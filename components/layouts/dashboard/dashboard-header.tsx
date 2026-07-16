@@ -1,7 +1,5 @@
 "use client"
 
-import { usePathname } from "next/navigation"
-
 import {
   Avatar,
   AvatarFallback,
@@ -15,35 +13,9 @@ import { Icons } from "@/components/ui/icons"
 import type { AuthUser } from "@/features/auth"
 import { getUserInitials } from "@/utils/get-initials"
 
-const pageTitles: Record<string, string> = {
-  "/dashboard": "Motolend Admin Dashboard",
-  "/users": "All Users",
-  "/users/overview": "User Management",
-  "/support": "All Tickets",
-  "/support/overview": "Customer Support",
-}
-
-function getPageTitle(pathname: string) {
-  if (pageTitles[pathname]) {
-    return pageTitles[pathname]
-  }
-
-  if (/^\/users\/[^/]+$/.test(pathname)) {
-    return "User Details"
-  }
-
-  if (pathname.startsWith("/support/") && pathname !== "/support/overview") {
-    return "Ticket Details"
-  }
-
-  return "Motolend Admin Dashboard"
-}
-
 export function DashboardHeader({ user }: { user: AuthUser }) {
-  const pathname = usePathname()
   const userName = user.name
   const userInitials = getUserInitials(userName)
-  const title = getPageTitle(pathname)
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -55,7 +27,7 @@ export function DashboardHeader({ user }: { user: AuthUser }) {
         />
         <div className="flex min-w-0 flex-col gap-0.5">
           <h1 className="truncate text-sm font-semibold leading-tight sm:text-base">
-            {title}
+            Motolend Admin Dashboard
           </h1>
           <p className="hidden truncate text-sm text-muted-foreground sm:block">
             Welcome back, {userName}
