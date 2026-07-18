@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 
+import { useRoles } from "@/features/role-permissions/hooks/use-roles"
 import { BaseModal } from "@/components/ui/base-modal"
 import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
@@ -17,11 +18,11 @@ import {
 } from "@/components/ui/select"
 import { useCreateAdminUser } from "@/features/users/hooks/use-user-mutations"
 import {
-  adminRoleOptions,
   createAdminUserFormDefaults,
   createAdminUserSchema,
   type CreateAdminUserFormValues,
 } from "@/features/users/schemas/create-admin-user.schema"
+import { getAssignableAdminRoles } from "@/features/users/utils/admin-roles"
 
 type CreateAdminUserDialogProps = {
   open: boolean
@@ -33,6 +34,13 @@ export function CreateAdminUserDialog({
   onOpenChange,
 }: CreateAdminUserDialogProps) {
   const { createAdminUser, isPending } = useCreateAdminUser()
+  const {
+    data: roles,
+    isPending: isRolesPending,
+    isError: isRolesError,
+  } = useRoles()
+
+  const roleOptions = getAssignableAdminRoles(roles ?? [])
 
   const form = useForm<CreateAdminUserFormValues>({
     resolver: zodResolver(createAdminUserSchema),
@@ -79,7 +87,10 @@ export function CreateAdminUserDialog({
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isPending}>
+          <Button
+            type="submit"
+            disabled={isPending || isRolesPending || roleOptions.length === 0}
+          >
             {isPending ? "Creating…" : "Create User"}
           </Button>
         </div>
@@ -153,20 +164,32 @@ export function CreateAdminUserDialog({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel>Role</FieldLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select
+                value={field.value}
+                onValueChange={field.onChange}
+                disabled={isRolesPending || isRolesError || roleOptions.length === 0}
+              >
                 <SelectTrigger
                   className="h-11 w-full border-border bg-background"
                   aria-invalid={fieldState.invalid}
                 >
-                  <SelectValue placeholder="Select role" />
+                  <SelectValue
+                    placeholder={
+                      isRolesPending
+                        ? "Loading roles…"
+                        : isRolesError
+                          ? "Could not load roles"
+                          : "Select role"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent
                   position="popper"
                   className="w-[var(--radix-select-trigger-width)]"
                 >
-                  {adminRoleOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                  {roleOptions.map((role) => (
+                    <SelectItem key={role.id} value={role.name}>
+                      {role.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

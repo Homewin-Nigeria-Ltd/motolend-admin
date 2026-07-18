@@ -7,6 +7,7 @@ import type {
   DashboardFilter,
   ProductPerformance,
 } from "@/features/dashboard/types"
+import { AppLoader } from "@/components/ui/app-loader"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   ChartContainer,
@@ -81,9 +82,7 @@ export function DashboardProductPerformanceChart({
       </CardHeader>
       <CardContent className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden px-4 pb-5 sm:px-5">
         {isLoading ? (
-          <p className="py-6 text-center text-sm text-muted-foreground">
-            Loading product performance data...
-          </p>
+          <AppLoader className="py-12" spinnerClassName="size-6" />
         ) : total === 0 ? (
           <p className="py-6 text-center text-sm text-muted-foreground">
             No product performance data for this period.

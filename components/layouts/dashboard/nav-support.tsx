@@ -37,7 +37,9 @@ export function NavSupport({
       <SidebarMenu>
         {items.map((item) => {
           const isActive =
-            (item.url != null && pathname === item.url) ||
+            (item.url != null &&
+              (pathname === item.url ||
+                pathname.startsWith(`${item.url}/`))) ||
             item.items?.some(
               (subItem) =>
                 pathname === subItem.url ||

@@ -61,15 +61,52 @@ export function mapAccountStatusToUserStatus(
 
   const normalized = accountStatus.trim().toLowerCase()
 
-  if (normalized === "inactive") {
-    return "Inactive"
+  switch (normalized) {
+    case "active":
+      return "Active"
+    case "inactive":
+      return "Inactive"
+    case "deactivated":
+      return "Deactivated"
+    case "pending":
+      return "Pending"
+    case "verified":
+      return "Verified"
+    default:
+      return formatRoleToken(accountStatus) as UserStatus
+  }
+}
+
+function formatRoleToken(role: string) {
+  return role
+    .split(/[_\s-]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(" ")
+}
+
+export function formatUserRoleLabel(user: ApiAdminUser) {
+  if (user.roles?.length) {
+    const labels = user.roles
+      .map((entry) => {
+        if (typeof entry === "string") {
+          return formatRoleToken(entry)
+        }
+
+        return entry.name ?? (entry.slug ? formatRoleToken(entry.slug) : "")
+      })
+      .filter(Boolean)
+
+    if (labels.length > 0) {
+      return labels.join(", ")
+    }
   }
 
-  if (normalized === "deactivated") {
-    return "Deactivated"
+  if (user.role?.trim()) {
+    return formatRoleToken(user.role)
   }
 
-  return "Active"
+  return "—"
 }
 
 export function mapApiUserToUserRecord(user: ApiAdminUser): UserRecord {
@@ -80,6 +117,7 @@ export function mapApiUserToUserRecord(user: ApiAdminUser): UserRecord {
     email: user.email,
     accountNumber: user.profile?.account_number ?? "—",
     phoneNumber: user.phone || "—",
+    role: formatUserRoleLabel(user),
     status: mapAccountStatusToUserStatus(user.account_status, user.role ?? ""),
   }
 }

@@ -64,6 +64,15 @@ export const userColumns: ColumnDef<UserRecord>[] = [
     ),
   },
   {
+    accessorKey: "role",
+    header: "Role",
+    cell: ({ row }) => (
+      <span className="whitespace-nowrap text-foreground">
+        {row.original.role}
+      </span>
+    ),
+  },
+  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => <UserStatusBadge status={row.original.status} />,

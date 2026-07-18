@@ -5,6 +5,7 @@ import { Cell, Pie, PieChart } from "recharts"
 import { LOAN_PURPOSE_COLORS } from "@/features/dashboard/api/queries"
 import { DashboardPeriodFilter } from "@/features/dashboard/components/dashboard-period-filter"
 import type { DashboardFilter, LoanPurposeItem } from "@/features/dashboard/types"
+import { AppLoader } from "@/components/ui/app-loader"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   ChartContainer,
@@ -57,9 +58,7 @@ export function DashboardLoanPurposeChart({
       </CardHeader>
       <CardContent className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden px-4 pb-5 sm:px-5">
         {isLoading ? (
-          <p className="py-6 text-center text-sm text-muted-foreground">
-            Loading loan purpose data...
-          </p>
+          <AppLoader className="py-12" spinnerClassName="size-6" />
         ) : items.length === 0 ? (
           <p className="py-6 text-center text-sm text-muted-foreground">
             No loan purpose data for this period.

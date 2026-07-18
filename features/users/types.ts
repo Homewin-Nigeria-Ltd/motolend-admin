@@ -4,7 +4,13 @@ export type UserTab =
   | "deactivated"
   | "admin"
 
-export type UserStatus = "Active" | "Inactive" | "Deactivated" | "Admin"
+export type UserStatus =
+  | "Active"
+  | "Inactive"
+  | "Deactivated"
+  | "Pending"
+  | "Verified"
+  | "Admin"
 
 export type UserListParams = {
   page: number
@@ -59,6 +65,12 @@ export type ApiFinancialMetrics = {
   pending_repayments_count?: number | null
 }
 
+export type ApiUserRole = {
+  id?: string | number
+  name?: string
+  slug?: string
+}
+
 export type ApiAdminUser = {
   id: string
   first_name: string
@@ -78,7 +90,7 @@ export type ApiAdminUser = {
   transaction_pin_set_at?: string | null
   two_factor_enabled_at?: string | null
   profile?: ApiUserProfile | null
-  roles?: unknown[]
+  roles?: ApiUserRole[] | string[]
   next_of_kin?: ApiNextOfKin | null
   employment_status?: string | null
   company_name?: string | null
@@ -148,6 +160,7 @@ export type UserRecord = {
   email: string
   accountNumber: string
   phoneNumber: string
+  role: string
   status: UserStatus
   avatarUrl?: string | null
 }

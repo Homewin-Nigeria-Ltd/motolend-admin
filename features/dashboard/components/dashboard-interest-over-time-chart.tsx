@@ -4,6 +4,7 @@ import { useId } from "react"
 import { Area, AreaChart, XAxis, YAxis } from "recharts"
 
 import type { InterestOverTimePoint } from "@/features/dashboard/types"
+import { AppLoader } from "@/components/ui/app-loader"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Select,
@@ -80,9 +81,7 @@ export function DashboardInterestOverTimeChart({
       </CardHeader>
       <CardContent className="px-2 pb-2 sm:px-4">
         {isLoading ? (
-          <p className="py-12 text-center text-sm text-muted-foreground">
-            Loading interest data...
-          </p>
+          <AppLoader className="h-[320px]" spinnerClassName="size-6" />
         ) : data.length === 0 ? (
           <p className="py-12 text-center text-sm text-muted-foreground">
             No interest data for this period.
