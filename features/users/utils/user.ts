@@ -137,9 +137,5 @@ export function extractApiUser(
 }
 
 export function tabToListQuery(tab: UserTab) {
-  if (tab === "admin") {
-    return { role: "admin" as const }
-  }
-
   return { status: tab }
 }
