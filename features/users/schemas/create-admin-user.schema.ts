@@ -18,10 +18,3 @@ export const createAdminUserFormDefaults: CreateAdminUserFormValues = {
   phone: "",
   role: "",
 }
-
-export const adminRoleOptions = [
-  { value: "Loan Manager", label: "Loan Manager" },
-  { value: "admin", label: "Admin" },
-  { value: "Customer Support", label: "Customer Support" },
-  { value: "Credit Officer", label: "Credit Officer" },
-] as const
