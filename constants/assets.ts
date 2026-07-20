@@ -11,6 +11,7 @@ export const ASSETS = {
     shortUpTrend: "/illustrations/short-up-trend.svg",
     shortDownTrend: "/illustrations/short-down-trend.svg",
     longUpTrend: "/illustrations/long-up-trend.svg",
+    longDownTrend: "/illustrations/long-down-trend.svg",
     cardCorner: "/illustrations/card-corner.svg",
     gift: "/illustrations/gift.svg",
     happyCustomer: "/illustrations/happy-customer.svg",

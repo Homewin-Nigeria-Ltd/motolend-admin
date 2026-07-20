@@ -132,7 +132,6 @@ export type UserKpi = {
   value: string
   changePercent: number
   trend: "up" | "down"
-  sparkline: number[]
 }
 
 export type ApiUserMetricTrend = {

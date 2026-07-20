@@ -74,7 +74,6 @@ export type DashboardKpiCard = {
   value: string
   changePercent: number
   trend: DashboardTrendDirection
-  sparkline: number[]
 }
 
 export type DashboardOverview = {

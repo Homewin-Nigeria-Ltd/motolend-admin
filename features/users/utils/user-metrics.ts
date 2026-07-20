@@ -5,16 +5,6 @@ const EMPTY_METRIC: ApiUserMetricItem = {
   trend: { percentage: 0, direction: "up" },
 }
 
-function buildSparkline(trend: "up" | "down", value: number) {
-  const scale = Math.max(Math.abs(value), 1)
-  const base =
-    trend === "up"
-      ? [0.55, 0.62, 0.58, 0.7, 0.66, 0.78, 0.74, 0.86, 0.82, 1]
-      : [1, 0.92, 0.96, 0.84, 0.88, 0.76, 0.8, 0.68, 0.72, 0.6]
-
-  return base.map((point) => Math.max(1, Math.round(point * scale)))
-}
-
 function formatMetricValue(key: string, value: number | string) {
   const numericValue = typeof value === "number" ? value : Number(value)
 
@@ -36,8 +26,6 @@ function mapMetricToKpi(
   label: string,
   metric: ApiUserMetricItem,
 ): UserKpi {
-  const numericValue =
-    typeof metric.value === "number" ? metric.value : Number(metric.value)
   const trend = metric.trend.direction === "down" ? "down" : "up"
 
   return {
@@ -46,10 +34,6 @@ function mapMetricToKpi(
     value: formatMetricValue(key, metric.value),
     changePercent: metric.trend.percentage ?? 0,
     trend,
-    sparkline: buildSparkline(
-      trend,
-      Number.isNaN(numericValue) ? 1 : numericValue,
-    ),
   }
 }
 

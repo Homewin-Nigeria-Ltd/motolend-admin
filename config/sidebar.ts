@@ -27,6 +27,12 @@ export const navMain: NavItem[] = [
   { title: "Overview", url: "/dashboard", icon: "dashboard", permission: null },
   { title: "Users", url: "/users/overview", icon: "group", permission: null },
   {
+    title: "Loan Applications",
+    url: "/applications/overview",
+    icon: "listAlt",
+    permission: null,
+  },
+  {
     title: "Customer Support",
     url: "/support/overview",
     icon: "headphones",

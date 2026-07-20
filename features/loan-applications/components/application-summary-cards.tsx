@@ -1,4 +1,6 @@
-import type { UserKpi } from "@/features/users/types"
+"use client"
+
+import type { ApplicationKpi } from "@/features/loan-applications/types"
 import { MetricSummaryCard } from "@/components/metric-summary-card"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -11,7 +13,7 @@ function SummaryCardSkeleton() {
   )
 }
 
-function SummaryCard({ kpi }: { kpi: UserKpi }) {
+function SummaryCard({ kpi }: { kpi: ApplicationKpi }) {
   return (
     <MetricSummaryCard
       label={kpi.label}
@@ -22,11 +24,11 @@ function SummaryCard({ kpi }: { kpi: UserKpi }) {
   )
 }
 
-export function UserSummaryCards({
+export function ApplicationSummaryCards({
   kpis,
   isLoading = false,
 }: {
-  kpis: UserKpi[]
+  kpis: ApplicationKpi[]
   isLoading?: boolean
 }) {
   if (isLoading) {
