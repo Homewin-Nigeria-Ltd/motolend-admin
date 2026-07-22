@@ -33,6 +33,18 @@ export const navMain: NavItem[] = [
     permission: null,
   },
   {
+    title: "Loan Products",
+    url: "/loan-products/overview",
+    icon: "priceTag",
+    permission: null,
+  },
+  {
+    title: "Repayments",
+    url: "/repayments/overview",
+    icon: "revenue",
+    permission: null,
+  },
+  {
     title: "Customer Support",
     url: "/support/overview",
     icon: "headphones",

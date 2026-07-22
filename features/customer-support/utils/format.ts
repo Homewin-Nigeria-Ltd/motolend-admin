@@ -66,16 +66,3 @@ export function getInitials(name: string) {
     .slice(0, 2)
     .toUpperCase()
 }
-
-export function buildSparkline(value: number, direction: "up" | "down") {
-  const base = Math.max(value, 1)
-  const points = Array.from({ length: 10 }, (_, index) => {
-    const progress = index / 9
-    const wave = Math.sin(progress * Math.PI) * (base * 0.08)
-    return direction === "up"
-      ? base * (0.55 + progress * 0.45) + wave
-      : base * (1 - progress * 0.4) + wave
-  })
-
-  return points.map((point) => Math.max(1, Math.round(point)))
-}

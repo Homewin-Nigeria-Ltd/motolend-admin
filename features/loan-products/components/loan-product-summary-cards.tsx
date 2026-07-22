@@ -1,4 +1,4 @@
-import type { TicketKpi } from "@/features/customer-support/types"
+import type { LoanProductKpi } from "@/features/loan-products/types"
 import { MetricSummaryCard } from "@/components/metric-summary-card"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -11,7 +11,7 @@ function SummaryCardSkeleton() {
   )
 }
 
-function SummaryCard({ kpi }: { kpi: TicketKpi }) {
+function SummaryCard({ kpi }: { kpi: LoanProductKpi }) {
   return (
     <MetricSummaryCard
       label={kpi.label}
@@ -22,17 +22,17 @@ function SummaryCard({ kpi }: { kpi: TicketKpi }) {
   )
 }
 
-export function TicketSummaryCards({
+export function LoanProductSummaryCards({
   kpis,
   isLoading = false,
 }: {
-  kpis: TicketKpi[]
+  kpis: LoanProductKpi[]
   isLoading?: boolean
 }) {
   if (isLoading) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, index) => (
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, index) => (
           <SummaryCardSkeleton key={index} />
         ))}
       </div>
@@ -40,7 +40,7 @@ export function TicketSummaryCards({
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {kpis.map((kpi) => (
         <SummaryCard key={kpi.key} kpi={kpi} />
       ))}

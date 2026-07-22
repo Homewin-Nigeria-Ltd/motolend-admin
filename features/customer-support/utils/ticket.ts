@@ -13,7 +13,6 @@ import type {
   TicketTimelineEntry,
 } from "@/features/customer-support/types"
 import {
-  buildSparkline,
   formatTicketCount,
   formatTicketDateTime,
   getInitials,
@@ -314,7 +313,6 @@ export function mapApiMetricsToTicketKpis(
       value: formatTicketCount(metric.value),
       changePercent: metric.trend.percentage,
       trend,
-      sparkline: buildSparkline(metric.value, trend),
     }
   })
 }

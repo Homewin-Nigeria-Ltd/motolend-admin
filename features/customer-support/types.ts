@@ -10,7 +10,6 @@ export type TicketKpi = {
   value: string
   changePercent: number
   trend: "up" | "down"
-  sparkline: number[]
 }
 
 export type TicketListParams = {

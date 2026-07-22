@@ -54,6 +54,10 @@ function isNavItemActive(pathname: string, item: NavItem) {
     (item.url === "/users/overview" && pathname.startsWith("/users")) ||
     (item.url === "/applications/overview" &&
       pathname.startsWith("/applications")) ||
+    (item.url === "/loan-products/overview" &&
+      pathname.startsWith("/loan-products")) ||
+    (item.url === "/repayments/overview" &&
+      pathname.startsWith("/repayments")) ||
     (item.url === "/support/overview" && pathname.startsWith("/support")) ||
     (item.url === "/customers" &&
       (pathname === "/customers" ||
