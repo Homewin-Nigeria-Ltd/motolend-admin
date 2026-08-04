@@ -14,20 +14,17 @@ import {
 } from "@/components/ui/sidebar"
 import { Icons } from "@/components/ui/icons"
 import { LogoutConfirmDialog } from "@/features/auth/components/logout-confirm-dialog"
+import type { AuthUser } from "@/features/auth/types"
 import { cn } from "@/lib/utils"
 import { getUserInitials } from "@/utils/get-initials"
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string
-    email: string
-    avatar: string | null
-  }
-}) {
+export function NavUser({ user }: { user: AuthUser }) {
   const [logoutOpen, setLogoutOpen] = useState(false)
-  const userInitials = getUserInitials(user.name)
+  const userName =
+    [user.first_name, user.middle_name, user.last_name]
+      .filter(Boolean)
+      .join(" ") || user.email
+  const userInitials = getUserInitials(userName)
 
   return (
     <SidebarMenu>
@@ -36,18 +33,21 @@ export function NavUser({
           <SidebarMenuButton
             asChild
             size="lg"
-            tooltip={user.name}
+            tooltip={userName}
             className="min-w-0 flex-1 group hover:bg-transparent hover:text-sidebar-foreground active:bg-transparent group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:min-h-8! group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:justify-center! group-data-[collapsible=icon]:items-center!"
           >
             <div className="flex min-w-0 flex-1 items-center gap-2">
               <Avatar className="size-8 shrink-0 rounded-lg group-data-[collapsible=icon]:size-7 group-data-[collapsible=icon]:rounded-full">
-                <AvatarImage src={user.avatar ?? undefined} alt={user.name} />
+                <AvatarImage
+                  src={user.profile_photo_url ?? undefined}
+                  alt={userName}
+                />
                 <AvatarFallback className="rounded-lg group-data-[collapsible=icon]:rounded-full">
                   {userInitials}
                 </AvatarFallback>
               </Avatar>
               <div className="grid min-w-0 flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{userName}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
             </div>
@@ -60,7 +60,7 @@ export function NavUser({
               "mr-2 shrink-0 cursor-pointer rounded-md p-1 text-sidebar-foreground/70 transition-colors",
               "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
               "disabled:pointer-events-none disabled:opacity-50",
-              "group-data-[collapsible=icon]:hidden"
+              "group-data-[collapsible=icon]:hidden",
             )}
           >
             <Icons.logout size={24} />

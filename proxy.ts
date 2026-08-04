@@ -5,7 +5,15 @@ import { AUTH_COOKIE_NAME } from "@/constants/auth"
 
 const PUBLIC_PATHS = ["/login"]
 
-const PROTECTED_PREFIXES = ["/dashboard", "/users", "/support", "/settings"]
+const PROTECTED_PREFIXES = [
+  "/dashboard",
+  "/users",
+  "/applications",
+  "/loan-products",
+  "/repayments",
+  "/support",
+  "/settings",
+]
 
 function isPublicPath(pathname: string) {
   return PUBLIC_PATHS.some(

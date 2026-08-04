@@ -41,13 +41,7 @@ function userHasPermission(user: AuthUser, permission: PermissionKey) {
     return true
   }
 
-  if (user.permissions && user.permissions.length > 0) {
-    return user.permissions.some(
-      (entry) => entry.key === permission && entry.has_access,
-    )
-  }
-
-  return (user.permission_keys ?? []).includes(permission)
+  return (user.permissions ?? []).some((entry) => entry.name === permission)
 }
 
 function buildPermissions(user: AuthUser): Permissions {

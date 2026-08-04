@@ -1,32 +1,4 @@
 export type AuthUserPermission = {
-  key: string
-  name: string
-  description: string
-  has_access: boolean
-}
-
-export type AuthUser = {
-  id: string
-  name: string
-  email: string
-  phone: string
-  role: string
-  status: string
-  profile_photo_url: string | null
-  admin_role?: string | null
-  permissions?: AuthUserPermission[]
-  permission_keys?: string[]
-}
-
-export type Session = {
-  user: AuthUser
-}
-
-export type LoginActionResult =
-  | { success: true }
-  | { success: false; error: string }
-
-export type ApiAuthPermission = {
   id: number
   name: string
   guard_name: string
@@ -34,15 +6,15 @@ export type ApiAuthPermission = {
   updated_at?: string
 }
 
-export type ApiAuthRole = {
+export type AuthUserRole = {
   id: number
   name: string
   guard_name?: string
   description?: string | null
-  permissions?: ApiAuthPermission[]
+  permissions?: AuthUserPermission[]
 }
 
-export type ApiAuthUser = {
+export type AuthUser = {
   id: string
   first_name: string
   last_name: string
@@ -56,20 +28,27 @@ export type ApiAuthUser = {
   phone_verified_at?: string | null
   created_at?: string
   updated_at?: string
-  admin_role?: string | null
-  roles?: ApiAuthRole[]
-  permissions?: ApiAuthPermission[]
+  roles?: AuthUserRole[]
+  permissions?: AuthUserPermission[]
   profile_photo_url?: string | null
 }
+
+export type LoginActionResult =
+  | { success: true }
+  | { success: false; error: string }
 
 export type LoginResponseData = {
   token: string
   access_token?: string
-  user: ApiAuthUser
+  user?: AuthUser
+}
+
+export type MeResponseData = {
+  user: AuthUser
 }
 
 export type MeApiResponse = {
-  user: ApiAuthUser
-  roles: ApiAuthRole[]
-  permissions: ApiAuthPermission[]
+  user: AuthUser
+  roles: AuthUserRole[]
+  permissions: AuthUserPermission[]
 }

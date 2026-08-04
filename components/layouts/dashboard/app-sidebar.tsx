@@ -48,13 +48,7 @@ export function AppSidebar({
         <NavSupport items={filteredSupport} />
       </SidebarContent>
       <SidebarFooter className="pb-12">
-        <NavUser
-          user={{
-            name: user.name,
-            email: user.email,
-            avatar: user.profile_photo_url,
-          }}
-        />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -14,7 +14,10 @@ import type { AuthUser } from "@/features/auth"
 import { getUserInitials } from "@/utils/get-initials"
 
 export function DashboardHeader({ user }: { user: AuthUser }) {
-  const userName = user.name
+  const userName =
+    [user.first_name, user.middle_name, user.last_name]
+      .filter(Boolean)
+      .join(" ") || user.email
   const userInitials = getUserInitials(userName)
 
   return (
