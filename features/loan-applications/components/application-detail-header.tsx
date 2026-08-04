@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -84,8 +85,10 @@ export function ApplicationDetailHeader({
               </p>
             </HeaderField>
 
-            <Button type="button" className="h-10 shrink-0 px-4" disabled>
-              Loan History
+            <Button type="button" className="h-10 shrink-0 px-4" asChild>
+              <Link href={`/users/${application.borrower.id}#loan-history`}>
+                Loan History
+              </Link>
             </Button>
           </div>
 

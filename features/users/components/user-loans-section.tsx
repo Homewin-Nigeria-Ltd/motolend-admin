@@ -24,7 +24,7 @@ export function UserLoansSection({
   errorMessage,
 }: UserLoansSectionProps) {
   return (
-    <div className="space-y-4">
+    <div id="loan-history" className="scroll-mt-6 space-y-4">
       <h3 className="text-base font-semibold text-foreground">Loan History</h3>
 
       <div className="flex items-center justify-between rounded-2xl border border-border bg-background px-5 py-4">

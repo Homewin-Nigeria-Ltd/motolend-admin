@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import { BackLink } from "@/components/back-link"
 import { AppLoader } from "@/components/ui/app-loader"
@@ -32,6 +32,16 @@ export function UserDetailSection({ userId }: UserDetailSectionProps) {
     page: loansPage,
     per_page: LOANS_PAGE_SIZE,
   })
+
+  useEffect(() => {
+    if (!user || window.location.hash !== "#loan-history") {
+      return
+    }
+
+    document
+      .getElementById("loan-history")
+      ?.scrollIntoView({ behavior: "smooth" })
+  }, [user])
 
   if (isPending) {
     return (
