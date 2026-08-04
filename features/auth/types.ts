@@ -26,6 +26,22 @@ export type LoginActionResult =
   | { success: true }
   | { success: false; error: string }
 
+export type ApiAuthPermission = {
+  id: number
+  name: string
+  guard_name: string
+  created_at?: string
+  updated_at?: string
+}
+
+export type ApiAuthRole = {
+  id: number
+  name: string
+  guard_name?: string
+  description?: string | null
+  permissions?: ApiAuthPermission[]
+}
+
 export type ApiAuthUser = {
   id: string
   first_name: string
@@ -36,6 +52,14 @@ export type ApiAuthUser = {
   status: string
   role: string
   account_status: string
+  email_verified_at?: string | null
+  phone_verified_at?: string | null
+  created_at?: string
+  updated_at?: string
+  admin_role?: string | null
+  roles?: ApiAuthRole[]
+  permissions?: ApiAuthPermission[]
+  profile_photo_url?: string | null
 }
 
 export type LoginResponseData = {
@@ -44,12 +68,8 @@ export type LoginResponseData = {
   user: ApiAuthUser
 }
 
-export type MeResponseData = {
-  user: ApiAuthUser
-}
-
 export type MeApiResponse = {
-  success?: boolean
-  data?: MeResponseData
-  user?: ApiAuthUser
+  user: ApiAuthUser
+  roles: ApiAuthRole[]
+  permissions: ApiAuthPermission[]
 }

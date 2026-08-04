@@ -25,24 +25,29 @@ export type SupportItem = {
 
 export const navMain: NavItem[] = [
   { title: "Overview", url: "/dashboard", icon: "dashboard", permission: null },
-  { title: "Users", url: "/users/overview", icon: "group", permission: null },
+  {
+    title: "Users",
+    url: "/users/overview",
+    icon: "group",
+    permission: PERMISSION_KEYS.viewUsers,
+  },
   {
     title: "Loan Applications",
     url: "/applications/overview",
     icon: "listAlt",
-    permission: null,
+    permission: PERMISSION_KEYS.viewLoans,
   },
   {
     title: "Loan Products",
     url: "/loan-products/overview",
     icon: "priceTag",
-    permission: null,
+    permission: PERMISSION_KEYS.viewLoanProducts,
   },
   {
     title: "Repayments",
     url: "/repayments/overview",
     icon: "revenue",
-    permission: null,
+    permission: PERMISSION_KEYS.manageRepayments,
   },
   {
     title: "Customer Support",
@@ -57,6 +62,6 @@ export const navSupport: SupportItem[] = [
     name: "Settings",
     url: "/settings",
     icon: "settings",
-    permission: PERMISSION_KEYS.settings,
+    permission: PERMISSION_KEYS.manageUsers,
   },
 ]

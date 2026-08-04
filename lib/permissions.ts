@@ -4,38 +4,36 @@ import type { AuthUser } from "@/features/auth/types"
 import { getUser } from "@/lib/get-user"
 
 export const PERMISSION_KEYS = {
-  orderManagement: "order_management",
-  kitchenWorkflow: "kitchen_workflow",
-  revenueAnalytics: "revenue_analytics",
-  inventoryTracking: "inventory_tracking",
-  menuManagement: "menu_management",
-  deliveryManagement: "delivery_management",
-  riderChat: "rider_chat",
-  performance: "performance",
-  staffManagement: "staff_management",
-  technicalReport: "technical_report",
-  customerRetentionLoyalty: "customer_retention_loyalty",
-  customerSupport: "customer_support",
-  settings: "settings",
+  viewUsers: "view_users",
+  manageUsers: "manage_users",
+  viewLoans: "view_loans",
+  reviewLoans: "review_loans",
+  approveLoans: "approve_loans",
+  disburseLoans: "disburse_loans",
+  viewLoanProducts: "view_loan_products",
+  manageLoanProducts: "manage_loan_products",
+  createLoanProducts: "create_loan_products",
+  viewTransactions: "view_transactions",
+  manageRepayments: "manage_repayments",
+  onboardClients: "onboard_clients",
 } as const
 
 export type PermissionKey =
   (typeof PERMISSION_KEYS)[keyof typeof PERMISSION_KEYS]
 
 export type Permissions = {
-  canAccessOrderManagement: boolean
-  canAccessKitchenWorkflow: boolean
-  canAccessRevenueAnalytics: boolean
-  canAccessInventoryTracking: boolean
-  canAccessMenuManagement: boolean
-  canAccessDeliveryManagement: boolean
-  canAccessRiderChat: boolean
-  canAccessPerformance: boolean
-  canAccessStaffManagement: boolean
-  canAccessTechnicalReport: boolean
-  canAccessCustomerRetentionLoyalty: boolean
-  canAccessCustomerSupport: boolean
-  canAccessSettings: boolean
+  canViewUsers: boolean
+  canManageUsers: boolean
+  canViewLoans: boolean
+  canReviewLoans: boolean
+  canApproveLoans: boolean
+  canDisburseLoans: boolean
+  canViewLoanProducts: boolean
+  canManageLoanProducts: boolean
+  canCreateLoanProducts: boolean
+  canViewTransactions: boolean
+  canManageRepayments: boolean
+  canOnboardClients: boolean
 }
 
 function userHasPermission(user: AuthUser, permission: PermissionKey) {
@@ -45,7 +43,7 @@ function userHasPermission(user: AuthUser, permission: PermissionKey) {
 
   if (user.permissions && user.permissions.length > 0) {
     return user.permissions.some(
-      (entry) => entry.key === permission && entry.has_access
+      (entry) => entry.key === permission && entry.has_access,
     )
   }
 
@@ -54,49 +52,33 @@ function userHasPermission(user: AuthUser, permission: PermissionKey) {
 
 function buildPermissions(user: AuthUser): Permissions {
   return {
-    canAccessOrderManagement: userHasPermission(
+    canViewUsers: userHasPermission(user, PERMISSION_KEYS.viewUsers),
+    canManageUsers: userHasPermission(user, PERMISSION_KEYS.manageUsers),
+    canViewLoans: userHasPermission(user, PERMISSION_KEYS.viewLoans),
+    canReviewLoans: userHasPermission(user, PERMISSION_KEYS.reviewLoans),
+    canApproveLoans: userHasPermission(user, PERMISSION_KEYS.approveLoans),
+    canDisburseLoans: userHasPermission(user, PERMISSION_KEYS.disburseLoans),
+    canViewLoanProducts: userHasPermission(
       user,
-      PERMISSION_KEYS.orderManagement,
+      PERMISSION_KEYS.viewLoanProducts,
     ),
-    canAccessKitchenWorkflow: userHasPermission(
+    canManageLoanProducts: userHasPermission(
       user,
-      PERMISSION_KEYS.kitchenWorkflow,
+      PERMISSION_KEYS.manageLoanProducts,
     ),
-    canAccessRevenueAnalytics: userHasPermission(
+    canCreateLoanProducts: userHasPermission(
       user,
-      PERMISSION_KEYS.revenueAnalytics,
+      PERMISSION_KEYS.createLoanProducts,
     ),
-    canAccessInventoryTracking: userHasPermission(
+    canViewTransactions: userHasPermission(
       user,
-      PERMISSION_KEYS.inventoryTracking,
+      PERMISSION_KEYS.viewTransactions,
     ),
-    canAccessMenuManagement: userHasPermission(
+    canManageRepayments: userHasPermission(
       user,
-      PERMISSION_KEYS.menuManagement,
+      PERMISSION_KEYS.manageRepayments,
     ),
-    canAccessDeliveryManagement: userHasPermission(
-      user,
-      PERMISSION_KEYS.deliveryManagement,
-    ),
-    canAccessRiderChat: userHasPermission(user, PERMISSION_KEYS.riderChat),
-    canAccessPerformance: userHasPermission(user, PERMISSION_KEYS.performance),
-    canAccessStaffManagement: userHasPermission(
-      user,
-      PERMISSION_KEYS.staffManagement,
-    ),
-    canAccessTechnicalReport: userHasPermission(
-      user,
-      PERMISSION_KEYS.technicalReport,
-    ),
-    canAccessCustomerRetentionLoyalty: userHasPermission(
-      user,
-      PERMISSION_KEYS.customerRetentionLoyalty,
-    ),
-    canAccessCustomerSupport: userHasPermission(
-      user,
-      PERMISSION_KEYS.customerSupport,
-    ),
-    canAccessSettings: userHasPermission(user, PERMISSION_KEYS.settings),
+    canOnboardClients: userHasPermission(user, PERMISSION_KEYS.onboardClients),
   }
 }
 
@@ -107,19 +89,18 @@ export const getPermissions = cache(async (): Promise<Permissions> => {
 })
 
 const permissionFlagByKey: Record<PermissionKey, keyof Permissions> = {
-  [PERMISSION_KEYS.orderManagement]: "canAccessOrderManagement",
-  [PERMISSION_KEYS.kitchenWorkflow]: "canAccessKitchenWorkflow",
-  [PERMISSION_KEYS.revenueAnalytics]: "canAccessRevenueAnalytics",
-  [PERMISSION_KEYS.inventoryTracking]: "canAccessInventoryTracking",
-  [PERMISSION_KEYS.menuManagement]: "canAccessMenuManagement",
-  [PERMISSION_KEYS.deliveryManagement]: "canAccessDeliveryManagement",
-  [PERMISSION_KEYS.riderChat]: "canAccessRiderChat",
-  [PERMISSION_KEYS.performance]: "canAccessPerformance",
-  [PERMISSION_KEYS.staffManagement]: "canAccessStaffManagement",
-  [PERMISSION_KEYS.technicalReport]: "canAccessTechnicalReport",
-  [PERMISSION_KEYS.customerRetentionLoyalty]: "canAccessCustomerRetentionLoyalty",
-  [PERMISSION_KEYS.customerSupport]: "canAccessCustomerSupport",
-  [PERMISSION_KEYS.settings]: "canAccessSettings",
+  [PERMISSION_KEYS.viewUsers]: "canViewUsers",
+  [PERMISSION_KEYS.manageUsers]: "canManageUsers",
+  [PERMISSION_KEYS.viewLoans]: "canViewLoans",
+  [PERMISSION_KEYS.reviewLoans]: "canReviewLoans",
+  [PERMISSION_KEYS.approveLoans]: "canApproveLoans",
+  [PERMISSION_KEYS.disburseLoans]: "canDisburseLoans",
+  [PERMISSION_KEYS.viewLoanProducts]: "canViewLoanProducts",
+  [PERMISSION_KEYS.manageLoanProducts]: "canManageLoanProducts",
+  [PERMISSION_KEYS.createLoanProducts]: "canCreateLoanProducts",
+  [PERMISSION_KEYS.viewTransactions]: "canViewTransactions",
+  [PERMISSION_KEYS.manageRepayments]: "canManageRepayments",
+  [PERMISSION_KEYS.onboardClients]: "canOnboardClients",
 }
 
 export function hasPermission(
