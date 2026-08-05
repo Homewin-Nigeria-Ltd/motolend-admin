@@ -12,6 +12,7 @@ import {
   createLoanProductFormDefaults,
   createLoanProductSchema,
   getTierAmountsBoundsError,
+  type CreateLoanProductFormInput,
   type CreateLoanProductFormValues,
 } from "@/features/loan-products/schemas/create-loan-product.schema"
 import { buildCreateLoanProductPayload } from "@/features/loan-products/utils/build-create-loan-product-payload"
@@ -21,7 +22,11 @@ export function CreateLoanProductSection() {
   const router = useRouter()
   const { createLoanProduct, isPending } = useCreateLoanProduct()
 
-  const form = useForm<CreateLoanProductFormValues>({
+  const form = useForm<
+    CreateLoanProductFormInput,
+    unknown,
+    CreateLoanProductFormValues
+  >({
     resolver: zodResolver(createLoanProductSchema),
     defaultValues: createLoanProductFormDefaults,
   })

@@ -1,26 +1,9 @@
 import { z } from "zod/v3"
 
-function emptyToUndefined(value: unknown) {
-  if (value === "" || value === null || value === undefined) {
-    return undefined
-  }
-
-  if (typeof value === "number" && Number.isNaN(value)) {
-    return undefined
-  }
-
-  return value
-}
-
 function requiredPositiveNumber(message: string) {
   return z
-    .preprocess(
-      emptyToUndefined,
-      z.number({
-        invalid_type_error: message,
-        required_error: message,
-      }),
-    )
+    .union([z.number(), z.nan(), z.undefined()])
+    .refine((value): value is number => Number.isFinite(value), message)
     .refine((value) => value > 0, message)
 }
 
@@ -39,8 +22,9 @@ export const recordRepaymentSchema = z.object({
   }),
 })
 
-export type RecordRepaymentFormValues = z.infer<typeof recordRepaymentSchema>
+export type RecordRepaymentFormInput = z.input<typeof recordRepaymentSchema>
+export type RecordRepaymentFormValues = z.output<typeof recordRepaymentSchema>
 
-export const recordRepaymentFormDefaults: Partial<RecordRepaymentFormValues> = {
+export const recordRepaymentFormDefaults: Partial<RecordRepaymentFormInput> = {
   payment_method: "cash",
 }

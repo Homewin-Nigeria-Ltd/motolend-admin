@@ -20,6 +20,7 @@ import {
   PAYMENT_METHOD_OPTIONS,
   recordRepaymentFormDefaults,
   recordRepaymentSchema,
+  type RecordRepaymentFormInput,
   type RecordRepaymentFormValues,
 } from "@/features/repayments/schemas/record-repayment.schema"
 
@@ -44,7 +45,11 @@ export function RecordRepaymentDialog({
 }: RecordRepaymentDialogProps) {
   const { recordRepayment, isPending } = useRecordRepayment(repaymentId)
 
-  const form = useForm<RecordRepaymentFormValues>({
+  const form = useForm<
+    RecordRepaymentFormInput,
+    unknown,
+    RecordRepaymentFormValues
+  >({
     resolver: zodResolver(recordRepaymentSchema),
     defaultValues: recordRepaymentFormDefaults,
   })

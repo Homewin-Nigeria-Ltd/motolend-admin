@@ -1,25 +1,9 @@
 import { z } from "zod/v3"
 
-function emptyToUndefined(value: unknown) {
-  if (value === "" || value === null || value === undefined) {
-    return undefined
-  }
-
-  if (typeof value === "number" && Number.isNaN(value)) {
-    return undefined
-  }
-
-  return value
-}
-
 function requiredNumber(message: string) {
-  return z.preprocess(
-    emptyToUndefined,
-    z.number({
-      invalid_type_error: message,
-      required_error: message,
-    }),
-  )
+  return z
+    .union([z.number(), z.nan(), z.undefined()])
+    .refine((value): value is number => Number.isFinite(value), message)
 }
 
 function requiredPositiveNumber(message: string) {
@@ -74,28 +58,43 @@ export const createLoanProductSchema = z
     })
   })
 
-export type CreateLoanProductFormValues = z.infer<typeof createLoanProductSchema>
-export type CreateLoanProductTierFormValues = z.infer<typeof tierSchema>
+export type CreateLoanProductFormInput = z.input<typeof createLoanProductSchema>
+export type CreateLoanProductFormValues = z.output<typeof createLoanProductSchema>
+export type CreateLoanProductTierFormValues = z.output<typeof tierSchema>
 
 export function getTierAmountsBoundsError(
-  values: Pick<CreateLoanProductFormValues, "min_amount" | "max_amount" | "tiers">,
+  values: Pick<CreateLoanProductFormInput, "min_amount" | "max_amount" | "tiers">,
 ): string | null {
-  const { min_amount: loanMin, max_amount: loanMax, tiers } = values
+  const loanMin = values.min_amount
+  const loanMax = values.max_amount
 
-  if (!Number.isFinite(loanMin) || !Number.isFinite(loanMax)) {
+  if (
+    typeof loanMin !== "number" ||
+    typeof loanMax !== "number" ||
+    !Number.isFinite(loanMin) ||
+    !Number.isFinite(loanMax)
+  ) {
     return null
   }
 
-  for (const tier of tiers) {
-    if (!Number.isFinite(tier.min_amount) || !Number.isFinite(tier.max_amount)) {
+  for (const tier of values.tiers) {
+    const tierMin = tier.min_amount
+    const tierMax = tier.max_amount
+
+    if (
+      typeof tierMin !== "number" ||
+      typeof tierMax !== "number" ||
+      !Number.isFinite(tierMin) ||
+      !Number.isFinite(tierMax)
+    ) {
       continue
     }
 
     if (
-      tier.min_amount < loanMin ||
-      tier.max_amount > loanMax ||
-      tier.min_amount > loanMax ||
-      tier.max_amount < loanMin
+      tierMin < loanMin ||
+      tierMax > loanMax ||
+      tierMin > loanMax ||
+      tierMax < loanMin
     ) {
       return "Tier amounts must stay within the loan minimum and maximum."
     }
@@ -104,7 +103,7 @@ export function getTierAmountsBoundsError(
   return null
 }
 
-export const createLoanProductFormDefaults = {
+export const createLoanProductFormDefaults: CreateLoanProductFormInput = {
   name: "",
   description: "",
   min_amount: undefined,
@@ -121,7 +120,7 @@ export const createLoanProductFormDefaults = {
       interest_rate: undefined,
     },
   ],
-} as CreateLoanProductFormValues
+}
 
 export const INTEREST_TYPE_OPTIONS = ["flat", "reducing"] as const
 export const TENURE_TYPE_OPTIONS = ["days", "weeks", "months"] as const

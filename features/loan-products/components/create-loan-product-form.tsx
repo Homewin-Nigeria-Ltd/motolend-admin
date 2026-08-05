@@ -18,11 +18,16 @@ import { Textarea } from "@/components/ui/textarea"
 import {
   INTEREST_TYPE_OPTIONS,
   TENURE_TYPE_OPTIONS,
+  type CreateLoanProductFormInput,
   type CreateLoanProductFormValues,
 } from "@/features/loan-products/schemas/create-loan-product.schema"
 
 type CreateLoanProductFormProps = {
-  form: UseFormReturn<CreateLoanProductFormValues>
+  form: UseFormReturn<
+    CreateLoanProductFormInput,
+    unknown,
+    CreateLoanProductFormValues
+  >
   disabled?: boolean
 }
 
@@ -32,7 +37,11 @@ function NumberField({
   label,
   disabled,
 }: {
-  form: UseFormReturn<CreateLoanProductFormValues>
+  form: UseFormReturn<
+    CreateLoanProductFormInput,
+    unknown,
+    CreateLoanProductFormValues
+  >
   name:
     | "min_amount"
     | "max_amount"
