@@ -42,6 +42,10 @@ async function fetchUserList(params: UserListParams): Promise<UserListResponse> 
     query.search = params.search.trim()
   }
 
+  if (params.role_id !== undefined && params.role_id !== "") {
+    query.role_id = params.role_id
+  }
+
   const tabQuery = tabToListQuery(params.tab ?? "active")
   Object.assign(query, tabQuery)
 

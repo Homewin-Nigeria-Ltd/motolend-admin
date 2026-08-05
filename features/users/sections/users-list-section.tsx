@@ -1,25 +1,38 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 
 import { DataTable } from "@/components/data-table"
 import { AppLoader } from "@/components/ui/app-loader"
 import { userColumns } from "@/features/users/columns"
 import { CreateAdminUserDialog } from "@/features/users/components/create-admin-user-dialog"
-import { UserToolbar } from "@/features/users/components/user-toolbar"
+import { UserToolbar, ALL_ROLES_VALUE } from "@/features/users/components/user-toolbar"
 import { UsersListToolbar } from "@/features/users/components/users-list-toolbar"
 import { useUserList } from "@/features/users/hooks/use-user-list"
 import type { UserRecord, UserTab } from "@/features/users/types"
+import { getUserListStateFromSearchParams } from "@/features/users/utils/user-list-url"
 
 const PAGE_SIZE = 15
 
 export function UsersListSection() {
   const router = useRouter()
-  const [tab, setTab] = useState<UserTab>("active")
+  const searchParams = useSearchParams()
+  const initialState = getUserListStateFromSearchParams(searchParams)
+
+  const [tab, setTab] = useState<UserTab>(initialState.tab)
   const [search, setSearch] = useState("")
+  const [roleId, setRoleId] = useState(initialState.roleId)
   const [page, setPage] = useState(1)
   const [createOpen, setCreateOpen] = useState(false)
+
+  useEffect(() => {
+    if (!searchParams.has("tab") && !searchParams.has("role_id")) {
+      return
+    }
+
+    router.replace("/users", { scroll: false })
+  }, [router, searchParams])
 
   const {
     data: userList,
@@ -32,6 +45,8 @@ export function UsersListSection() {
     per_page: PAGE_SIZE,
     search,
     tab,
+    role_id:
+      tab === "admin" && roleId !== ALL_ROLES_VALUE ? roleId : undefined,
   })
 
   const users = userList?.items ?? []
@@ -40,11 +55,19 @@ export function UsersListSection() {
 
   const handleTabChange = (value: UserTab) => {
     setTab(value)
+    if (value !== "admin") {
+      setRoleId(ALL_ROLES_VALUE)
+    }
     setPage(1)
   }
 
   const handleSearchChange = (value: string) => {
     setSearch(value)
+    setPage(1)
+  }
+
+  const handleRoleIdChange = (value: string) => {
+    setRoleId(value)
     setPage(1)
   }
 
@@ -91,6 +114,9 @@ export function UsersListSection() {
                 onTabChange={handleTabChange}
                 search={search}
                 onSearchChange={handleSearchChange}
+                showRoleFilter
+                roleId={roleId}
+                onRoleIdChange={handleRoleIdChange}
                 onCreateAdminUser={() => setCreateOpen(true)}
               />
             </>

@@ -11,9 +11,11 @@ import { useCreateLoanProduct } from "@/features/loan-products/hooks/use-loan-pr
 import {
   createLoanProductFormDefaults,
   createLoanProductSchema,
+  getTierAmountsBoundsError,
   type CreateLoanProductFormValues,
 } from "@/features/loan-products/schemas/create-loan-product.schema"
 import { buildCreateLoanProductPayload } from "@/features/loan-products/utils/build-create-loan-product-payload"
+import { toast } from "@/lib/toast"
 
 export function CreateLoanProductSection() {
   const router = useRouter()
@@ -28,13 +30,23 @@ export function CreateLoanProductSection() {
     router.push("/loan-products/overview")
   }
 
-  const handleSubmit = form.handleSubmit(async (values) => {
-    const result = await createLoanProduct(buildCreateLoanProductPayload(values))
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
 
-    if (result.success) {
-      router.push("/loan-products/overview")
+    const tierBoundsError = getTierAmountsBoundsError(form.getValues())
+    if (tierBoundsError) {
+      toast.warning(tierBoundsError)
+      return
     }
-  })
+
+    void form.handleSubmit(async (values) => {
+      const result = await createLoanProduct(buildCreateLoanProductPayload(values))
+
+      if (result.success) {
+        router.push("/loan-products/overview")
+      }
+    })(event)
+  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-muted p-4 md:p-6">

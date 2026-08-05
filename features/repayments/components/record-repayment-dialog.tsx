@@ -27,8 +27,8 @@ const paymentMethodLabels: Record<(typeof PAYMENT_METHOD_OPTIONS)[number], strin
   {
     cash: "Cash",
     bank_transfer: "Bank Transfer",
-    mobile_money: "Mobile Money",
-    direct_debit: "Direct Debit",
+    ussd: "USSD",
+    card: "Card",
   }
 
 type RecordRepaymentDialogProps = {

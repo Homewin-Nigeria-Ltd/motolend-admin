@@ -1,7 +1,10 @@
 "use client"
 
+import Link from "next/link"
+
 import type { ApiRole } from "@/features/role-permissions/types"
 import { formatRoleUsersCount } from "@/features/role-permissions/utils/filter-permissions"
+import { buildAdminUsersByRoleUrl } from "@/features/users/utils/user-list-url"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
@@ -30,9 +33,9 @@ export function RoleCard({ role, onViewPermissions }: RoleCardProps) {
             type="button"
             variant="outline"
             className="h-10 rounded"
-            disabled
+            asChild
           >
-            View Users
+            <Link href={buildAdminUsersByRoleUrl(role.id)}>View Users</Link>
           </Button>
           <Button
             type="button"

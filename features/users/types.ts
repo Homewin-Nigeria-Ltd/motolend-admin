@@ -17,6 +17,7 @@ export type UserListParams = {
   per_page?: number
   search?: string
   tab?: UserTab
+  role_id?: string | number
 }
 
 export type UserListMeta = {

@@ -106,7 +106,7 @@ export function CreateLoanProductForm({
             name="interest_type"
             render={({ field }) => (
               <Select
-                value={field.value}
+                value={field.value || undefined}
                 onValueChange={field.onChange}
                 disabled={disabled}
               >
@@ -142,7 +142,7 @@ export function CreateLoanProductForm({
             name="tenure_type"
             render={({ field }) => (
               <Select
-                value={field.value}
+                value={field.value || undefined}
                 onValueChange={field.onChange}
                 disabled={disabled}
               >
@@ -194,9 +194,9 @@ export function CreateLoanProductForm({
             disabled={disabled}
             onClick={() =>
               append({
-                min_amount: form.getValues("min_amount"),
-                max_amount: form.getValues("max_amount"),
-                interest_rate: 0,
+                min_amount: undefined as unknown as number,
+                max_amount: undefined as unknown as number,
+                interest_rate: undefined as unknown as number,
               })
             }
           >
