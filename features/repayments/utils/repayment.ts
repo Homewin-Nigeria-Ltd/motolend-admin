@@ -21,15 +21,16 @@ export function formatRepaymentAmount(
     return "0"
   }
 
-  const value = typeof amount === "number" ? amount : Number(amount)
+  if (typeof amount === "string") {
+    const trimmed = amount.trim()
+    return trimmed || "0"
+  }
 
-  if (Number.isNaN(value)) {
+  if (Number.isNaN(amount)) {
     return "0"
   }
 
-  return new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 0,
-  }).format(value)
+  return String(amount)
 }
 
 export function formatRepaymentDueDate(value: string | null | undefined) {

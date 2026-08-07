@@ -48,12 +48,12 @@ export function mapApiMetricsToUserKpis(
     },
     {
       key: "all_users",
-      label: "All users",
+      label: "All Users",
       metric: metrics.all_users ?? EMPTY_METRIC,
     },
     {
       key: "inactive_users",
-      label: "Inactive User",
+      label: "Inactive Users",
       metric: metrics.inactive_users ?? EMPTY_METRIC,
     },
     {
@@ -63,7 +63,7 @@ export function mapApiMetricsToUserKpis(
     },
     {
       key: "active_users",
-      label: "Active users",
+      label: "Active Users",
       metric: metrics.active_users ?? EMPTY_METRIC,
     },
   ] as const
