@@ -3,7 +3,6 @@
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
-import { Icons } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
 import { ApplicationFilterTabs } from "@/features/loan-applications/components/application-filter-tabs"
 import type { ApplicationTab } from "@/features/loan-applications/types"
@@ -39,16 +38,6 @@ export function ApplicationToolbar({
               className="h-10"
             />
           </div>
-
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            className="size-10 shrink-0"
-            aria-label="Filter applications"
-          >
-            <Icons.filter size={18} />
-          </Button>
 
           {showViewAll ? (
             <Button type="button" className="h-10 px-4" asChild>
