@@ -1,6 +1,5 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
 import type { ApplicationDocument } from "@/features/loan-applications/types"
 
@@ -31,7 +30,7 @@ function DocumentRow({ document }: { document: ApplicationDocument }) {
             </p>
           </div>
         </div>
-        {document.downloadUrl ? (
+        {/* {document.downloadUrl ? (
           <Button
             type="button"
             variant="ghost"
@@ -57,7 +56,7 @@ function DocumentRow({ document }: { document: ApplicationDocument }) {
           >
             <Icons.download size={18} />
           </Button>
-        )}
+        )} */}
       </div>
     </div>
   )

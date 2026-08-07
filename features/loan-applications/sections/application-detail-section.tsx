@@ -60,9 +60,11 @@ export function ApplicationDetailSection({
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-4">
           <ApplicationBorrowerCard borrower={application.borrower} />
-          <ApplicationSupportingDocumentsCard
-            documents={application.supportingDocuments}
-          />
+          <div className="hidden">
+            <ApplicationSupportingDocumentsCard
+              documents={application.supportingDocuments}
+            />
+          </div>
         </div>
 
         <div className="flex flex-col gap-4">

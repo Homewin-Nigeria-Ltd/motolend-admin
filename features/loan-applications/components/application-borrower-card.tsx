@@ -72,22 +72,24 @@ export function ApplicationBorrowerCard({
         <Field label="Company Name" value={borrower.companyName} />
         <Field label="Job Title" value={borrower.jobTitle} />
         <Field label="Monthly Income" value={borrower.monthlyIncome} />
-        <Field
-          label="Grantor Name 1"
-          value={grantorOne?.name ?? "—"}
-        />
-        <Field
-          label="Grantor Telephone 1"
-          value={grantorOne?.telephone ?? "—"}
-        />
-        <Field
-          label="Grantor Name 2"
-          value={grantorTwo?.name ?? "—"}
-        />
-        <Field
-          label="Grantor Telephone 2"
-          value={grantorTwo?.telephone ?? "—"}
-        />
+        <div className="hidden">
+          <Field
+            label="Grantor Name 1"
+            value={grantorOne?.name ?? "—"}
+          />
+          <Field
+            label="Grantor Telephone 1"
+            value={grantorOne?.telephone ?? "—"}
+          />
+          <Field
+            label="Grantor Name 2"
+            value={grantorTwo?.name ?? "—"}
+          />
+          <Field
+            label="Grantor Telephone 2"
+            value={grantorTwo?.telephone ?? "—"}
+          />
+        </div>
       </div>
     </div>
   )
