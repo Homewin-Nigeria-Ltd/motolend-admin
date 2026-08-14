@@ -220,9 +220,9 @@ export function mapApiLoanProductDetail(
     overview: [
       infoRow("Category", overview?.category ?? product.category),
       infoRow("Description", overview?.description ?? product.description),
-      infoRow("Age", overview?.age),
+      // infoRow("Age", overview?.age),
       infoRow("Location", overview?.location),
-      infoRow("Employment Status", overview?.employment_status),
+      // infoRow("Employment Status", overview?.employment_status),
       infoRow("Credit Score", overview?.credit_score),
     ],
     loanAmountDuration: [
@@ -234,10 +234,10 @@ export function mapApiLoanProductDetail(
         "Max Loan Amount",
         loanAmountDuration?.max_amount ?? product.max_amount,
       ),
-      infoRow(
-        "Step Increments",
-        loanAmountDuration?.step_increments ?? product.amount_increment,
-      ),
+      // infoRow(
+      //   "Step Increments",
+      //   loanAmountDuration?.step_increments ?? product.amount_increment,
+      // ),
       infoRow("Currency", loanAmountDuration?.currency ?? product.currency),
       infoRow(
         "Loan Tenure",
@@ -282,10 +282,10 @@ export function mapApiLoanProductDetail(
         "Early Repayment",
         interestFees?.early_repayment ?? product.early_settlement_fee,
       ),
-      infoRow(
-        "Insurance Fee",
-        interestFees?.insurance_fee ?? product.insurance_fee,
-      ),
+      // infoRow(
+      //   "Insurance Fee",
+      //   interestFees?.insurance_fee ?? product.insurance_fee,
+      // ),
     ],
     repaymentRules: [
       infoRow(
@@ -300,10 +300,10 @@ export function mapApiLoanProductDetail(
         "Partial Payments Allowed",
         repaymentRules?.partial_payments_allowed ?? product.partial_payment_allowed,
       ),
-      infoRow(
-        "Overpayment Handling",
-        repaymentRules?.overpayment_handling ?? product.overpayment_handling,
-      ),
+      // infoRow(
+      //   "Overpayment Handling",
+      //   repaymentRules?.overpayment_handling ?? product.overpayment_handling,
+      // ),
       infoRow(
         "Auto-Debit",
         repaymentRules?.auto_debit ?? product.auto_debit_settings,
