@@ -3,6 +3,7 @@ export { LoanProductsOverviewSection } from "@/features/loan-products/sections/l
 export { LoanProductsListSection } from "@/features/loan-products/sections/loan-products-list-section"
 export { LoanProductDetailSection } from "@/features/loan-products/sections/loan-product-detail-section"
 export { CreateLoanProductSection } from "@/features/loan-products/sections/create-loan-product-section"
+export { UpdateLoanProductSection } from "@/features/loan-products/sections/update-loan-product-section"
 export {
   useLoanProductDetail,
   useLoanProductList,

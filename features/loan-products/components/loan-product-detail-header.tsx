@@ -1,5 +1,7 @@
 "use client"
 
+import Link from "next/link"
+
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
 import {
@@ -10,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { DeleteLoanProductDialog } from "@/features/loan-products/components/delete-loan-product-dialog"
-import { EditLoanProductSheet } from "@/features/loan-products/components/edit-loan-product-sheet"
 import { useUpdateLoanProduct } from "@/features/loan-products/hooks/use-loan-product-mutations"
 import type { LoanProductDetail } from "@/features/loan-products/types"
 import { cn } from "@/lib/utils"
@@ -98,20 +99,17 @@ export function LoanProductDetailHeader({
         </div>
 
         <div className="flex items-center gap-2 self-start lg:self-center">
-          <EditLoanProductSheet
-            product={product}
-            trigger={
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="size-10 shrink-0"
-                aria-label="Edit loan product"
-              >
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-10 shrink-0"
+            aria-label="Edit loan product"
+            asChild
+          >
+            <Link href={`/loan-products/${product.id}/edit`}>
                 <Icons.edit size={18} />
-              </Button>
-            }
-          />
+            </Link>
+          </Button>
           <DeleteLoanProductDialog
             productId={product.id}
             productName={displayValue(product.name)}

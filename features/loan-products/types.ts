@@ -1,3 +1,5 @@
+import type { CreateLoanProductFormInput } from "@/features/loan-products/schemas/create-loan-product.schema"
+
 export type LoanProductStatus = "active" | "inactive"
 
 export type LoanProductTab = "all" | LoanProductStatus
@@ -60,6 +62,64 @@ export type LoanProductIntegration = {
   status: LoanProductIntegrationStatus
 }
 
+export type CreateLoanProductTierInput = {
+  min_amount: number
+  max_amount: number
+  interest_rate: number
+}
+
+export type LoanProductEligibilityCriteriaInput = {
+  age: string
+  location: string
+  employment_status: string
+  credit_score: string
+}
+
+export type LoanProductApprovalWorkflowInput = {
+  name: string
+  steps: number
+}
+
+export type CreateLoanProductInput = {
+  name: string
+  description: string
+  min_amount: number
+  max_amount: number
+  interest_type: string
+  tenure: number
+  tenure_type: string
+  credit_protection_fee: number
+  is_active: boolean
+  code: string
+  category: string
+  eligibility_criteria: LoanProductEligibilityCriteriaInput
+  amount_increment: number
+  currency: string
+  interest_rate: number
+  repayment_frequency: string
+  grace_period: string
+  start_date_rules: string
+  processing_fee: number
+  late_payment_fee: number
+  early_settlement_fee: number
+  insurance_fee: number
+  repayment_methods: string[]
+  payment_allocation: string
+  partial_payment_allowed: string
+  overpayment_handling: string
+  auto_debit_settings: string
+  collateral_required: boolean
+  collateral_types: string[]
+  valuation_rules: string
+  mandatory_documents: string[]
+  allowed_document_formats: string[]
+  document_size_limit: number
+  verification_method: string
+  approval_workflow: LoanProductApprovalWorkflowInput
+  notifications_integrations: string[]
+  tiers: CreateLoanProductTierInput[]
+}
+
 export type LoanProductDetail = {
   id: string
   productId: string
@@ -75,6 +135,7 @@ export type LoanProductDetail = {
   notificationsAlerts: LoanProductInfoRow[]
   integrations: LoanProductIntegration[]
   tiers: LoanProductTier[]
+  formValues: CreateLoanProductFormInput
 }
 
 export type LoanProductListResponse = {
@@ -82,37 +143,7 @@ export type LoanProductListResponse = {
   meta: LoanProductListMeta
 }
 
-export type CreateLoanProductTierInput = {
-  min_amount: number
-  max_amount: number
-  interest_rate: number
-}
-
-export type CreateLoanProductInput = {
-  name: string
-  description: string
-  min_amount: number
-  max_amount: number
-  interest_type: string
-  tenure: number
-  tenure_type: string
-  credit_protection_fee: number
-  is_active: boolean
-  tiers: CreateLoanProductTierInput[]
-}
-
-export type UpdateLoanProductPayload = {
-  name?: string
-  description?: string
-  min_amount?: number
-  max_amount?: number
-  interest_type?: string
-  tenure?: number
-  tenure_type?: string
-  credit_protection_fee?: number
-  is_active?: boolean
-  tiers?: CreateLoanProductTierInput[]
-}
+export type UpdateLoanProductPayload = Partial<CreateLoanProductInput>
 
 export type UpdateLoanProductInput = {
   id: string
@@ -146,6 +177,18 @@ export type ApiLoanProductTier = {
   interest_rate: number | string
   created_at?: string | null
   updated_at?: string | null
+}
+
+export type ApiLoanProductEligibilityCriteria = {
+  age?: string | null
+  location?: string | null
+  employment_status?: string | null
+  credit_score?: string | null
+}
+
+export type ApiLoanProductApprovalWorkflow = {
+  name?: string | null
+  steps?: number | null
 }
 
 export type ApiLoanProductDetailsHeader = {
@@ -234,49 +277,50 @@ export type ApiLoanProductDetails = {
   integrations?: ApiLoanProductDetailsIntegrations | null
 }
 
+/** Single loan product detail response from GET /admin/loan-products/:id */
 export type ApiLoanProduct = {
-  id: number | string
+  id: number
   name: string
-  description?: string | null
-  min_amount?: number | string | null
-  max_amount?: number | string | null
-  interest_type?: string | null
-  tenure?: number | null
-  tenure_type?: string | null
-  credit_protection_fee?: number | string | null
-  is_active?: boolean | null
-  created_at?: string | null
-  updated_at?: string | null
-  deleted_at?: string | null
-  code?: string | null
-  category?: string | null
-  eligibility_criteria?: string | null
-  amount_increment?: number | string | null
-  currency?: string | null
-  repayment_frequency?: string | null
-  grace_period?: string | null
-  start_date_rules?: string | null
-  interest_rate?: number | string | null
-  processing_fee?: number | string | null
-  late_payment_fee?: number | string | null
-  early_settlement_fee?: number | string | null
-  insurance_fee?: number | string | null
-  repayment_methods?: string | null
-  payment_allocation?: string | null
-  partial_payment_allowed?: string | null
-  overpayment_handling?: string | null
-  auto_debit_settings?: string | null
-  collateral_required?: boolean | string | null
-  collateral_types?: string | null
-  valuation_rules?: string | null
-  mandatory_documents?: string | null
-  allowed_document_formats?: string | null
-  document_size_limit?: string | null
-  verification_method?: string | null
-  approval_workflow?: string | null
-  notifications_integrations?: string | null
-  tiers?: ApiLoanProductTier[] | null
-  details?: ApiLoanProductDetails | null
+  description: string | null
+  min_amount: string | number | null
+  max_amount: string | number | null
+  interest_type: string | null
+  tenure: number | null
+  tenure_type: string | null
+  credit_protection_fee: string | number | null
+  is_active: boolean
+  created_at: string | null
+  updated_at: string | null
+  deleted_at: string | null
+  code: string | null
+  category: string | null
+  eligibility_criteria: ApiLoanProductEligibilityCriteria | null
+  amount_increment: string | number | null
+  currency: string | null
+  repayment_frequency: string | null
+  grace_period: string | null
+  start_date_rules: string | null
+  interest_rate: string | number | null
+  processing_fee: string | number | null
+  late_payment_fee: string | number | null
+  early_settlement_fee: string | number | null
+  insurance_fee: string | number | null
+  repayment_methods: string[] | null
+  payment_allocation: string | null
+  partial_payment_allowed: string | null
+  overpayment_handling: string | null
+  auto_debit_settings: string | null
+  collateral_required: boolean
+  collateral_types: string[] | null
+  valuation_rules: string | null
+  mandatory_documents: string[] | null
+  allowed_document_formats: string[] | null
+  document_size_limit: string | number | null
+  verification_method: string | null
+  approval_workflow: ApiLoanProductApprovalWorkflow | null
+  notifications_integrations: string[] | null
+  tiers: ApiLoanProductTier[]
+  details: ApiLoanProductDetails | null
 }
 
 export type ApiLoanProductDetailResponse =
