@@ -11,13 +11,11 @@ import { CreateLoanProductForm } from "@/features/loan-products/components/creat
 import { useUpdateLoanProduct } from "@/features/loan-products/hooks/use-loan-product-mutations"
 import { useLoanProductDetail } from "@/features/loan-products/hooks/use-loan-product-queries"
 import {
-  getTierAmountsBoundsError,
   updateLoanProductSchema,
   type UpdateLoanProductFormInput,
   type UpdateLoanProductFormValues,
 } from "@/features/loan-products/schemas/update-loan-product.schema"
 import { buildCreateLoanProductPayload } from "@/features/loan-products/utils/build-create-loan-product-payload"
-import { toast } from "@/lib/toast"
 
 type UpdateLoanProductSectionProps = {
   productId: string
@@ -96,26 +94,16 @@ function UpdateLoanProductForm({
     defaultValues,
   })
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const handleSubmit = form.handleSubmit(async (values) => {
+    const result = await updateLoanProduct({
+      id: productId,
+      ...buildCreateLoanProductPayload(values),
+    })
 
-    const tierBoundsError = getTierAmountsBoundsError(form.getValues())
-    if (tierBoundsError) {
-      toast.warning(tierBoundsError)
-      return
+    if (result.success) {
+      onSuccess()
     }
-
-    void form.handleSubmit(async (values) => {
-      const result = await updateLoanProduct({
-        id: productId,
-        ...buildCreateLoanProductPayload(values),
-      })
-
-      if (result.success) {
-        onSuccess()
-      }
-    })(event)
-  }
+  })
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-muted p-4 md:p-6">

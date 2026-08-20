@@ -62,24 +62,6 @@ export type LoanProductIntegration = {
   status: LoanProductIntegrationStatus
 }
 
-export type CreateLoanProductTierInput = {
-  min_amount: number
-  max_amount: number
-  interest_rate: number
-}
-
-export type LoanProductEligibilityCriteriaInput = {
-  age: string
-  location: string
-  employment_status: string
-  credit_score: string
-}
-
-export type LoanProductApprovalWorkflowInput = {
-  name: string
-  steps: number
-}
-
 export type CreateLoanProductInput = {
   name: string
   description: string
@@ -90,34 +72,9 @@ export type CreateLoanProductInput = {
   tenure_type: string
   credit_protection_fee: number
   is_active: boolean
-  code: string
-  category: string
-  eligibility_criteria: LoanProductEligibilityCriteriaInput
-  amount_increment: number
-  currency: string
   interest_rate: number
-  repayment_frequency: string
-  grace_period: string
-  start_date_rules: string
   processing_fee: number
-  late_payment_fee: number
-  early_settlement_fee: number
   insurance_fee: number
-  repayment_methods: string[]
-  payment_allocation: string
-  partial_payment_allowed: string
-  overpayment_handling: string
-  auto_debit_settings: string
-  collateral_required: boolean
-  collateral_types: string[]
-  valuation_rules: string
-  mandatory_documents: string[]
-  allowed_document_formats: string[]
-  document_size_limit: number
-  verification_method: string
-  approval_workflow: LoanProductApprovalWorkflowInput
-  notifications_integrations: string[]
-  tiers: CreateLoanProductTierInput[]
 }
 
 export type LoanProductDetail = {

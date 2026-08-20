@@ -6,7 +6,7 @@ import { LoanProductApprovalWorkflowCard } from "@/features/loan-products/compon
 import { LoanProductDetailHeader } from "@/features/loan-products/components/loan-product-detail-header"
 import { LoanProductInfoCard } from "@/features/loan-products/components/loan-product-info-card"
 import { LoanProductIntegrationsCard } from "@/features/loan-products/components/loan-product-integrations-card"
-import { LoanProductTiersCard } from "@/features/loan-products/components/loan-product-tiers-card"
+// import { LoanProductTiersCard } from "@/features/loan-products/components/loan-product-tiers-card"
 import { useLoanProductDetail } from "@/features/loan-products/hooks/use-loan-product-queries"
 
 type LoanProductDetailSectionProps = {
@@ -87,7 +87,7 @@ export function LoanProductDetailSection({
         <LoanProductIntegrationsCard integrations={product.integrations} />
       </div>
 
-      <LoanProductTiersCard tiers={product.tiers} />
+      {/* <LoanProductTiersCard tiers={product.tiers} /> */}
     </div>
   )
 }

@@ -198,35 +198,6 @@ function toStringValue(value: unknown): string {
   return ""
 }
 
-function toStringArray(value: unknown): string[] {
-  if (Array.isArray(value)) {
-    return value.map((item) => toStringValue(item)).filter(Boolean)
-  }
-
-  if (typeof value === "string") {
-    const trimmed = value.trim()
-    if (!trimmed) {
-      return []
-    }
-
-    try {
-      const parsed = JSON.parse(trimmed) as unknown
-      if (Array.isArray(parsed)) {
-        return toStringArray(parsed)
-      }
-    } catch {
-      // fall through
-    }
-
-    return trimmed
-      .split(",")
-      .map((item) => item.trim())
-      .filter(Boolean)
-  }
-
-  return []
-}
-
 function toBoolean(value: unknown, fallback = false): boolean {
   if (typeof value === "boolean") {
     return value
@@ -245,37 +216,9 @@ function toBoolean(value: unknown, fallback = false): boolean {
   return fallback
 }
 
-function parseThresholdNumber(value: unknown): number | undefined {
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return value
-  }
-
-  if (typeof value !== "string") {
-    return undefined
-  }
-
-  const match = value.match(/-?\d+(\.\d+)?/)
-  if (!match) {
-    return undefined
-  }
-
-  const parsed = Number(match[0])
-  return Number.isFinite(parsed) ? parsed : undefined
-}
-
 function mapApiLoanProductToFormValues(
   product: ApiLoanProduct,
 ): CreateLoanProductFormInput {
-  const eligibility = product.eligibility_criteria
-  const approvalWorkflow = product.approval_workflow
-
-  const tiers =
-    product.tiers?.map((tier) => ({
-      min_amount: toFiniteNumber(tier.min_amount),
-      max_amount: toFiniteNumber(tier.max_amount),
-      interest_rate: toFiniteNumber(tier.interest_rate),
-    })) ?? []
-
   return {
     name: toStringValue(product.name),
     description: toStringValue(product.description),
@@ -286,53 +229,9 @@ function mapApiLoanProductToFormValues(
     tenure_type: toStringValue(product.tenure_type),
     credit_protection_fee: toFiniteNumber(product.credit_protection_fee),
     is_active: toBoolean(product.is_active, true),
-    code: toStringValue(product.code),
-    category: toStringValue(product.category),
-    eligibility_criteria: {
-      age: parseThresholdNumber(eligibility?.age),
-      location: toStringValue(eligibility?.location),
-      employment_status: toStringValue(eligibility?.employment_status),
-      credit_score: parseThresholdNumber(eligibility?.credit_score),
-    },
-    amount_increment: toFiniteNumber(product.amount_increment),
-    currency: toStringValue(product.currency),
     interest_rate: toFiniteNumber(product.interest_rate),
-    repayment_frequency: toStringValue(product.repayment_frequency),
-    grace_period: toStringValue(product.grace_period),
-    start_date_rules: toStringValue(product.start_date_rules),
     processing_fee: toFiniteNumber(product.processing_fee),
-    late_payment_fee: toFiniteNumber(product.late_payment_fee),
-    early_settlement_fee: toFiniteNumber(product.early_settlement_fee),
     insurance_fee: toFiniteNumber(product.insurance_fee),
-    repayment_methods: toStringArray(product.repayment_methods),
-    payment_allocation: toStringValue(product.payment_allocation),
-    partial_payment_allowed: toStringValue(product.partial_payment_allowed),
-    overpayment_handling: toStringValue(product.overpayment_handling),
-    auto_debit_settings: toStringValue(product.auto_debit_settings),
-    collateral_required: toBoolean(product.collateral_required),
-    collateral_types: toStringArray(product.collateral_types),
-    valuation_rules: toStringValue(product.valuation_rules),
-    mandatory_documents: toStringArray(product.mandatory_documents),
-    allowed_document_formats: toStringArray(product.allowed_document_formats),
-    document_size_limit: toFiniteNumber(product.document_size_limit),
-    verification_method: toStringValue(product.verification_method),
-    approval_workflow: {
-      name: toStringValue(approvalWorkflow?.name),
-      steps: toFiniteNumber(approvalWorkflow?.steps),
-    },
-    notifications_integrations: toStringArray(
-      product.notifications_integrations,
-    ),
-    tiers:
-      tiers.length > 0
-        ? tiers
-        : [
-            {
-              min_amount: undefined,
-              max_amount: undefined,
-              interest_rate: undefined,
-            },
-          ],
   }
 }
 
