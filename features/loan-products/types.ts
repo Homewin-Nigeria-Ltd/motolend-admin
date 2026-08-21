@@ -177,6 +177,7 @@ export type ApiLoanProductDetailsLoanAmountDuration = {
 export type ApiLoanProductDetailsInterestFees = {
   interest_method?: string | null
   interest_rate?: string | null
+  credit_protection_fee?: number | string | null
   processing_fee?: number | string | null
   late_payment_penalty?: number | string | null
   early_repayment?: number | string | null

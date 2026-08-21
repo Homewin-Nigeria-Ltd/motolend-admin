@@ -13,7 +13,7 @@ const PAGE_SIZE = 15
 
 export function RepaymentsOverviewSection() {
   const router = useRouter()
-  const [tab, setTab] = useState<RepaymentTab>("active")
+  const [tab, setTab] = useState<RepaymentTab>("disbursed")
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
 

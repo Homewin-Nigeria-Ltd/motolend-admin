@@ -60,7 +60,7 @@ function SummaryItem({ label, value }: { label: string; value: string }) {
 
 function RepaymentDetailContent({ repayment }: { repayment: RepaymentDetail }) {
   const [recordOpen, setRecordOpen] = useState(false)
-  const isClosed = repayment.status.trim().toLowerCase() === "closed"
+  const isClosed = repayment.status.trim().toLowerCase() === "repaid"
 
   return (
     <>

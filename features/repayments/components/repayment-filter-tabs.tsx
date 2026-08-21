@@ -4,10 +4,10 @@ import type { RepaymentTab } from "@/features/repayments/types"
 import { cn } from "@/lib/utils"
 
 const tabs: { value: RepaymentTab; label: string }[] = [
-  { value: "active", label: "Active" },
-  { value: "paid", label: "Paid" },
-  { value: "defaulted", label: "Defaulted" },
+  { value: "disbursed", label: "Disbursed" },
+  { value: "repaid", label: "Repaid" },
   { value: "overdue", label: "Overdue" },
+  { value: "defaulted", label: "Defaulted" },
 ]
 
 type RepaymentFilterTabsProps = {

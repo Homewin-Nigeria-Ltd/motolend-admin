@@ -67,15 +67,15 @@ export function normalizeRepaymentStatus(
   const normalized = status?.trim().toLowerCase()
 
   if (
-    normalized === "active" ||
-    normalized === "paid" ||
-    normalized === "defaulted" ||
-    normalized === "overdue"
+    normalized === "disbursed" ||
+    normalized === "repaid" ||
+    normalized === "overdue" ||
+    normalized === "defaulted"
   ) {
     return normalized
   }
 
-  return "active"
+  return "disbursed"
 }
 
 function resolveCustomerName(repayment: ApiRepayment) {
@@ -114,7 +114,7 @@ export function mapApiRepayment(
 ): Repayment {
   const status = repayment.status
     ? normalizeRepaymentStatus(repayment.status)
-    : (fallbackStatus ?? "active")
+    : (fallbackStatus ?? "disbursed")
 
   return {
     id: String(repayment.id),

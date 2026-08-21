@@ -1,4 +1,8 @@
-export type RepaymentStatus = "active" | "paid" | "defaulted" | "overdue"
+export type RepaymentStatus =
+  | "disbursed"
+  | "repaid"
+  | "overdue"
+  | "defaulted"
 
 export type RepaymentTab = RepaymentStatus
 

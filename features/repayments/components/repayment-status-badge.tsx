@@ -3,19 +3,17 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
 const statusStyles: Record<string, string> = {
-  active: "bg-primary/10 text-primary",
-  paid: "bg-emerald-50 text-emerald-700",
-  closed: "bg-emerald-50 text-emerald-700",
-  defaulted: "bg-destructive/10 text-destructive",
+  disbursed: "bg-primary/10 text-primary",
+  repaid: "bg-emerald-50 text-emerald-700",
   overdue: "bg-amber-50 text-amber-700",
+  defaulted: "bg-destructive/10 text-destructive",
 }
 
 const statusLabels: Record<string, string> = {
-  active: "Active",
-  paid: "Paid",
-  closed: "Closed",
-  defaulted: "Defaulted",
+  disbursed: "Disbursed",
+  repaid: "Repaid",
   overdue: "Overdue",
+  defaulted: "Defaulted",
 }
 
 type RepaymentStatusBadgeProps = {

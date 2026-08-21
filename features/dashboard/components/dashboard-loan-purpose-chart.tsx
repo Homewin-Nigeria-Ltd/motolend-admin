@@ -13,6 +13,11 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 type DashboardLoanPurposeChartProps = {
   items: LoanPurposeItem[]
@@ -114,7 +119,12 @@ export function DashboardLoanPurposeChart({
                         LOAN_PURPOSE_COLORS[index % LOAN_PURPOSE_COLORS.length],
                     }}
                   />
-                  <span className="truncate">{item.category}</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="min-w-0 truncate">{item.category}</span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">{item.category}</TooltipContent>
+                  </Tooltip>
                   <span className="ml-auto shrink-0 font-medium text-foreground">
                     {item.percentage}%
                   </span>

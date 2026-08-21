@@ -340,29 +340,31 @@ export function mapApiLoanProductDetail(
         interestFees?.interest_rate ?? product.interest_rate ?? resolveInterest(product),
       ),
       infoRow(
+        "Credit Protection Fee",
+        interestFees?.credit_protection_fee ?? product.credit_protection_fee,
+      ),
+      infoRow(
         "Processing Fee",
-        interestFees?.processing_fee ??
-          product.processing_fee ??
-          product.credit_protection_fee,
-      ),
-      infoRow(
-        "Late Payment Penalty",
-        interestFees?.late_payment_penalty ?? product.late_payment_fee,
-      ),
-      infoRow(
-        "Early Repayment",
-        interestFees?.early_repayment ?? product.early_settlement_fee,
+        interestFees?.processing_fee ?? product.processing_fee,
       ),
       // infoRow(
-      //   "Insurance Fee",
-      //   interestFees?.insurance_fee ?? product.insurance_fee,
+      //   "Late Payment Penalty",
+      //   interestFees?.late_payment_penalty ?? product.late_payment_fee,
       // ),
+      // infoRow(
+      //   "Early Repayment",
+      //   interestFees?.early_repayment ?? product.early_settlement_fee,
+      // ),
+      infoRow(
+        "Insurance Fee",
+        interestFees?.insurance_fee ?? product.insurance_fee,
+      ),
     ],
     repaymentRules: [
-      infoRow(
-        "Repayment Methods",
-        repaymentRules?.repayment_methods ?? product.repayment_methods,
-      ),
+      // infoRow(
+      //   "Repayment Methods",
+      //   repaymentRules?.repayment_methods ?? product.repayment_methods,
+      // ),
       infoRow(
         "Payment Allocation",
         repaymentRules?.payment_allocation ?? product.payment_allocation,
