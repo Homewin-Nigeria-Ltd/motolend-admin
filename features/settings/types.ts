@@ -1,6 +1,6 @@
 import type { IconName } from "@/components/ui/icons"
 
-export type SettingsItemId = "role-permissions"
+export type SettingsItemId = "credit-check" | "role-permissions"
 
 export type SettingsItem = {
   id: SettingsItemId
@@ -12,7 +12,36 @@ export type SettingsItem = {
   href: string
 }
 
-export const SETTINGS_LEFT_COLUMN: SettingsItem[] = []
+export type CreditCheckSetting = {
+  key: string
+  enabled: boolean
+  description: string
+  updated_at: string
+  updated_by: string | null
+}
+
+export type CreditCheckSettingApiResponse = {
+  status?: string
+  success?: boolean
+  message?: string
+  data: CreditCheckSetting
+}
+
+export type UpdateCreditCheckSettingInput = {
+  enabled: boolean
+}
+
+export const SETTINGS_LEFT_COLUMN: SettingsItem[] = [
+  {
+    id: "credit-check",
+    title: "Credit Check",
+    description:
+      "Control whether credit checks run during loan applications.",
+    icon: "fileText",
+    iconPlain: true,
+    href: "/settings/credit-check",
+  },
+]
 
 export const SETTINGS_RIGHT_COLUMN: SettingsItem[] = [
   {
