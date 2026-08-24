@@ -67,7 +67,7 @@ export function DashboardProductPerformanceChart({
   const total = performance?.totalTransactions ?? 0
 
   return (
-    <Card className="flex h-full min-w-0 flex-col gap-4 py-5">
+    <Card className="flex w-full min-w-0 flex-col gap-4 py-5">
       <CardHeader className="flex flex-col gap-3 px-4 pb-0 sm:flex-row sm:items-start sm:justify-between sm:px-5">
         <div className="min-w-0 space-y-1">
           <CardTitle className="text-sm font-semibold text-foreground">
@@ -80,7 +80,7 @@ export function DashboardProductPerformanceChart({
         </div>
         <DashboardPeriodFilter value={filter} onChange={onFilterChange} />
       </CardHeader>
-      <CardContent className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden px-4 pb-5 sm:px-5">
+      <CardContent className="flex min-w-0 flex-col overflow-hidden px-4 pb-5 sm:px-5">
         {isLoading ? (
           <AppLoader className="py-12" spinnerClassName="size-6" />
         ) : total === 0 ? (
