@@ -289,12 +289,12 @@ export function mapApiLoanProductDetail(
     name: displayValue(details?.header?.name ?? product.name),
     status: normalizeLoanProductStatus(product),
     overview: [
-      infoRow("Category", overview?.category ?? product.category),
+      // infoRow("Category", overview?.category ?? product.category),
       infoRow("Description", overview?.description ?? product.description),
       // infoRow("Age", overview?.age),
-      infoRow("Location", overview?.location),
+      // infoRow("Location", overview?.location),
       // infoRow("Employment Status", overview?.employment_status),
-      infoRow("Credit Score", overview?.credit_score),
+      // infoRow("Credit Score", overview?.credit_score),
     ],
     loanAmountDuration: [
       infoRow(
@@ -317,18 +317,18 @@ export function mapApiLoanProductDetail(
             ? `${product.tenure} ${product.tenure_type}`
             : product.tenure),
       ),
-      infoRow(
-        "Repayment Frequency",
-        loanAmountDuration?.repayment_frequency ?? product.repayment_frequency,
-      ),
-      infoRow(
-        "Grace Period",
-        loanAmountDuration?.grace_period ?? product.grace_period,
-      ),
-      infoRow(
-        "Loan Start Date Rule",
-        loanAmountDuration?.loan_start_date_rule ?? product.start_date_rules,
-      ),
+      // infoRow(
+      //   "Repayment Frequency",
+      //   loanAmountDuration?.repayment_frequency ?? product.repayment_frequency,
+      // ),
+      // infoRow(
+      //   "Grace Period",
+      //   loanAmountDuration?.grace_period ?? product.grace_period,
+      // ),
+      // infoRow(
+      //   "Loan Start Date Rule",
+      //   loanAmountDuration?.loan_start_date_rule ?? product.start_date_rules,
+      // ),
     ],
     interestFees: [
       infoRow(

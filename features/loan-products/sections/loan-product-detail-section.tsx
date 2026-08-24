@@ -63,10 +63,10 @@ export function LoanProductDetailSection({
           rows={product.loanAmountDuration}
         />
         <LoanProductInfoCard title="Interest & Fees" rows={product.interestFees} />
-        <LoanProductInfoCard
+        {/* <LoanProductInfoCard
           title="Repayment Rules"
           rows={product.repaymentRules}
-        />
+        /> */}
         {/* <LoanProductInfoCard
           title="Collateral & Security"
           rows={product.collateralSecurity}
