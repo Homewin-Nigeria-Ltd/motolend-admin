@@ -14,15 +14,15 @@ export function DashboardSection() {
         <DashboardTopMetrics />
       </DashboardSectionErrorBoundary>
 
-      <div className="grid gap-4 xl:grid-cols-2">
-        {/* <DashboardSectionErrorBoundary title="Loan purpose">
+      {/* <div className="grid gap-4 xl:grid-cols-2">
+        <DashboardSectionErrorBoundary title="Loan purpose">
           <DashboardLoanPurposeSection />
-        </DashboardSectionErrorBoundary> */}
-
-        <DashboardSectionErrorBoundary title="Product performance">
-          <DashboardProductPerformanceSection />
         </DashboardSectionErrorBoundary>
-      </div>
+      </div> */}
+
+      <DashboardSectionErrorBoundary title="Product performance">
+        <DashboardProductPerformanceSection />
+      </DashboardSectionErrorBoundary>
 
       <DashboardSectionErrorBoundary title="Secondary metrics">
         <DashboardBottomMetrics />

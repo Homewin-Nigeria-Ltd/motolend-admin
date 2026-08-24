@@ -295,8 +295,6 @@ export function mapApiLoanProductDetail(
       // infoRow("Location", overview?.location),
       // infoRow("Employment Status", overview?.employment_status),
       // infoRow("Credit Score", overview?.credit_score),
-    ],
-    loanAmountDuration: [
       infoRow(
         "Min Loan Amount",
         loanAmountDuration?.min_amount ?? product.min_amount,
@@ -317,6 +315,40 @@ export function mapApiLoanProductDetail(
             ? `${product.tenure} ${product.tenure_type}`
             : product.tenure),
       ),
+      // infoRow(
+      //   "Repayment Frequency",
+      //   loanAmountDuration?.repayment_frequency ?? product.repayment_frequency,
+      // ),
+      // infoRow(
+      //   "Grace Period",
+      //   loanAmountDuration?.grace_period ?? product.grace_period,
+      // ),
+      // infoRow(
+      //   "Loan Start Date Rule",
+      //   loanAmountDuration?.loan_start_date_rule ?? product.start_date_rules,
+      // ),
+    ],
+    loanAmountDuration: [
+      // infoRow(
+      //   "Min Loan Amount",
+      //   loanAmountDuration?.min_amount ?? product.min_amount,
+      // ),
+      // infoRow(
+      //   "Max Loan Amount",
+      //   loanAmountDuration?.max_amount ?? product.max_amount,
+      // ),
+      // infoRow(
+      //   "Step Increments",
+      //   loanAmountDuration?.step_increments ?? product.amount_increment,
+      // ),
+      // infoRow("Currency", loanAmountDuration?.currency ?? product.currency),
+      // infoRow(
+      //   "Loan Tenure",
+      //   loanAmountDuration?.loan_tenure ??
+      //     (product.tenure != null && product.tenure_type
+      //       ? `${product.tenure} ${product.tenure_type}`
+      //       : product.tenure),
+      // ),
       // infoRow(
       //   "Repayment Frequency",
       //   loanAmountDuration?.repayment_frequency ?? product.repayment_frequency,

@@ -58,10 +58,10 @@ export function LoanProductDetailSection({
 
       <div className="grid gap-4 xl:grid-cols-2">
         <LoanProductInfoCard title="Overview" rows={product.overview} />
-        <LoanProductInfoCard
+        {/* <LoanProductInfoCard
           title="Loan Amount & Duration"
           rows={product.loanAmountDuration}
-        />
+        /> */}
         <LoanProductInfoCard title="Interest & Fees" rows={product.interestFees} />
         {/* <LoanProductInfoCard
           title="Repayment Rules"
@@ -79,13 +79,14 @@ export function LoanProductDetailSection({
 
       <LoanProductApprovalWorkflowCard workflows={product.approvalWorkflow} />
 
-      <div className="grid gap-4 xl:grid-cols-2">
+      {/* <div className="grid gap-4 xl:grid-cols-2">
         <LoanProductInfoCard
           title="Notifications & Alerts"
           rows={product.notificationsAlerts}
         />
-        <LoanProductIntegrationsCard integrations={product.integrations} />
-      </div>
+      </div> */}
+
+      <LoanProductIntegrationsCard integrations={product.integrations} />
 
       {/* <LoanProductTiersCard tiers={product.tiers} /> */}
     </div>
