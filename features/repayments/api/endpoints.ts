@@ -8,6 +8,7 @@ export const repaymentServerEndpoints = {
 } as const
 
 export const repaymentEndpoints = {
+  metrics: `/api/proxy${repaymentsPath}/metrics`,
   list: `/api/proxy${repaymentsPath}`,
   detail: (id: string) =>
     `/api/proxy${repaymentsPath}/${encodeURIComponent(id)}`,

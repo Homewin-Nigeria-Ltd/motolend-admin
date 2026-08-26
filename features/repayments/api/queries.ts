@@ -5,6 +5,7 @@ import { repaymentKeys } from "@/features/repayments/api/keys"
 import type {
   ApiRepaymentDetailResponse,
   ApiRepaymentListResponse,
+  ApiRepaymentMetrics,
   RepaymentDetail,
   RepaymentListParams,
   RepaymentListResponse,
@@ -15,6 +16,10 @@ import {
   mapApiRepaymentDetail,
 } from "@/features/repayments/utils/repayment"
 import { api } from "@/lib/api/client"
+
+async function fetchRepaymentMetrics(): Promise<ApiRepaymentMetrics> {
+  return api.get<ApiRepaymentMetrics>(repaymentEndpoints.metrics)
+}
 
 async function fetchRepaymentList(
   params: RepaymentListParams,
@@ -51,7 +56,8 @@ async function fetchRepaymentList(
 
   const perPage = response.per_page ?? params.per_page ?? 15
   const total = response.total ?? response.data?.length ?? 0
-  const lastPage = response.last_page ?? Math.max(1, Math.ceil(total / Math.max(perPage, 1)))
+  const lastPage =
+    response.last_page ?? Math.max(1, Math.ceil(total / Math.max(perPage, 1)))
 
   return {
     items: (response.data ?? []).map((item) =>
@@ -80,6 +86,13 @@ async function fetchRepaymentDetail(id: string): Promise<RepaymentDetail> {
 }
 
 export const repaymentQueries = {
+  metrics: () =>
+    queryOptions({
+      queryKey: repaymentKeys.metrics(),
+      queryFn: fetchRepaymentMetrics,
+      staleTime: 60_000,
+    }),
+
   list: (params: RepaymentListParams) =>
     queryOptions({
       queryKey: repaymentKeys.list(params),

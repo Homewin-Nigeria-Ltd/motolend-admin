@@ -165,3 +165,21 @@ export type ApiRepaymentDetailResponse =
       data?: ApiRepaymentDetail
       success?: boolean
     }
+
+export type ApiRepaymentMetricTrend = {
+  percentage: number
+  direction: "up" | "down"
+}
+
+export type ApiRepaymentMetricItem = {
+  value: number
+  trend: ApiRepaymentMetricTrend
+  sparkline: number[]
+}
+
+export type ApiRepaymentMetrics = {
+  total_outstanding: ApiRepaymentMetricItem
+  total_repaid: ApiRepaymentMetricItem
+  repayment_rate: ApiRepaymentMetricItem
+  overdue_payments: ApiRepaymentMetricItem
+}

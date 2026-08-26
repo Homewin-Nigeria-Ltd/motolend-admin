@@ -3,6 +3,7 @@ export { RepaymentsOverviewSection } from "@/features/repayments/sections/repaym
 export { RepaymentsListSection } from "@/features/repayments/sections/repayments-list-section"
 export { RepaymentDetailSection } from "@/features/repayments/sections/repayment-detail-section"
 export { useRepaymentList, useRepaymentDetail } from "@/features/repayments/hooks/use-repayment-queries"
+export { useRepaymentMetrics } from "@/features/repayments/hooks/use-repayment-metrics"
 export type {
   Repayment,
   RepaymentDetail,

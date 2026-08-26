@@ -4,8 +4,10 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 import { DataTable } from "@/components/data-table"
-import { RepaymentToolbar } from "@/features/repayments/components/repayment-toolbar"
 import { repaymentColumns } from "@/features/repayments/columns"
+import { RepaymentSummaryCards } from "@/features/repayments/components/repayment-summary-cards"
+import { RepaymentToolbar } from "@/features/repayments/components/repayment-toolbar"
+import { useRepaymentMetrics } from "@/features/repayments/hooks/use-repayment-metrics"
 import { useRepaymentList } from "@/features/repayments/hooks/use-repayment-queries"
 import type { Repayment, RepaymentTab } from "@/features/repayments/types"
 
@@ -16,6 +18,13 @@ export function RepaymentsOverviewSection() {
   const [tab, setTab] = useState<RepaymentTab>("disbursed")
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
+
+  const {
+    data: metrics,
+    isPending: isMetricsPending,
+    isError: isMetricsError,
+    error: metricsError,
+  } = useRepaymentMetrics()
 
   const {
     data: repaymentList,
@@ -50,6 +59,19 @@ export function RepaymentsOverviewSection() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6 bg-muted p-4 md:gap-8 md:p-6">
+      {isMetricsError ? (
+        <div className="rounded-2xl border border-border bg-background p-4 text-sm text-destructive">
+          {metricsError instanceof Error
+            ? metricsError.message
+            : "Failed to load repayment metrics."}
+        </div>
+      ) : (
+        <RepaymentSummaryCards
+          metrics={metrics}
+          isLoading={isMetricsPending}
+        />
+      )}
+
       {isError ? (
         <div className="rounded-2xl border border-border bg-background p-6 text-sm text-destructive">
           {error instanceof Error
