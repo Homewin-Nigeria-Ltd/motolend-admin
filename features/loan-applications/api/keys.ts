@@ -1,4 +1,7 @@
-import type { ApplicationListParams } from "@/features/loan-applications/types"
+import type {
+  ApplicationListParams,
+  EligibilityReviewListParams,
+} from "@/features/loan-applications/types"
 
 export const loanApplicationKeys = {
   all: ["loan-applications"] as const,
@@ -8,4 +11,6 @@ export const loanApplicationKeys = {
     [...loanApplicationKeys.lists(), params] as const,
   details: () => [...loanApplicationKeys.all, "detail"] as const,
   detail: (id: string) => [...loanApplicationKeys.details(), id] as const,
+  eligibilityReviews: (params?: EligibilityReviewListParams) =>
+    [...loanApplicationKeys.all, "eligibility-reviews", params ?? {}] as const,
 }

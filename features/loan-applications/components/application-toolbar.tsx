@@ -40,9 +40,16 @@ export function ApplicationToolbar({
           </div>
 
           {showViewAll ? (
-            <Button type="button" className="h-10 px-4" asChild>
-              <Link href="/applications">View All</Link>
-            </Button>
+            <>
+              <Button type="button" variant="outline" className="h-10 px-4" asChild>
+                <Link href="/applications/eligibility-reviews">
+                  Eligibility Reviews
+                </Link>
+              </Button>
+              <Button type="button" className="h-10 px-4" asChild>
+                <Link href="/applications">View All</Link>
+              </Button>
+            </>
           ) : null}
         </div>
       </div>

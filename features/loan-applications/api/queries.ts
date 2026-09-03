@@ -6,10 +6,12 @@ import type {
   ApiApplicationDetailResponse,
   ApiApplicationListResponse,
   ApiApplicationMetricsResponse,
+  ApiEligibilityReviewsResponse,
   ApplicationDetail,
   ApplicationKpi,
   ApplicationListParams,
   ApplicationListResponse,
+  EligibilityReviewListParams,
 } from "@/features/loan-applications/types"
 import {
   extractApiApplicationDetail,
@@ -18,6 +20,18 @@ import {
   mapApiMetricsToApplicationKpis,
 } from "@/features/loan-applications/utils/application"
 import { api } from "@/lib/api/client"
+
+async function fetchEligibilityReviews(
+  params: EligibilityReviewListParams,
+): Promise<ApiEligibilityReviewsResponse> {
+  return api.get<ApiEligibilityReviewsResponse>(
+    loanApplicationEndpoints.eligibilityReviews,
+    {
+      page: params.page,
+      per_page: params.per_page ?? 15,
+    },
+  )
+}
 
 async function fetchApplicationMetrics(): Promise<ApplicationKpi[]> {
   const response = await api.get<ApiApplicationMetricsResponse>(
@@ -100,5 +114,12 @@ export const loanApplicationQueries = {
       queryKey: loanApplicationKeys.detail(id),
       queryFn: () => fetchApplicationDetail(id),
       enabled: Boolean(id.trim()),
+    }),
+
+  eligibilityReviews: (params: EligibilityReviewListParams) =>
+    queryOptions({
+      queryKey: loanApplicationKeys.eligibilityReviews(params),
+      queryFn: () => fetchEligibilityReviews(params),
+      placeholderData: (previous) => previous,
     }),
 }

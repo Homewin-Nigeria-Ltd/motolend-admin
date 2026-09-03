@@ -262,3 +262,64 @@ export type ApiApplicationListResponse = {
   per_page: number
   total: number
 }
+
+export type EligibilityReviewDecision =
+  | "approve_10000"
+  | "approve_20000"
+  | "decline"
+
+export type EligibilityReviewDecisionInput = {
+  userId: string
+  decision: EligibilityReviewDecision
+  notes: string
+}
+
+export type EligibilityReviewListParams = {
+  page: number
+  per_page?: number
+}
+
+export type ApiEligibilityReviewUser = {
+  id: string
+  name: string
+  email: string
+  phone: string
+}
+
+export type ApiEligibilityReviewRiskAnalysis = {
+  eligibility_amount: number
+  status: string
+  analyzed_transaction_count: number
+  average_monthly_regular_income: number
+  qualifying_income_months: number
+  qualifying_10000_months: number
+  qualifying_20000_months: number
+  monthly_credit_inflows: Record<string, number>
+  reasons: string[]
+}
+
+export type ApiEligibilityReviewItem = {
+  user: ApiEligibilityReviewUser
+  risk_analysis: ApiEligibilityReviewRiskAnalysis
+  statement_checked_at: string | null
+  manual_review_status: string | null
+  manual_review_amount: number | null
+  manual_review_notes: string | null
+  reviewed_at: string | null
+}
+
+export type ApiEligibilityReviewsResponse = {
+  current_page: number
+  data: ApiEligibilityReviewItem[]
+  first_page_url?: string | null
+  from?: number | null
+  last_page: number
+  last_page_url?: string | null
+  links?: unknown[]
+  next_page_url?: string | null
+  path?: string | null
+  per_page: number
+  prev_page_url?: string | null
+  to?: number | null
+  total: number
+}

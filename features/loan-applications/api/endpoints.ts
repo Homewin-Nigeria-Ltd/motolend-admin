@@ -1,4 +1,5 @@
 const loansPath = "/admin/loans"
+const eligibilityReviewsPath = "/admin/eligibility-reviews"
 
 export const loanApplicationServerEndpoints = {
   metrics: `${loansPath}/metrics`,
@@ -11,6 +12,9 @@ export const loanApplicationServerEndpoints = {
     `${loansPath}/${encodeURIComponent(id)}/direct-debit-mandate`,
   markDisbursed: (id: string) =>
     `${loansPath}/${encodeURIComponent(id)}/mark-disbursed`,
+  eligibilityReviews: eligibilityReviewsPath,
+  eligibilityReviewDecision: (userId: string) =>
+    `${eligibilityReviewsPath}/${encodeURIComponent(userId)}/decision`,
 } as const
 
 export const loanApplicationEndpoints = {
@@ -27,4 +31,7 @@ export const loanApplicationEndpoints = {
     `/api/proxy${loansPath}/${encodeURIComponent(id)}/direct-debit-mandate`,
   markDisbursed: (id: string) =>
     `/api/proxy${loansPath}/${encodeURIComponent(id)}/mark-disbursed`,
+  eligibilityReviews: `/api/proxy${eligibilityReviewsPath}`,
+  eligibilityReviewDecision: (userId: string) =>
+    `/api/proxy${eligibilityReviewsPath}/${encodeURIComponent(userId)}/decision`,
 } as const
