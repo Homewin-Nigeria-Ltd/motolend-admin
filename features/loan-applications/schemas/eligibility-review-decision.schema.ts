@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "zod/v3"
 
 export const ELIGIBILITY_REVIEW_DECISION_OPTIONS = [
   "approve_10000",
@@ -8,25 +8,22 @@ export const ELIGIBILITY_REVIEW_DECISION_OPTIONS = [
 
 export const eligibilityReviewDecisionSchema = z.object({
   decision: z.enum(ELIGIBILITY_REVIEW_DECISION_OPTIONS, {
-    message: "Select a decision",
+    required_error: "Select a decision",
+    invalid_type_error: "Select a decision",
   }),
-  notes: z
-    .string()
-    .trim()
-    .min(1, "Reviewer notes are required"),
+  notes: z.string().trim().min(1, "Reviewer notes are required"),
 })
 
 export type EligibilityReviewDecisionFormInput = z.input<
   typeof eligibilityReviewDecisionSchema
 >
 
-export type EligibilityReviewDecisionFormValues = z.infer<
+export type EligibilityReviewDecisionFormValues = z.output<
   typeof eligibilityReviewDecisionSchema
 >
 
-export const eligibilityReviewDecisionDefaults: EligibilityReviewDecisionFormInput =
+export const eligibilityReviewDecisionDefaults: Partial<EligibilityReviewDecisionFormInput> =
   {
-    decision: undefined,
     notes: "",
   }
 
