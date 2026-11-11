@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 
 import { BackLink } from "@/components/back-link"
 import { AppLoader } from "@/components/ui/app-loader"
+import { AdminDetailSection } from "@/features/users/sections/admin-detail-section"
 import { UserActivityCard } from "@/features/users/components/user-activity-card"
 import { UserBalanceCard } from "@/features/users/components/user-balance-card"
 import { UserLoansSection } from "@/features/users/components/user-loans-section"
@@ -27,11 +28,14 @@ export function UserDetailSection({ userId }: UserDetailSectionProps) {
     isFetching: isLoansFetching,
     isError: isLoansError,
     error: loansError,
-  } = useUserLoans({
-    userId,
-    page: loansPage,
-    per_page: LOANS_PAGE_SIZE,
-  })
+  } = useUserLoans(
+    {
+      userId,
+      page: loansPage,
+      per_page: LOANS_PAGE_SIZE,
+    },
+    user != null && !user.isAdmin,
+  )
 
   useEffect(() => {
     if (!user || window.location.hash !== "#loan-history") {
@@ -65,6 +69,10 @@ export function UserDetailSection({ userId }: UserDetailSectionProps) {
         </div>
       </div>
     )
+  }
+
+  if (user.isAdmin) {
+    return <AdminDetailSection user={user} />
   }
 
   const loanItems = loans?.items ?? []

@@ -34,13 +34,17 @@ export type AuthUser = {
 }
 
 export type LoginActionResult =
-  | { success: true }
+  | { success: true; otpRequired?: boolean }
   | { success: false; error: string }
 
 export type LoginResponseData = {
-  token: string
+  token?: string
   access_token?: string
   user?: AuthUser
+  otp_required?: boolean
+  requires_otp?: boolean
+  otp_sent?: boolean
+  message?: string
 }
 
 export type MeResponseData = {

@@ -10,6 +10,8 @@ export type UserStatus =
   | "Deactivated"
   | "Pending"
   | "Verified"
+  | "PND"
+  | "Blocked"
   | "Admin"
 
 export type UserListParams = {
@@ -45,6 +47,8 @@ export type ApiUserProfile = {
   account_number?: string | null
   account_name?: string | null
   bank_code?: string | null
+  bvn?: string | null
+  nin?: string | null
   kyc_status?: string | null
   liveness_status?: string | null
   bank_account_verified_at?: string | null
@@ -87,6 +91,7 @@ export type ApiAdminUser = {
   email_verified_at?: string | null
   phone_verified_at?: string | null
   bvn?: string | null
+  nin?: string | null
   bvn_verified_at?: string | null
   transaction_pin_set_at?: string | null
   two_factor_enabled_at?: string | null
@@ -115,6 +120,13 @@ export type ApiUserDetailResponse =
       user?: ApiAdminUser
       success?: boolean
     }
+
+export type UserAccountStatus = "active" | "pnd" | "blocked"
+
+export type UpdateUserStatusInput = {
+  id: string
+  status: UserAccountStatus
+}
 
 export type CreateAdminUserInput = {
   full_name: string
@@ -261,8 +273,13 @@ export type UserLoanListResponse = {
 export type UserDetail = {
   id: string
   name: string
+  firstName: string
+  lastName: string
   email: string
+  role: string
+  isAdmin: boolean
   signedUpOn: string
+  accountStatus: string
   status: UserStatus
   pendingRepayments: number
   avatarUrl?: string | null

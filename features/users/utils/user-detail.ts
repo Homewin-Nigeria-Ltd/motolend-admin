@@ -2,7 +2,9 @@ import type { ApiAdminUser, UserDetail } from "@/features/users/types"
 import { formatMoney } from "@/features/users/utils/format-money"
 import {
   formatSignedUpOn,
+  formatUserRoleLabel,
   getApiUserDisplayName,
+  isStaffAdmin,
   mapAccountStatusToUserStatus,
 } from "@/features/users/utils/user"
 
@@ -51,18 +53,35 @@ export function mapApiUserToUserDetail(user: ApiAdminUser): UserDetail {
         ]
       : []
 
+  const managedStatus = user.status?.trim().toLowerCase()
+  const statusSource =
+    managedStatus === "active" ||
+    managedStatus === "pnd" ||
+    managedStatus === "blocked"
+      ? managedStatus
+      : user.account_status
+
   return {
     id: user.id,
     name,
+    firstName: user.first_name?.trim() || "—",
+    lastName: user.last_name?.trim() || "—",
     email: user.email,
+    role: formatUserRoleLabel(user),
+    isAdmin: isStaffAdmin(user),
     signedUpOn: formatSignedUpOn(user.created_at),
     status: mapAccountStatusToUserStatus(
-      user.account_status,
-      user.role ?? "",
+      statusSource,
+      typeof user.role === "string" ? user.role : "",
     ),
     pendingRepayments: metrics?.pending_repayments_count ?? 0,
     avatarUrl: null,
+    accountStatus: (user.status || user.account_status || "")
+      .trim()
+      .toLowerCase(),
     fields: [
+      { label: "BVN", value: valueOrDash(user.bvn ?? profile?.bvn) },
+      { label: "NIN", value: valueOrDash(user.nin ?? profile?.nin) },
       { label: "Email", value: valueOrDash(user.email) },
       {
         label: "Date of Birth",

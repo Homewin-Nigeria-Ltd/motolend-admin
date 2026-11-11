@@ -15,12 +15,19 @@ import { getUserListStateFromSearchParams } from "@/features/users/utils/user-li
 
 const PAGE_SIZE = 15
 
-export function UsersListSection() {
+export function UsersListSection({
+  defaultTab = "active",
+}: {
+  defaultTab?: UserTab
+}) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const initialState = getUserListStateFromSearchParams(searchParams)
+  const hasListQuery = searchParams.has("tab") || searchParams.has("role_id")
 
-  const [tab, setTab] = useState<UserTab>(initialState.tab)
+  const [tab, setTab] = useState<UserTab>(
+    hasListQuery ? initialState.tab : defaultTab,
+  )
   const [search, setSearch] = useState("")
   const [roleId, setRoleId] = useState(initialState.roleId)
   const [page, setPage] = useState(1)

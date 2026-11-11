@@ -72,6 +72,10 @@ export function mapAccountStatusToUserStatus(
       return "Pending"
     case "verified":
       return "Verified"
+    case "pnd":
+      return "PND"
+    case "blocked":
+      return "Blocked"
     default:
       return formatRoleToken(accountStatus) as UserStatus
   }
@@ -83,6 +87,41 @@ function formatRoleToken(role: string) {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
     .join(" ")
+}
+
+function normalizeRoleName(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+}
+
+function collectRoleLabels(user: ApiAdminUser) {
+  const labels: string[] = []
+
+  for (const entry of user.roles ?? []) {
+    if (typeof entry === "string") {
+      if (entry.trim()) labels.push(entry)
+      continue
+    }
+
+    if (entry.name?.trim()) labels.push(entry.name)
+    if (entry.slug?.trim()) labels.push(entry.slug)
+  }
+
+  if (labels.length === 0 && user.role?.trim()) {
+    labels.push(user.role)
+  }
+
+  return labels
+}
+
+export function isStaffAdmin(user: ApiAdminUser) {
+  return collectRoleLabels(user).some((label) => {
+    const name = normalizeRoleName(label)
+    return name !== "user" && name !== "users"
+  })
 }
 
 export function formatUserRoleLabel(user: ApiAdminUser) {

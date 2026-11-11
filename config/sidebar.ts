@@ -27,9 +27,13 @@ export const navMain: NavItem[] = [
   { title: "Overview", url: "/dashboard", icon: "dashboard", permission: null },
   {
     title: "Users",
-    url: "/users/overview",
+    url: "/users",
     icon: "group",
     permission: PERMISSION_KEYS.viewUsers,
+    items: [
+      { title: "Users", url: "/users" },
+      { title: "Admin", url: "/users/admin" },
+    ],
   },
   {
     title: "Loan Applications",

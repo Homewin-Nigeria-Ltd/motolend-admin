@@ -12,6 +12,22 @@ import { apiServer } from "@/lib/api/server-client"
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 
+function readToken(response: LoginResponseData) {
+  return response.token || response.access_token || ""
+}
+
+function isOtpChallenge(response: LoginResponseData) {
+  if (
+    response.otp_required === true ||
+    response.requires_otp === true ||
+    response.otp_sent === true
+  ) {
+    return true
+  }
+
+  return !readToken(response)
+}
+
 async function setAuthCookie(token: string) {
   const cookieStore = await cookies()
   cookieStore.set(AUTH_COOKIE_NAME, token, {
@@ -33,24 +49,42 @@ export async function loginAction(data: LoginPayload): Promise<LoginActionResult
     }
   }
 
+  const otp = parsed.data.otp?.trim()
+  const payload: LoginPayload = {
+    login: parsed.data.login,
+    password: parsed.data.password,
+    ...(otp ? { otp } : {}),
+  }
+
   try {
     const response = await apiServer.post<LoginResponseData, LoginPayload>(
       authEndpoints.login,
-      parsed.data,
+      payload,
       { auth: false },
     )
 
-    const token = response.token || response.access_token
-
-    if (!token) {
+    if (!response || typeof response !== "object") {
       return {
         success: false,
-        error: "Authentication token was not returned",
+        error: "Sign in could not be completed",
       }
     }
 
-    await setAuthCookie(token)
-    return { success: true }
+    const token = readToken(response)
+
+    if (token) {
+      await setAuthCookie(token)
+      return { success: true }
+    }
+
+    if (!otp && isOtpChallenge(response)) {
+      return { success: true, otpRequired: true }
+    }
+
+    return {
+      success: false,
+      error: response.message || "Authentication token was not returned",
+    }
   } catch (error) {
     if (error instanceof ApiError) {
       return {

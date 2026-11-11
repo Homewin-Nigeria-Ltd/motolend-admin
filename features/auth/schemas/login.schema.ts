@@ -3,6 +3,7 @@ import { z } from "zod/v3"
 export const loginSchema = z.object({
   login: z.string().min(1, "Email is required"),
   password: z.string().min(1, "Password is required"),
+  otp: z.string().optional(),
 })
 
 export type LoginInput = z.infer<typeof loginSchema>

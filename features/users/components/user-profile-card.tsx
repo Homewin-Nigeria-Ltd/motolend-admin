@@ -6,6 +6,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { UserStatusSelect } from "@/features/users/components/user-status-select"
 import type { UserDetail } from "@/features/users/types"
 import { getUserInitials } from "@/utils/get-initials"
 
@@ -43,6 +44,7 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
           <Badge className="h-auto rounded-full border-0 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
             {user.status}
           </Badge>
+          <UserStatusSelect userId={user.id} status={user.accountStatus} />
         </div>
       </div>
 

@@ -21,6 +21,13 @@ import { Icon, Icons } from "@/components/ui/icons"
 import type { NavItem } from "@/config/sidebar"
 
 function isNavSubItemActive(pathname: string, subUrl: string) {
+  if (subUrl === "/users") {
+    return (
+      pathname === "/users" ||
+      (pathname.startsWith("/users/") && !pathname.startsWith("/users/admin"))
+    )
+  }
+
   if (pathname === subUrl) {
     return true
   }

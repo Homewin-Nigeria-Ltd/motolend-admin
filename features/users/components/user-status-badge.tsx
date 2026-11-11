@@ -8,6 +8,8 @@ const statusStyles: Record<UserStatus, string> = {
   Deactivated: "bg-muted text-muted-foreground",
   Pending: "bg-amber-50 text-amber-800",
   Verified: "bg-sky-50 text-sky-700",
+  PND: "bg-amber-50 text-amber-800",
+  Blocked: "bg-red-50 text-red-700",
   Admin: "bg-primary/10 text-primary",
 }
 

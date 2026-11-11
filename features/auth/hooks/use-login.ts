@@ -21,6 +21,11 @@ export function useLogin() {
         return
       }
 
+      if (result.otpRequired) {
+        toast.success("Enter the verification code")
+        return
+      }
+
       toast.success("Signed in successfully")
       queryClient.invalidateQueries({ queryKey: authKeys.all })
       router.push("/dashboard")
@@ -32,9 +37,7 @@ export function useLogin() {
   })
 
   const login = useCallback(
-    (data: LoginInput) => {
-      mutation.mutate(data)
-    },
+    (data: LoginInput) => mutation.mutateAsync(data),
     [mutation],
   )
 
