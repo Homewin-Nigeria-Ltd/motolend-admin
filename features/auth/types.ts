@@ -37,6 +37,10 @@ export type LoginActionResult =
   | { success: true; otpRequired?: boolean }
   | { success: false; error: string }
 
+export type ResendOtpResult =
+  | { success: true }
+  | { success: false; error: string }
+
 export type LoginResponseData = {
   token?: string
   access_token?: string

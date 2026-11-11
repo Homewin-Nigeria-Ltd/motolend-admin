@@ -36,14 +36,37 @@ export function useLogin() {
     },
   })
 
+  const resendMutation = useMutation({
+    ...authMutations.resendOtp,
+    onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(result.error)
+        return
+      }
+
+      toast.success("A new verification code has been sent")
+    },
+    onError: () => {
+      toast.error("Could not resend the code. Please try again.")
+    },
+  })
+
   const login = useCallback(
     (data: LoginInput) => mutation.mutateAsync(data),
     [mutation],
   )
 
+  const resendOtp = useCallback(
+    (input: { login: string; password: string }) =>
+      resendMutation.mutateAsync(input),
+    [resendMutation],
+  )
+
   return {
     login,
+    resendOtp,
     isPending: mutation.isPending,
+    isResending: resendMutation.isPending,
     isError: mutation.isError,
     error: mutation.error,
   }

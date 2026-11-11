@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 
@@ -29,6 +29,13 @@ import {
 import { cn } from "@/lib/utils"
 
 const OTP_LENGTH = 4
+const RESEND_SECONDS = 60
+
+function formatCountdown(seconds: number) {
+  const minutes = Math.floor(seconds / 60)
+  const rest = seconds % 60
+  return `${minutes}:${rest.toString().padStart(2, "0")}`
+}
 
 function OtpBoxes({
   value,
@@ -99,9 +106,10 @@ function OtpBoxes({
 }
 
 export function LoginForm() {
-  const { login, isPending } = useLogin()
+  const { login, resendOtp, isPending, isResending } = useLogin()
   const [showPassword, setShowPassword] = useState(false)
   const [needsOtp, setNeedsOtp] = useState(false)
+  const [resendIn, setResendIn] = useState(0)
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -111,6 +119,18 @@ export function LoginForm() {
       otp: "",
     },
   })
+
+  useEffect(() => {
+    if (resendIn <= 0) {
+      return
+    }
+
+    const timer = window.setInterval(() => {
+      setResendIn((current) => (current > 0 ? current - 1 : 0))
+    }, 1000)
+
+    return () => window.clearInterval(timer)
+  }, [resendIn > 0])
 
   async function onSubmit(data: LoginInput) {
     if (needsOtp && (data.otp?.replace(/\D/g, "").length ?? 0) < OTP_LENGTH) {
@@ -127,6 +147,7 @@ export function LoginForm() {
 
       if (result.success && result.otpRequired) {
         setNeedsOtp(true)
+        setResendIn(RESEND_SECONDS)
       }
     } catch {
       // The login hook already reports the error.
@@ -254,7 +275,7 @@ export function LoginForm() {
           form="login-form"
           size="lg"
           className="h-12 w-full text-base font-semibold"
-          disabled={isPending}
+          disabled={isPending || isResending}
         >
           {isPending
             ? "Signing in…"
@@ -267,9 +288,39 @@ export function LoginForm() {
             type="button"
             variant="ghost"
             className="h-10 w-full"
-            disabled={isPending}
+            disabled={isPending || isResending || resendIn > 0}
+            onClick={async () => {
+              try {
+                const result = await resendOtp({
+                  login: form.getValues("login"),
+                  password: form.getValues("password"),
+                })
+                if (result.success) {
+                  form.setValue("otp", "")
+                  form.clearErrors("otp")
+                  setResendIn(RESEND_SECONDS)
+                }
+              } catch {
+                // The resend hook already reports the error.
+              }
+            }}
+          >
+            {isResending
+              ? "Sending code…"
+              : resendIn > 0
+                ? `Resend code in ${formatCountdown(resendIn)}`
+                : "Resend code"}
+          </Button>
+        ) : null}
+        {needsOtp ? (
+          <Button
+            type="button"
+            variant="ghost"
+            className="h-10 w-full"
+            disabled={isPending || isResending}
             onClick={() => {
               setNeedsOtp(false)
+              setResendIn(0)
               form.setValue("otp", "")
               form.clearErrors("otp")
             }}

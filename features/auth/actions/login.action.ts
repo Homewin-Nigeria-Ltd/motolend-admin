@@ -6,7 +6,11 @@ import { AUTH_COOKIE_NAME } from "@/constants/auth"
 import { authEndpoints } from "@/features/auth/api/endpoints"
 import type { LoginPayload } from "@/features/auth/schemas/login.schema"
 import { loginSchema } from "@/features/auth/schemas/login.schema"
-import type { LoginActionResult, LoginResponseData } from "@/features/auth/types"
+import type {
+  LoginActionResult,
+  LoginResponseData,
+  ResendOtpResult,
+} from "@/features/auth/types"
 import { ApiError } from "@/lib/api/client"
 import { apiServer } from "@/lib/api/server-client"
 
@@ -90,6 +94,36 @@ export async function loginAction(data: LoginPayload): Promise<LoginActionResult
       return {
         success: false,
         error: error.message || "Invalid email or password",
+      }
+    }
+
+    throw error
+  }
+}
+
+export async function resendOtpAction(input: {
+  login: string
+  password: string
+}): Promise<ResendOtpResult> {
+  const login = input.login.trim()
+  const password = input.password
+
+  if (!login || !password) {
+    return { success: false, error: "Email and password are required" }
+  }
+
+  try {
+    await apiServer.post(
+      authEndpoints.resendOtp,
+      { login, password },
+      { auth: false },
+    )
+    return { success: true }
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return {
+        success: false,
+        error: error.message || "Could not resend the code",
       }
     }
 
