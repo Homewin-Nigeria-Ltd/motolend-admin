@@ -114,14 +114,16 @@ export function UserToolbar({
             </Button>
           ) : null}
 
-          <Button
-            type="button"
-            className="h-10 px-4"
-            icon={{ name: "add", position: "left" }}
-            onClick={onCreateAdminUser}
-          >
-            Add Admin
-          </Button>
+          {tab === "admin" ? (
+            <Button
+              type="button"
+              className="h-10 px-4"
+              icon={{ name: "add", position: "left" }}
+              onClick={onCreateAdminUser}
+            >
+              Add Admin
+            </Button>
+          ) : null}
         </div>
       </div>
     </div>

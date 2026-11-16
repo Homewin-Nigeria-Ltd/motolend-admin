@@ -1,6 +1,7 @@
 "use client"
 
 import type { ColumnDef } from "@tanstack/react-table"
+import Link from "next/link"
 
 import {
   Avatar,
@@ -33,16 +34,19 @@ export const transactionColumns: ColumnDef<TransactionRecord>[] = [
     accessorKey: "customerName",
     header: "Customer Name",
     cell: ({ row }) => (
-      <div className="flex items-center gap-3">
+      <Link
+        href={`/users/${row.original.userId}`}
+        className="flex items-center gap-3 hover:opacity-80"
+      >
         <Avatar className="size-10">
           <AvatarFallback className="bg-primary text-sm font-medium text-primary-foreground">
             {getUserInitials(row.original.customerName)}
           </AvatarFallback>
         </Avatar>
-        <span className="truncate font-medium text-foreground">
+        <span className="truncate font-medium text-foreground underline-offset-4 hover:underline">
           {row.original.customerName}
         </span>
-      </div>
+      </Link>
     ),
   },
   {

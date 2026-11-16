@@ -1,6 +1,7 @@
 "use client"
 
 import type { ColumnDef } from "@tanstack/react-table"
+import Link from "next/link"
 
 import {
   Avatar,
@@ -28,7 +29,11 @@ export const userColumns: ColumnDef<UserRecord>[] = [
       const user = row.original
 
       return (
-        <div className="flex items-center gap-3">
+        <Link
+          href={`/users/${user.id}`}
+          onClick={(event) => event.stopPropagation()}
+          className="flex items-center gap-3 hover:opacity-80"
+        >
           <Avatar className="size-10">
             <AvatarImage src={user.avatarUrl ?? undefined} alt={user.name} />
             <AvatarFallback className="bg-primary text-sm font-medium text-primary-foreground">
@@ -36,12 +41,14 @@ export const userColumns: ColumnDef<UserRecord>[] = [
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0">
-            <p className="truncate font-medium text-foreground">{user.name}</p>
+            <p className="truncate font-medium text-foreground underline-offset-4 hover:underline">
+              {user.name}
+            </p>
             <p className="truncate text-xs text-muted-foreground">
               {user.email}
             </p>
           </div>
-        </div>
+        </Link>
       )
     },
   },

@@ -65,7 +65,7 @@ export const navMain: NavItem[] = [
     icon: "revenue",
     permission: PERMISSION_KEYS.manageRepayments,
     items: [
-      { title: "Repayment", url: "/repayments/overview" },
+      // { title: "Repayment", url: "/repayments/overview" },
       { title: "Recovery", url: "/repayments/recovery" },
       { title: "Transaction", url: "/repayments/transactions" },
     ],

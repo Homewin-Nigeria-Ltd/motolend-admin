@@ -16,6 +16,7 @@ export type RecoveryLoan = {
   id: string
   applicationId: string
   createdAt: string
+  userId: string
   customerName: string
   phone: string
   loanProduct: string

@@ -1,6 +1,7 @@
 "use client"
 
 import type { ColumnDef } from "@tanstack/react-table"
+import Link from "next/link"
 
 import type { RecoveryLoan } from "@/features/recovery/types"
 import { cn } from "@/lib/utils"
@@ -35,9 +36,12 @@ export function getRecoveryColumns({
       accessorKey: "customerName",
       header: "Customer Name",
       cell: ({ row }) => (
-        <span className="whitespace-nowrap font-medium text-foreground">
+        <Link
+          href={`/users/${row.original.userId}`}
+          className="whitespace-nowrap font-medium text-foreground underline-offset-4 hover:underline"
+        >
           {row.original.customerName}
-        </span>
+        </Link>
       ),
     },
     {

@@ -6,6 +6,7 @@ export type TransactionRecord = {
   id: string
   applicationId: string
   createdAt: string
+  userId: string
   customerName: string
   loanProduct: string
   principal: string
