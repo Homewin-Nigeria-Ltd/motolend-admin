@@ -5,9 +5,10 @@ import { useEffect, useState } from "react"
 import { BackLink } from "@/components/back-link"
 import { AppLoader } from "@/components/ui/app-loader"
 import { AdminDetailSection } from "@/features/users/sections/admin-detail-section"
-import { UserActivityCard } from "@/features/users/components/user-activity-card"
 import { UserBalanceCard } from "@/features/users/components/user-balance-card"
+import { UserLoanProgressionCard } from "@/features/users/components/user-loan-progression-card"
 import { UserLoansSection } from "@/features/users/components/user-loans-section"
+import { UserPasswordCard } from "@/features/users/components/user-password-card"
 import { UserProfileCard } from "@/features/users/components/user-profile-card"
 import { UserRepaymentAccounts } from "@/features/users/components/user-repayment-accounts"
 import { useUserDetail } from "@/features/users/hooks/use-user-detail"
@@ -92,8 +93,11 @@ export function UserDetailSection({ userId }: UserDetailSectionProps) {
 
         <div className="flex flex-col gap-4">
           <UserBalanceCard user={user} />
-          <UserRepaymentAccounts accounts={user.repaymentAccounts} />
-          <UserActivityCard user={user} />
+          <UserRepaymentAccounts accounts={user.bankAccounts} />
+          <UserPasswordCard userId={user.id} userName={user.name} />
+          {user.loanProgression ? (
+            <UserLoanProgressionCard progression={user.loanProgression} />
+          ) : null}
         </div>
       </div>
 

@@ -47,6 +47,12 @@ export type ApiUserProfile = {
   account_number?: string | null
   account_name?: string | null
   bank_code?: string | null
+  repayment_account_number?: string | null
+  repayment_bank_name?: string | null
+  repayment_account_name?: string | null
+  virtual_account_number?: string | null
+  virtual_bank_name?: string | null
+  virtual_account_name?: string | null
   bvn?: string | null
   nin?: string | null
   kyc_status?: string | null
@@ -126,6 +132,7 @@ export type UserAccountStatus = "active" | "pnd" | "blocked"
 export type UpdateUserStatusInput = {
   id: string
   status: UserAccountStatus
+  reason?: string
 }
 
 export type CreateAdminUserInput = {
@@ -171,6 +178,7 @@ export type UserRecord = {
   name: string
   email: string
   accountNumber: string
+  repaymentAccount: string
   phoneNumber: string
   role: string
   status: UserStatus
@@ -180,13 +188,25 @@ export type UserRecord = {
 export type UserDetailField = {
   label: string
   value: string
+  sensitive?: boolean
 }
 
-export type UserRepaymentAccount = {
+export type UserBankAccount = {
   id: string
+  label: string
   accountNumber: string
   bankName: string
+  accountName: string
   variant: "success" | "danger"
+}
+
+/** @deprecated Use UserBankAccount */
+export type UserRepaymentAccount = UserBankAccount
+
+export type UserLoanProgression = {
+  title: string
+  subtitle: string
+  href: string
 }
 
 export type UserTransaction = {
@@ -279,6 +299,7 @@ export type UserDetail = {
   role: string
   isAdmin: boolean
   signedUpOn: string
+  photoNote: string | null
   accountStatus: string
   status: UserStatus
   pendingRepayments: number
@@ -286,7 +307,10 @@ export type UserDetail = {
   fields: UserDetailField[]
   eligibleAmount: string
   pendingBill: string
-  repaymentAccounts: UserRepaymentAccount[]
+  bankAccounts: UserBankAccount[]
+  /** @deprecated Use bankAccounts */
+  repaymentAccounts: UserBankAccount[]
+  loanProgression: UserLoanProgression | null
   loansTaken: number
   totalSpend: string
   transactions: UserTransaction[]

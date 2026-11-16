@@ -2,28 +2,16 @@
 
 import { useState } from "react"
 
-import { BaseAlertDialog } from "@/components/ui/base-alert-dialog"
+import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { ChangeStatusDialog } from "@/features/users/components/change-status-dialog"
 import { useUpdateUserStatus } from "@/features/users/hooks/use-user-mutations"
 import type { UserAccountStatus } from "@/features/users/types"
 
-const OPTIONS: { value: UserAccountStatus; label: string }[] = [
-  { value: "active", label: "Active" },
-  { value: "pnd", label: "PND" },
-  { value: "blocked", label: "Blocked" },
-]
-
-const NOTES: Record<UserAccountStatus, string> = {
-  active: "The user can sign in and use the account.",
-  pnd: "Can log in and deposit, but cannot apply for loans or withdraw referral earnings.",
-  blocked: "The user is blocked and existing login tokens are revoked.",
+const STATUS_LABELS: Record<UserAccountStatus, string> = {
+  active: "Active",
+  pnd: "PND",
+  blocked: "Blocked",
 }
 
 function isAccountStatus(value: string): value is UserAccountStatus {
@@ -32,67 +20,42 @@ function isAccountStatus(value: string): value is UserAccountStatus {
 
 type UserStatusSelectProps = {
   userId: string
+  userName: string
   status: string
 }
 
-export function UserStatusSelect({ userId, status }: UserStatusSelectProps) {
+export function UserStatusSelect({
+  userId,
+  userName,
+  status,
+}: UserStatusSelectProps) {
   const { updateStatus, isPending } = useUpdateUserStatus(userId)
-  const [confirmBlock, setConfirmBlock] = useState(false)
-  const current = isAccountStatus(status) ? status : undefined
+  const [open, setOpen] = useState(false)
+  const current = isAccountStatus(status) ? status : "active"
 
   return (
-    <div className="flex w-full flex-col gap-2 sm:w-56">
-      <Select
-        value={current}
+    <>
+      <Button
+        type="button"
+        variant="outline"
+        className="h-10 gap-2 px-3"
         disabled={isPending}
-        onValueChange={(value) => {
-          if (!isAccountStatus(value) || value === current) {
-            return
-          }
-
-          if (value === "blocked") {
-            setConfirmBlock(true)
-            return
-          }
-
-          updateStatus(value)
-        }}
+        onClick={() => setOpen(true)}
       >
-        <SelectTrigger className="h-10 w-full bg-background">
-          <SelectValue placeholder="Set status" />
-        </SelectTrigger>
-        <SelectContent>
-          {OPTIONS.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {current ? (
-        <p className="text-xs text-muted-foreground">{NOTES[current]}</p>
-      ) : null}
+        Status: {STATUS_LABELS[current]}
+        <Icons.chevronDown size={16} className="text-muted-foreground" />
+      </Button>
 
-      <BaseAlertDialog
-        title="Block this user?"
-        open={confirmBlock}
-        onOpenChange={setConfirmBlock}
-        confirmLabel="Block user"
-        pendingLabel="Blocking..."
-        confirmVariant="destructive"
+      <ChangeStatusDialog
+        open={open}
+        onOpenChange={setOpen}
+        userName={userName}
+        currentStatus={current}
         isPending={isPending}
-        headerIcon={<Icons.alert size={28} className="text-destructive" />}
-        onConfirm={() => {
-          updateStatus("blocked")
-          setConfirmBlock(false)
+        onSave={async (nextStatus, reason) => {
+          await updateStatus(nextStatus, reason)
         }}
-        className="sm:max-w-md"
-      >
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          This blocks the account and revokes existing login tokens. The user
-          will need to sign in again after the block is lifted.
-        </p>
-      </BaseAlertDialog>
-    </div>
+      />
+    </>
   )
 }

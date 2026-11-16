@@ -11,7 +11,10 @@ export const userMutations = {
     mutationFn: (input: CreateAdminUserInput) => createAdminUserAction(input),
   },
   updateStatus: {
-    mutationFn: ({ id, status }: UpdateUserStatusInput) =>
-      api.patch(userEndpoints.status(id), { status }),
+    mutationFn: ({ id, status, reason }: UpdateUserStatusInput) =>
+      api.patch(userEndpoints.status(id), {
+        status,
+        ...(reason ? { reason } : {}),
+      }),
   },
 }

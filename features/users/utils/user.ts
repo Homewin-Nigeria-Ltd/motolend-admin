@@ -148,6 +148,26 @@ export function formatUserRoleLabel(user: ApiAdminUser) {
   return "—"
 }
 
+function resolveRepaymentAccount(user: ApiAdminUser) {
+  const profile = user.profile
+  const number =
+    profile?.repayment_account_number?.trim() ||
+    profile?.virtual_account_number?.trim()
+  const bank =
+    profile?.repayment_bank_name?.trim() ||
+    profile?.virtual_bank_name?.trim()
+
+  if (!number && !bank) {
+    return "—"
+  }
+
+  if (number && bank) {
+    return `${number} · ${bank}`
+  }
+
+  return number || bank || "—"
+}
+
 export function mapApiUserToUserRecord(user: ApiAdminUser): UserRecord {
   return {
     id: user.id,
@@ -155,6 +175,7 @@ export function mapApiUserToUserRecord(user: ApiAdminUser): UserRecord {
     name: getApiUserDisplayName(user),
     email: user.email,
     accountNumber: user.profile?.account_number ?? "—",
+    repaymentAccount: resolveRepaymentAccount(user),
     phoneNumber: user.phone || "—",
     role: formatUserRoleLabel(user),
     status: mapAccountStatusToUserStatus(user.account_status, user.role ?? ""),

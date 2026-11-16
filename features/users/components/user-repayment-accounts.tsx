@@ -2,21 +2,28 @@
 
 import { useState } from "react"
 
+import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
-import type { UserRepaymentAccount } from "@/features/users/types"
+import type { UserBankAccount } from "@/features/users/types"
 import { cn } from "@/lib/utils"
 
 type UserRepaymentAccountsProps = {
-  accounts: UserRepaymentAccount[]
+  accounts: UserBankAccount[]
 }
 
-function RepaymentAccountCard({ account }: { account: UserRepaymentAccount }) {
+function BankAccountCard({ account }: { account: UserBankAccount }) {
   const [copied, setCopied] = useState(false)
-  const fullAccount = `${account.accountNumber} ${account.bankName}`
+  const copyValue = [
+    account.accountNumber,
+    account.bankName,
+    account.accountName,
+  ]
+    .filter((part) => part && part !== "—")
+    .join(" · ")
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(fullAccount)
+      await navigator.clipboard.writeText(copyValue || account.accountNumber)
       setCopied(true)
       window.setTimeout(() => setCopied(false), 1500)
     } catch {
@@ -25,42 +32,57 @@ function RepaymentAccountCard({ account }: { account: UserRepaymentAccount }) {
   }
 
   return (
-    <div className="flex w-full items-center gap-3 rounded-2xl border border-border bg-background p-4">
-      <div
-        className={cn(
-          "flex size-10 shrink-0 items-center justify-center rounded-full",
-          account.variant === "success"
-            ? "bg-emerald-50 text-emerald-600"
-            : "bg-red-50 text-red-500",
-        )}
-      >
-        <Icons.revenue size={18} />
+    <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border border-border bg-background p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-xs font-medium text-muted-foreground">
+            {account.label}
+          </p>
+          <p className="mt-1 truncate text-sm font-semibold text-foreground">
+            {account.accountNumber}
+          </p>
+          <p className="mt-0.5 truncate text-xs text-muted-foreground">
+            {account.bankName}
+            {account.accountName && account.accountName !== "—"
+              ? ` · ${account.accountName}`
+              : ""}
+          </p>
+        </div>
+        <div
+          className={cn(
+            "flex size-9 shrink-0 items-center justify-center rounded-full",
+            account.variant === "success"
+              ? "bg-emerald-50 text-emerald-600"
+              : "bg-red-50 text-red-500",
+          )}
+        >
+          <Icons.revenue size={16} />
+        </div>
       </div>
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-foreground">
-          {account.accountNumber} {account.bankName}
-        </p>
-        <p className="text-xs text-muted-foreground">Repayment Account</p>
-      </div>
-      <button
+
+      <Button
         type="button"
+        variant="outline"
+        size="sm"
+        className="h-8 w-fit px-3"
         onClick={handleCopy}
-        aria-label={copied ? "Copied" : "Copy account number"}
-        className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        icon={{ name: copied ? "check" : "copy", position: "left" }}
       >
-        {copied ? <Icons.check size={16} /> : <Icons.copy size={16} />}
-      </button>
+        {copied ? "Copied" : "Copy"}
+      </Button>
     </div>
   )
 }
 
 export function UserRepaymentAccounts({ accounts }: UserRepaymentAccountsProps) {
-  if (accounts.length === 0) return null
+  if (accounts.length === 0) {
+    return null
+  }
 
   return (
-    <div className="flex w-full flex-col gap-3">
+    <div className="grid gap-3 sm:grid-cols-2">
       {accounts.map((account) => (
-        <RepaymentAccountCard key={account.id} account={account} />
+        <BankAccountCard key={account.id} account={account} />
       ))}
     </div>
   )

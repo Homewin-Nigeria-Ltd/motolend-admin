@@ -54,8 +54,8 @@ export function useUpdateUserStatus(userId: string) {
   })
 
   return {
-    updateStatus: (status: UserAccountStatus) =>
-      mutation.mutate({ id: userId, status }),
+    updateStatus: (status: UserAccountStatus, reason?: string) =>
+      mutation.mutateAsync({ id: userId, status, reason }),
     isPending: mutation.isPending,
   }
 }

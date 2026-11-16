@@ -55,6 +55,15 @@ export const userColumns: ColumnDef<UserRecord>[] = [
     ),
   },
   {
+    accessorKey: "repaymentAccount",
+    header: "Repayment Account",
+    cell: ({ row }) => (
+      <span className="whitespace-nowrap text-foreground">
+        {row.original.repaymentAccount}
+      </span>
+    ),
+  },
+  {
     accessorKey: "phoneNumber",
     header: "Phone Number",
     cell: ({ row }) => (
