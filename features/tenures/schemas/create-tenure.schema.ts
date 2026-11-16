@@ -7,6 +7,11 @@ export const REPAYMENT_FREQUENCY_OPTIONS = [
   "biweekly",
   "monthly",
 ] as const
+export const INTEREST_FREQUENCY_OPTIONS = [
+  "daily",
+  "weekly",
+  "monthly",
+] as const
 export const INTEREST_TYPE_OPTIONS = ["flat", "reducing"] as const
 
 function requiredPositiveNumber(message: string) {
@@ -57,6 +62,15 @@ export const createTenureSchema = z.object({
       (value) => (INTEREST_TYPE_OPTIONS as readonly string[]).includes(value),
       "Interest type is required",
     ),
+  interest_frequency: z
+    .string()
+    .trim()
+    .min(1, "Interest frequency is required")
+    .refine(
+      (value) =>
+        (INTEREST_FREQUENCY_OPTIONS as readonly string[]).includes(value),
+      "Interest frequency is required",
+    ),
   interest_rate: requiredPositiveNumber("Interest rate must be greater than 0"),
   processing_fee: requiredNonNegativeNumber(
     "Processing fee must be 0 or greater",
@@ -79,6 +93,7 @@ export const createTenureFormDefaults: CreateTenureFormInput = {
   tenure_type: "",
   repayment_frequency: "",
   interest_type: "",
+  interest_frequency: "",
   interest_rate: undefined,
   processing_fee: undefined,
   insurance_fee: undefined,

@@ -16,6 +16,7 @@ import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { LINKED_PRODUCT_OPTIONS } from "@/features/tenures/data/mock-tenures"
 import {
+  INTEREST_FREQUENCY_OPTIONS,
   INTEREST_TYPE_OPTIONS,
   REPAYMENT_FREQUENCY_OPTIONS,
   TENURE_TYPE_OPTIONS,
@@ -51,6 +52,15 @@ const repaymentFrequencyLabels: Record<
   daily: "Daily",
   weekly: "Weekly",
   biweekly: "Bi-weekly",
+  monthly: "Monthly",
+}
+
+const interestFrequencyLabels: Record<
+  (typeof INTEREST_FREQUENCY_OPTIONS)[number],
+  string
+> = {
+  daily: "Daily",
+  weekly: "Weekly",
   monthly: "Monthly",
 }
 
@@ -246,6 +256,35 @@ export function CreateTenureForm({ form, disabled }: CreateTenureFormProps) {
                     {INTEREST_TYPE_OPTIONS.map((option) => (
                       <SelectItem key={option} value={option}>
                         {interestTypeLabels[option]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid ? (
+                  <FieldError errors={[fieldState.error]} />
+                ) : null}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="interest_frequency"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Interest frequency</FieldLabel>
+                <Select
+                  value={field.value || undefined}
+                  onValueChange={field.onChange}
+                  disabled={disabled}
+                >
+                  <SelectTrigger className="h-10 w-full">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {INTEREST_FREQUENCY_OPTIONS.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {interestFrequencyLabels[option]}
                       </SelectItem>
                     ))}
                   </SelectContent>
