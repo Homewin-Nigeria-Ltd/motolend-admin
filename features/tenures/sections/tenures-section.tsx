@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useMemo, useState } from "react"
 
 import { BackLink } from "@/components/back-link"
@@ -8,19 +9,30 @@ import { DataTable } from "@/components/data-table"
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
-import { tenureColumns } from "@/features/tenures/columns"
+import { getTenureColumns } from "@/features/tenures/columns"
 import { TenureFilterTabs } from "@/features/tenures/components/tenure-filter-tabs"
 import { TenureSummaryCards } from "@/features/tenures/components/tenure-summary-cards"
 import {
   tenureMetrics,
   tenureRecords,
 } from "@/features/tenures/data/mock-tenures"
-import type { TenureTab } from "@/features/tenures/types"
+import type { TenureRecord, TenureTab } from "@/features/tenures/types"
 
 export function TenuresSection() {
+  const router = useRouter()
   const [tab, setTab] = useState<TenureTab>("all")
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
+
+  const columns = useMemo(
+    () =>
+      getTenureColumns({
+        onEdit: (tenure: TenureRecord) => {
+          router.push(`/loan-products/tenures/${tenure.id}/edit`)
+        },
+      }),
+    [router],
+  )
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase()
@@ -62,7 +74,7 @@ export function TenuresSection() {
 
       <section className="min-w-0">
         <DataTable
-          columns={tenureColumns}
+          columns={columns}
           data={pageItems}
           page={currentPage}
           totalPages={totalPages}

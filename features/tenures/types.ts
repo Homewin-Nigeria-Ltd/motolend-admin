@@ -15,6 +15,8 @@ export type TenureRecord = {
   linkedProducts: string
   status: TenureStatus
   description?: string
+  repaymentFrequency?: string
+  interestFrequency?: string
 }
 
 export type TenureMetric = {
