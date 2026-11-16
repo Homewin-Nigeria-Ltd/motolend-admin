@@ -42,7 +42,7 @@ export const navMain: NavItem[] = [
     permission: PERMISSION_KEYS.viewLoans,
   },
   {
-    title: "Loan Products",
+    title: "Loan",
     url: "/loan-products",
     icon: "priceTag",
     permission: PERMISSION_KEYS.viewLoanProducts,
