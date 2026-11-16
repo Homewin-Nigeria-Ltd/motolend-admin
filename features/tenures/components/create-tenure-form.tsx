@@ -318,18 +318,18 @@ export function CreateTenureForm({ form, disabled }: CreateTenureFormProps) {
           <Field>
             <FieldLabel htmlFor="processing-fee">Processing Fee</FieldLabel>
             <div className="relative">
-              <span className="absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground">
-                ₦
-              </span>
               <Input
                 id="processing-fee"
                 type="number"
                 step="0.01"
                 placeholder="0"
                 disabled={disabled}
-                className="pl-7"
+                className="pr-10"
                 {...form.register("processing_fee", { valueAsNumber: true })}
               />
+              <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-muted-foreground">
+                %
+              </span>
             </div>
             <FieldError errors={[form.formState.errors.processing_fee]} />
           </Field>
@@ -337,18 +337,18 @@ export function CreateTenureForm({ form, disabled }: CreateTenureFormProps) {
           <Field>
             <FieldLabel htmlFor="insurance-fee">Insurance Fee</FieldLabel>
             <div className="relative">
-              <span className="absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground">
-                ₦
-              </span>
               <Input
                 id="insurance-fee"
                 type="number"
                 step="0.01"
                 placeholder="0"
                 disabled={disabled}
-                className="pl-7"
+                className="pr-10"
                 {...form.register("insurance_fee", { valueAsNumber: true })}
               />
+              <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-muted-foreground">
+                %
+              </span>
             </div>
             <FieldError errors={[form.formState.errors.insurance_fee]} />
           </Field>
