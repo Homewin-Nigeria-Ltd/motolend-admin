@@ -1,6 +1,10 @@
 import type { IconName } from "@/components/ui/icons"
 
-export type SettingsItemId = "credit-check" | "role-permissions"
+export type SettingsItemId =
+  | "credit-check"
+  | "role-permissions"
+  | "channel"
+  | "sms"
 
 export type SettingsItem = {
   id: SettingsItemId
@@ -52,5 +56,23 @@ export const SETTINGS_RIGHT_COLUMN: SettingsItem[] = [
     icon: "shield",
     iconPlain: true,
     href: "/settings/role-permissions",
+  },
+  {
+    id: "channel",
+    title: "Channel",
+    description:
+      "Turn API partners on or off for KYC, credit, banking, deposits and withdrawals.",
+    icon: "link",
+    iconPlain: true,
+    href: "/settings/channel",
+  },
+  {
+    id: "sms",
+    title: "SMS",
+    description:
+      "Connect your SMS partner and edit automated messages by loan status.",
+    icon: "messageCircle",
+    iconPlain: true,
+    href: "/settings/sms",
   },
 ]

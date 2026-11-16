@@ -28,6 +28,27 @@ function isNavSubItemActive(pathname: string, subUrl: string) {
     )
   }
 
+  if (subUrl === "/repayments/overview") {
+    return (
+      pathname === "/repayments" ||
+      pathname === "/repayments/overview" ||
+      (pathname.startsWith("/repayments/") &&
+        !pathname.startsWith("/repayments/recovery") &&
+        !pathname.startsWith("/repayments/transactions"))
+    )
+  }
+
+  if (subUrl === "/loan-products/overview") {
+    return (
+      pathname === "/loan-products" ||
+      pathname === "/loan-products/overview" ||
+      (pathname.startsWith("/loan-products/") &&
+        !pathname.startsWith("/loan-products/tenures") &&
+        !pathname.startsWith("/loan-products/disbursement") &&
+        !pathname.startsWith("/loan-products/progression"))
+    )
+  }
+
   if (pathname === subUrl) {
     return true
   }
@@ -61,8 +82,10 @@ function isNavItemActive(pathname: string, item: NavItem) {
     (item.url === "/users/overview" && pathname.startsWith("/users")) ||
     (item.url === "/applications/overview" &&
       pathname.startsWith("/applications")) ||
+    (item.url === "/loan-products" && pathname.startsWith("/loan-products")) ||
     (item.url === "/loan-products/overview" &&
       pathname.startsWith("/loan-products")) ||
+    (item.url === "/repayments" && pathname.startsWith("/repayments")) ||
     (item.url === "/repayments/overview" &&
       pathname.startsWith("/repayments")) ||
     (item.url === "/support/overview" && pathname.startsWith("/support")) ||

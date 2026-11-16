@@ -43,15 +43,32 @@ export const navMain: NavItem[] = [
   },
   {
     title: "Loan Products",
-    url: "/loan-products/overview",
+    url: "/loan-products",
     icon: "priceTag",
     permission: PERMISSION_KEYS.viewLoanProducts,
+    items: [
+      { title: "Loan Products", url: "/loan-products/overview" },
+      { title: "Tenure", url: "/loan-products/tenures" },
+      {
+        title: "Disbursement",
+        url: "/loan-products/disbursement",
+      },
+      {
+        title: "Loan Progression",
+        url: "/loan-products/progression",
+      },
+    ],
   },
   {
     title: "Repayments",
-    url: "/repayments/overview",
+    url: "/repayments",
     icon: "revenue",
     permission: PERMISSION_KEYS.manageRepayments,
+    items: [
+      { title: "Repayment", url: "/repayments/overview" },
+      { title: "Recovery", url: "/repayments/recovery" },
+      { title: "Transaction", url: "/repayments/transactions" },
+    ],
   },
   {
     title: "Customer Support",

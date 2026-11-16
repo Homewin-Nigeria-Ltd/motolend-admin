@@ -65,16 +65,7 @@ export type LoanProductIntegration = {
 export type CreateLoanProductInput = {
   name: string
   description: string
-  min_amount: number
-  max_amount: number
-  interest_type: string
-  tenure: number
-  tenure_type: string
-  credit_protection_fee: number
   is_active: boolean
-  interest_rate: number
-  processing_fee: number
-  insurance_fee: number
 }
 
 export type LoanProductDetail = {

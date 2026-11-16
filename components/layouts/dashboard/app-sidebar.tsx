@@ -43,7 +43,7 @@ export function AppSidebar({
           </span>
         </div>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="min-h-0 flex-1 overflow-y-auto">
         <NavMain items={filteredNavMain} />
         <NavSupport items={filteredSupport} />
       </SidebarContent>

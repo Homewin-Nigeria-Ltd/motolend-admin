@@ -30,7 +30,7 @@ export type Repayment = {
   customerName: string
   customerEmail: string
   avatarUrl?: string | null
-  loanType: string
+  loanProduct: string
   outstanding: string
   amountPaid: string
   penalties: string

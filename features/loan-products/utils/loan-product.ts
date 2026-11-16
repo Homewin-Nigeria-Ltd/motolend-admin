@@ -171,21 +171,6 @@ function resolveProductId(product: ApiLoanProduct) {
   return `#${product.id}`
 }
 
-function toFiniteNumber(value: unknown): number | undefined {
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return value
-  }
-
-  if (typeof value === "string" && value.trim()) {
-    const parsed = Number(value)
-    if (Number.isFinite(parsed)) {
-      return parsed
-    }
-  }
-
-  return undefined
-}
-
 function toStringValue(value: unknown): string {
   if (typeof value === "string") {
     return value.trim()
@@ -222,16 +207,7 @@ function mapApiLoanProductToFormValues(
   return {
     name: toStringValue(product.name),
     description: toStringValue(product.description),
-    min_amount: toFiniteNumber(product.min_amount),
-    max_amount: toFiniteNumber(product.max_amount),
-    interest_type: toStringValue(product.interest_type),
-    tenure: toFiniteNumber(product.tenure),
-    tenure_type: toStringValue(product.tenure_type),
-    credit_protection_fee: toFiniteNumber(product.credit_protection_fee),
     is_active: toBoolean(product.is_active, true),
-    interest_rate: toFiniteNumber(product.interest_rate),
-    processing_fee: toFiniteNumber(product.processing_fee),
-    insurance_fee: toFiniteNumber(product.insurance_fee),
   }
 }
 

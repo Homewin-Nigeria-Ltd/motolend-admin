@@ -79,6 +79,67 @@ function resolveLoanType(loan: ApiLoanApplication) {
   return product?.name?.trim() || "—"
 }
 
+export function formatRepaymentDate(value: string | null | undefined) {
+  if (!value) {
+    return "—"
+  }
+
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return value
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  }).format(date)
+}
+
+export function formatInterest(value: number | string | null | undefined) {
+  if (value === null || value === undefined || value === "") {
+    return "—"
+  }
+
+  const numeric = typeof value === "number" ? value : Number(value)
+
+  if (Number.isNaN(numeric)) {
+    return `${value}%`
+  }
+
+  return `${numeric}%`
+}
+
+export function resolveEligibilityInterest(
+  review: {
+    interest_rate?: number | string | null
+    risk_analysis?: { interest_rate?: number | string | null }
+  },
+) {
+  return formatInterest(
+    review.interest_rate ?? review.risk_analysis?.interest_rate,
+  )
+}
+
+export function resolveEligibilityRepaymentDate(
+  review: {
+    due_date?: string | null
+    repayment_date?: string | null
+    risk_analysis?: {
+      due_date?: string | null
+      repayment_date?: string | null
+    }
+  },
+) {
+  return formatRepaymentDate(
+    review.repayment_date ??
+      review.due_date ??
+      review.risk_analysis?.repayment_date ??
+      review.risk_analysis?.due_date,
+  )
+}
+
 export function resolveDocumentDownloadUrl(url: string | undefined) {
   if (!url?.trim()) {
     return null
@@ -127,6 +188,8 @@ export function mapApiLoanToApplication(
     avatarUrl: user?.avatar_url ?? null,
     loanType: resolveLoanType(loan),
     principal: formatApplicationAmount(loan.amount),
+    interest: formatInterest(loan.interest_rate),
+    repaymentDate: formatRepaymentDate(loan.due_date),
     totalPayable: formatApplicationAmount(loan.total_repayment),
     status: normalizeApplicationStatus(loan.status),
     userId: loan.user_id,

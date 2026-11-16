@@ -5,6 +5,10 @@ import type { ColumnDef } from "@tanstack/react-table"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import type { ApiEligibilityReviewItem } from "@/features/loan-applications/types"
+import {
+  resolveEligibilityInterest,
+  resolveEligibilityRepaymentDate,
+} from "@/features/loan-applications/utils/application"
 import { formatMoney } from "@/features/users/utils/format-money"
 import { getUserInitials } from "@/utils/get-initials"
 
@@ -85,6 +89,24 @@ export function createEligibilityReviewColumns({
       cell: ({ row }) => (
         <span className="whitespace-nowrap text-foreground">
           {formatMoney(row.original.risk_analysis.eligibility_amount)}
+        </span>
+      ),
+    },
+    {
+      id: "interest",
+      header: "Interest",
+      cell: ({ row }) => (
+        <span className="whitespace-nowrap text-foreground">
+          {resolveEligibilityInterest(row.original)}
+        </span>
+      ),
+    },
+    {
+      id: "repayment_date",
+      header: "Repayment Date",
+      cell: ({ row }) => (
+        <span className="whitespace-nowrap text-muted-foreground">
+          {resolveEligibilityRepaymentDate(row.original)}
         </span>
       ),
     },

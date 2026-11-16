@@ -25,6 +25,10 @@ import {
   type EligibilityReviewDecisionFormValues,
 } from "@/features/loan-applications/schemas/eligibility-review-decision.schema"
 import type { ApiEligibilityReviewItem } from "@/features/loan-applications/types"
+import {
+  resolveEligibilityInterest,
+  resolveEligibilityRepaymentDate,
+} from "@/features/loan-applications/utils/application"
 import { formatMoney } from "@/features/users/utils/format-money"
 
 type EligibilityReviewDecisionDialogProps = {
@@ -116,6 +120,18 @@ export function EligibilityReviewDecisionDialog({
                   {formatMoney(
                     review.risk_analysis.average_monthly_regular_income,
                   )}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Interest</dt>
+                <dd className="font-medium text-foreground">
+                  {resolveEligibilityInterest(review)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Repayment Date</dt>
+                <dd className="font-medium text-foreground">
+                  {resolveEligibilityRepaymentDate(review)}
                 </dd>
               </div>
               <div>

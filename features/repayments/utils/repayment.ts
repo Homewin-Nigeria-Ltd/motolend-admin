@@ -123,7 +123,7 @@ export function mapApiRepayment(
     customerName: resolveCustomerName(repayment),
     customerEmail: displayValue(repayment.user?.email),
     avatarUrl: repayment.user?.profile_photo_url,
-    loanType: resolveLoanType(repayment),
+    loanProduct: resolveLoanType(repayment),
     outstanding: formatRepaymentAmount(repayment.outstanding),
     amountPaid: formatRepaymentAmount(resolveAmountPaid(repayment)),
     penalties: formatRepaymentAmount(repayment.penalties),

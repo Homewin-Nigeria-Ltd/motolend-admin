@@ -39,6 +39,8 @@ export type LoanApplication = {
   avatarUrl?: string | null
   loanType: string
   principal: string
+  interest: string
+  repaymentDate: string
   totalPayable: string
   status: ApplicationStatus | string
   userId: string
@@ -296,6 +298,9 @@ export type ApiEligibilityReviewRiskAnalysis = {
   qualifying_20000_months: number
   monthly_credit_inflows: Record<string, number>
   reasons: string[]
+  interest_rate?: number | string | null
+  due_date?: string | null
+  repayment_date?: string | null
 }
 
 export type ApiEligibilityReviewItem = {
@@ -306,6 +311,9 @@ export type ApiEligibilityReviewItem = {
   manual_review_amount: number | null
   manual_review_notes: string | null
   reviewed_at: string | null
+  interest_rate?: number | string | null
+  due_date?: string | null
+  repayment_date?: string | null
 }
 
 export type ApiEligibilityReviewsResponse = {

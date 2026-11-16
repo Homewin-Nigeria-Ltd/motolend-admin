@@ -78,6 +78,24 @@ export const applicationColumns: ColumnDef<LoanApplication>[] = [
     ),
   },
   {
+    accessorKey: "interest",
+    header: "Interest",
+    cell: ({ row }) => (
+      <span className="whitespace-nowrap text-foreground">
+        {row.original.interest}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "repaymentDate",
+    header: "Repayment Date",
+    cell: ({ row }) => (
+      <span className="whitespace-nowrap text-muted-foreground">
+        {row.original.repaymentDate}
+      </span>
+    ),
+  },
+  {
     accessorKey: "totalPayable",
     header: "Total Payable",
     cell: ({ row }) => (

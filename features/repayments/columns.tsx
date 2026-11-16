@@ -60,11 +60,11 @@ export const repaymentColumns: ColumnDef<Repayment>[] = [
     },
   },
   {
-    accessorKey: "loanType",
-    header: "Loan Type",
+    accessorKey: "loanProduct",
+    header: "Loan Product",
     cell: ({ row }) => (
       <span className="whitespace-nowrap text-foreground">
-        {row.original.loanType}
+        {row.original.loanProduct}
       </span>
     ),
   },
