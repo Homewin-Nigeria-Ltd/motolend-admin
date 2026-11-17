@@ -30,7 +30,7 @@ export function AppSidebar({
   return (
     <Sidebar
       collapsible="icon"
-      className="**:data-[slot=sidebar-inner]:px-4 group-data-[collapsible=icon]:**:data-[slot=sidebar-inner]:px-2"
+      className="**:data-[slot=sidebar-inner]:px-4 group-data-[collapsible=icon]:**:data-[slot=sidebar-inner]:px-2.5"
       {...props}
     >
       <SidebarHeader className="pt-12">
