@@ -28,7 +28,7 @@ export function NotFoundView({ variant = "fullscreen" }: NotFoundViewProps) {
   return (
     <div
       className={cn(
-        "flex flex-1 items-center justify-center bg-white px-4 py-12",
+        "flex flex-1 items-center justify-center bg-background px-4 py-12",
         variant === "fullscreen" && "min-h-[calc(100vh-1px)]",
         variant === "embedded" && "min-h-0"
       )}

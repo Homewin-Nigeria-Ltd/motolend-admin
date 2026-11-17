@@ -60,7 +60,7 @@ export function UsersOverviewSection() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-white p-4 md:gap-8 md:p-6">
+    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-background p-4 md:gap-8 md:p-6">
       {isMetricsError ? (
         <div className="rounded-2xl border border-border bg-background p-4 text-sm text-destructive">
           {metricsError instanceof Error

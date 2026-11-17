@@ -43,7 +43,7 @@ export function EligibilityReviewsSection() {
 
   if (isPending && reviews.length === 0) {
     return (
-      <div className="flex min-h-0 flex-1 items-center justify-center bg-white p-6">
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-background p-6">
         <AppLoader spinnerClassName="size-8" />
       </div>
     )
@@ -51,7 +51,7 @@ export function EligibilityReviewsSection() {
 
   if (isError) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col bg-white p-4 md:p-6">
+      <div className="flex min-h-0 flex-1 flex-col bg-background p-4 md:p-6">
         <EligibilityReviewsToolbar />
         <div className="mt-6 rounded-2xl border border-border bg-background p-6 text-sm text-destructive">
           {error instanceof Error
@@ -63,7 +63,7 @@ export function EligibilityReviewsSection() {
   }
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-white p-4 md:p-6">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-background p-4 md:p-6">
       <section className="min-w-0">
         <DataTable
           columns={columns}

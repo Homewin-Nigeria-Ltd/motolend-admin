@@ -51,7 +51,7 @@ export function RoleDetailSection({ roleId }: RoleDetailSectionProps) {
 
   if (isPending) {
     return (
-      <div className="flex min-h-0 flex-1 items-center justify-center bg-white p-6">
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-background p-6">
         <AppLoader spinnerClassName="size-8" />
       </div>
     )
@@ -59,7 +59,7 @@ export function RoleDetailSection({ roleId }: RoleDetailSectionProps) {
 
   if (isError || !roleDetail) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col bg-white p-4 md:p-6">
+      <div className="flex min-h-0 flex-1 flex-col bg-background p-4 md:p-6">
         <div className="rounded-2xl border border-border bg-background p-6 text-sm text-destructive">
           Role not found.
         </div>
@@ -70,7 +70,7 @@ export function RoleDetailSection({ roleId }: RoleDetailSectionProps) {
   const role = roleDetail.role
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-white p-4 md:p-6">
+    <div className="flex min-h-0 flex-1 flex-col bg-background p-4 md:p-6">
       <div className="mb-4">
         <BackLink href="/settings/role-permissions" label="Roles & Permissions" />
       </div>

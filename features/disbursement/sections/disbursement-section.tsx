@@ -117,7 +117,7 @@ export function DisbursementSection() {
     (isListPending && records.length === 0)
   ) {
     return (
-      <div className="flex min-h-0 flex-1 items-center justify-center bg-white p-6">
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-background p-6">
         <AppLoader spinnerClassName="size-8" />
       </div>
     )
@@ -125,14 +125,14 @@ export function DisbursementSection() {
 
   if (isAllocationError || isListError || !allocationData) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col gap-6 bg-white p-4 md:p-6">
+      <div className="flex min-h-0 flex-1 flex-col gap-6 bg-background p-4 md:p-6">
         <div className="flex items-center gap-2">
           <BackLink href="/loan-products/overview" label="Loan Products" />
           <h2 className="text-base font-semibold text-foreground">
             Disbursement Allocation
           </h2>
         </div>
-        <div className="rounded-2xl border border-border bg-white p-6 text-sm text-destructive">
+        <div className="rounded-2xl border border-border bg-background p-6 text-sm text-destructive">
           {(allocationError ?? listError) instanceof Error
             ? (allocationError ?? listError)?.message
             : "Failed to load disbursements."}
@@ -142,7 +142,7 @@ export function DisbursementSection() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-white p-4 md:gap-8 md:p-6">
+    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-background p-4 md:gap-8 md:p-6">
       <div className="flex items-center gap-2">
         <BackLink href="/loan-products/overview" label="Loan Products" />
         <h2 className="text-base font-semibold text-foreground">
@@ -317,7 +317,7 @@ function DisbursementAllocationForm({
   return (
     <>
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-      <section className="rounded-2xl border border-border bg-white p-5 md:p-6">
+      <section className="rounded-2xl border border-border bg-background p-5 md:p-6">
         <h3 className="text-lg font-semibold text-foreground">Allocation</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Total amount we can disburse in each period.
@@ -446,14 +446,14 @@ function DisbursementAllocationForm({
         </div>
       </section>
 
-      <section className="overflow-hidden rounded-2xl border border-border bg-white">
-        <div className="border-b border-border bg-[#F9F9F9] px-5 py-4 md:px-6">
+      <section className="overflow-hidden rounded-2xl border border-border bg-background">
+        <div className="border-b border-border bg-muted px-5 py-4 md:px-6">
           <h3 className="text-lg font-semibold text-foreground">
             {summary.title}
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">{summary.resetNote}</p>
         </div>
-        <div className="bg-white p-5 md:p-6">
+        <div className="bg-background p-5 md:p-6">
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Disbursed</p>

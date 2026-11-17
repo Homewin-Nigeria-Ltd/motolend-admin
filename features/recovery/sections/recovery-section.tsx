@@ -167,7 +167,7 @@ export function RecoverySection() {
     (isMetricsPending && metrics.length === 0)
   ) {
     return (
-      <div className="flex min-h-0 flex-1 items-center justify-center bg-white p-6">
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-background p-6">
         <AppLoader spinnerClassName="size-8" />
       </div>
     )
@@ -175,7 +175,7 @@ export function RecoverySection() {
 
   if (isError || isStageCountsError || isMetricsError) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col gap-6 bg-white p-4 md:p-6">
+      <div className="flex min-h-0 flex-1 flex-col gap-6 bg-background p-4 md:p-6">
         <div className="flex items-center gap-2">
           <BackLink href="/repayments/overview" label="Repayments" />
           <h2 className="text-base font-semibold text-foreground">Recovery</h2>
@@ -190,7 +190,7 @@ export function RecoverySection() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-white p-4 md:gap-8 md:p-6">
+    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-background p-4 md:gap-8 md:p-6">
       <div className="flex items-center gap-2">
         <BackLink href="/repayments/overview" label="Repayments" />
         <h2 className="text-base font-semibold text-foreground">Recovery</h2>

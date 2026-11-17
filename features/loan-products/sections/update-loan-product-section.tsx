@@ -31,7 +31,7 @@ export function UpdateLoanProductSection({
 
   if (isLoading) {
     return (
-      <div className="flex min-h-0 flex-1 items-center justify-center bg-white p-6">
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-background p-6">
         <AppLoader spinnerClassName="size-8" />
       </div>
     )
@@ -39,7 +39,7 @@ export function UpdateLoanProductSection({
 
   if (isError || !product) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col gap-6 bg-white p-4 md:p-6">
+      <div className="flex min-h-0 flex-1 flex-col gap-6 bg-background p-4 md:p-6">
         <BackLink
           href={`/loan-products/${encodeURIComponent(productId)}`}
           label="Loan Product"
@@ -106,7 +106,7 @@ function UpdateLoanProductForm({
   })
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-white p-4 md:p-6">
+    <div className="flex min-h-0 flex-1 flex-col bg-background p-4 md:p-6">
       <div className="mb-4 flex items-center gap-2">
         <BackLink href={`/loan-products/${productId}`} label="Loan Product" />
         <h2 className="text-base font-semibold text-foreground">

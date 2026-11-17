@@ -7,7 +7,7 @@ export default function AdminUsersPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-0 flex-1 items-center justify-center bg-white p-6">
+        <div className="flex min-h-0 flex-1 items-center justify-center bg-background p-6">
           <AppLoader spinnerClassName="size-8" />
         </div>
       }

@@ -54,7 +54,7 @@ export function TicketsListSection() {
 
   if (isPending && tickets.length === 0) {
     return (
-      <div className="flex min-h-0 flex-1 items-center justify-center bg-white p-6">
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-background p-6">
         <AppLoader spinnerClassName="size-8" />
       </div>
     )
@@ -62,7 +62,7 @@ export function TicketsListSection() {
 
   if (isError) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col bg-white p-4 md:p-6">
+      <div className="flex min-h-0 flex-1 flex-col bg-background p-4 md:p-6">
         <div className="rounded-2xl border border-border bg-background p-6 text-sm text-destructive">
           {error instanceof Error ? error.message : "Failed to load tickets."}
         </div>
@@ -71,7 +71,7 @@ export function TicketsListSection() {
   }
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-white p-4 md:p-6">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-background p-4 md:p-6">
       <section className="min-w-0">
         <DataTable
           columns={ticketColumns}
