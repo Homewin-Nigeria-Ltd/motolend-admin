@@ -71,10 +71,10 @@ export function CreateTenureForm({ form, disabled }: CreateTenureFormProps) {
         <h3 className="text-base font-semibold text-foreground">
           Tenure information
         </h3>
-        <p className="mt-1 text-sm text-muted-foreground">
+        {/* <p className="mt-1 text-sm text-muted-foreground">
           Same as the loan product form, without minimum amount, maximum amount
           and credit protection fee.
-        </p>
+        </p> */}
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <Field>
