@@ -17,8 +17,14 @@ export function DataTablePagination({
   return (
     <div
       data-slot="data-table-pagination"
-      className={cn("flex justify-center py-4", className)}
+      className={cn(
+        "relative flex items-center justify-center px-4 py-4",
+        className,
+      )}
     >
+      <p className="absolute left-4 text-sm text-foreground">
+        Page {page} of {Math.max(totalPages, 1)}
+      </p>
       <PaginationControls
         page={page}
         totalPages={totalPages}

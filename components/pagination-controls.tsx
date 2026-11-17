@@ -1,13 +1,11 @@
 "use client"
 
-import * as React from "react"
-
 import { Icons } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 
 function getVisiblePages(
   currentPage: number,
-  totalPages: number
+  totalPages: number,
 ): (number | "ellipsis")[] {
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -67,14 +65,14 @@ export function PaginationControls({
   return (
     <nav
       aria-label="Pagination"
-      className={cn("flex items-center justify-center gap-3", className)}
+      className={cn("flex items-center justify-center gap-2 sm:gap-3", className)}
     >
       <button
         type="button"
         aria-label="Previous page"
         disabled={page <= 1}
         onClick={() => goToPage(page - 1)}
-        className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
+        className="flex size-9 shrink-0 items-center justify-center rounded-full border border-primary bg-background text-primary transition-colors hover:bg-primary/5 disabled:pointer-events-none disabled:opacity-40"
       >
         <Icons.chevronRight size={18} className="rotate-180" />
       </button>
@@ -96,15 +94,15 @@ export function PaginationControls({
             aria-current={item === page ? "page" : undefined}
             onClick={() => goToPage(item)}
             className={cn(
-              "flex size-9 shrink-0 items-center justify-center rounded-full text-sm transition-colors",
+              "flex size-9 shrink-0 items-center justify-center text-sm transition-colors",
               item === page
-                ? "bg-primary font-medium text-primary-foreground"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                ? "rounded-full border border-primary bg-primary/10 font-semibold text-foreground"
+                : "rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
             {item}
           </button>
-        )
+        ),
       )}
 
       <button
@@ -112,7 +110,7 @@ export function PaginationControls({
         aria-label="Next page"
         disabled={page >= totalPages}
         onClick={() => goToPage(page + 1)}
-        className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
+        className="flex size-9 shrink-0 items-center justify-center rounded-full border border-primary bg-background text-primary transition-colors hover:bg-primary/5 disabled:pointer-events-none disabled:opacity-40"
       >
         <Icons.chevronRight size={18} />
       </button>
