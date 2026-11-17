@@ -22,7 +22,7 @@ export function StatSummaryCard({
   const isUp = trend === "up"
 
   return (
-    <div className="flex min-h-[7.5rem] flex-col justify-between gap-5 rounded-2xl border border-border bg-background p-5 shadow-sm">
+    <div className="flex h-full min-h-[7.5rem] flex-col justify-between gap-5 rounded-2xl border border-border bg-background p-4">
       <div className="flex items-start justify-between gap-3">
         <p className="text-sm font-medium text-foreground">{label}</p>
         <span
