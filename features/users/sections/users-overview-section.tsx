@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 import { DataTable } from "@/components/data-table"
-import { userColumns } from "@/features/users/columns"
+import { adminUserColumns, userColumns } from "@/features/users/columns"
 import { CreateAdminUserDialog } from "@/features/users/components/create-admin-user-dialog"
 import { UserSummaryCards } from "@/features/users/components/user-summary-cards"
 import { UserToolbar } from "@/features/users/components/user-toolbar"
@@ -80,7 +80,7 @@ export function UsersOverviewSection() {
         </div>
       ) : (
         <DataTable
-          columns={userColumns}
+          columns={tab === "admin" ? adminUserColumns : userColumns}
           data={users}
           page={currentPage}
           totalPages={totalPages}

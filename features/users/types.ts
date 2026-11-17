@@ -176,6 +176,8 @@ export type UserRecord = {
   id: string
   createdAt: string
   name: string
+  firstName: string
+  lastName: string
   email: string
   accountNumber: string
   repaymentAccount: string

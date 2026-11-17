@@ -4,19 +4,20 @@ import { useState } from "react"
 
 import { BackLink } from "@/components/back-link"
 import { Button } from "@/components/ui/button"
+import { RadioGroup } from "@/components/ui/radio-group"
 import { PartnerToggleCard } from "@/features/channel/components/partner-toggle-card"
 import { channelServices as initialServices } from "@/features/channel/data/mock-channel"
 import type { ChannelService } from "@/features/channel/types"
 import { toast } from "@/lib/toast"
 
+function getSelectedPartnerId(service: ChannelService) {
+  return service.partners.find((partner) => partner.enabled)?.id ?? ""
+}
+
 export function ChannelSection() {
   const [services, setServices] = useState<ChannelService[]>(initialServices)
 
-  function togglePartner(
-    serviceId: string,
-    partnerId: string,
-    enabled: boolean,
-  ) {
+  function selectPartner(serviceId: string, partnerId: string) {
     setServices((current) =>
       current.map((service) => {
         if (service.id !== serviceId) {
@@ -25,24 +26,15 @@ export function ChannelSection() {
 
         return {
           ...service,
-          partners: service.partners.map((partner) => {
-            if (partner.id !== partnerId) {
-              return partner
-            }
-
-            return {
-              ...partner,
-              enabled,
-              lastCallLabel: enabled ? "On · last call just now" : null,
-            }
-          }),
+          partners: service.partners.map((partner) => ({
+            ...partner,
+            enabled: partner.id === partnerId,
+          })),
         }
       }),
     )
 
-    toast.success(
-      enabled ? "Partner turned on for new requests" : "Partner turned off",
-    )
+    toast.success("Partner selected for new requests")
   }
 
   return (
@@ -59,8 +51,8 @@ export function ChannelSection() {
               API partners
             </h3>
             <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-              Turn a partner on to route that service through it. Changes apply
-              to new requests immediately.
+              Choose one partner per service. Changes apply to new requests
+              immediately.
             </p>
           </div>
           <Button
@@ -95,19 +87,23 @@ export function ChannelSection() {
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-3">
+              <RadioGroup
+                value={getSelectedPartnerId(service)}
+                onValueChange={(partnerId) =>
+                  selectPartner(service.id, partnerId)
+                }
+                className="flex flex-wrap gap-3"
+              >
                 {service.partners.map((partner) => (
                   <PartnerToggleCard
                     key={partner.id}
+                    id={`${service.id}-${partner.id}`}
+                    value={partner.id}
                     name={partner.name}
-                    enabled={partner.enabled}
-                    lastCallLabel={partner.lastCallLabel}
-                    onToggle={(enabled) =>
-                      togglePartner(service.id, partner.id, enabled)
-                    }
+                    selected={partner.enabled}
                   />
                 ))}
-              </div>
+              </RadioGroup>
             </div>
           ))}
         </div>

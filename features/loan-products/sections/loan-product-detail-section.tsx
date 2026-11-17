@@ -2,10 +2,10 @@
 
 import { BackLink } from "@/components/back-link"
 import { AppLoader } from "@/components/ui/app-loader"
-import { LoanProductApprovalWorkflowCard } from "@/features/loan-products/components/loan-product-approval-workflow-card"
+// import { LoanProductApprovalWorkflowCard } from "@/features/loan-products/components/loan-product-approval-workflow-card"
 import { LoanProductDetailHeader } from "@/features/loan-products/components/loan-product-detail-header"
 import { LoanProductInfoCard } from "@/features/loan-products/components/loan-product-info-card"
-import { LoanProductIntegrationsCard } from "@/features/loan-products/components/loan-product-integrations-card"
+// import { LoanProductIntegrationsCard } from "@/features/loan-products/components/loan-product-integrations-card"
 // import { LoanProductTiersCard } from "@/features/loan-products/components/loan-product-tiers-card"
 import { useLoanProductDetail } from "@/features/loan-products/hooks/use-loan-product-queries"
 
@@ -62,7 +62,7 @@ export function LoanProductDetailSection({
           title="Loan Amount & Duration"
           rows={product.loanAmountDuration}
         /> */}
-        <LoanProductInfoCard title="Interest & Fees" rows={product.interestFees} />
+        {/* <LoanProductInfoCard title="Interest & Fees" rows={product.interestFees} /> */}
         {/* <LoanProductInfoCard
           title="Repayment Rules"
           rows={product.repaymentRules}
@@ -77,7 +77,7 @@ export function LoanProductDetailSection({
         /> */}
       </div>
 
-      <LoanProductApprovalWorkflowCard workflows={product.approvalWorkflow} />
+      {/* <LoanProductApprovalWorkflowCard workflows={product.approvalWorkflow} /> */}
 
       {/* <div className="grid gap-4 xl:grid-cols-2">
         <LoanProductInfoCard
@@ -86,7 +86,7 @@ export function LoanProductDetailSection({
         />
       </div> */}
 
-      <LoanProductIntegrationsCard integrations={product.integrations} />
+      {/* <LoanProductIntegrationsCard integrations={product.integrations} /> */}
 
       {/* <LoanProductTiersCard tiers={product.tiers} /> */}
     </div>

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 
 import { DataTable } from "@/components/data-table"
 import { AppLoader } from "@/components/ui/app-loader"
-import { userColumns } from "@/features/users/columns"
+import { adminUserColumns, userColumns } from "@/features/users/columns"
 import { CreateAdminUserDialog } from "@/features/users/components/create-admin-user-dialog"
 import { UserToolbar, ALL_ROLES_VALUE } from "@/features/users/components/user-toolbar"
 import { UsersListToolbar } from "@/features/users/components/users-list-toolbar"
@@ -104,7 +104,7 @@ export function UsersListSection({
     <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-muted p-4 md:p-6">
       <section className="min-w-0">
         <DataTable
-          columns={userColumns}
+          columns={tab === "admin" ? adminUserColumns : userColumns}
           data={users}
           page={currentPage}
           totalPages={totalPages}

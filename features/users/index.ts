@@ -1,4 +1,4 @@
-export { userColumns } from "./columns"
+export { adminUserColumns, userColumns } from "./columns"
 export { UserDetailSection } from "./sections/user-detail-section"
 export { UsersOverviewSection } from "./sections/users-overview-section"
 export { UsersListSection } from "./sections/users-list-section"

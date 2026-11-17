@@ -6,24 +6,9 @@ export const channelServices: ChannelService[] = [
     name: "KYC",
     description: "Identity checks with NIN and BVN",
     partners: [
-      {
-        id: "dojah",
-        name: "Dojah",
-        enabled: true,
-        lastCallLabel: "On · last call 2 min ago",
-      },
-      {
-        id: "smile-id",
-        name: "Smile ID",
-        enabled: false,
-        lastCallLabel: null,
-      },
-      {
-        id: "prembly",
-        name: "Prembly",
-        enabled: true,
-        lastCallLabel: "On · last call 2 min ago",
-      },
+      { id: "dojah", name: "Dojah", enabled: true },
+      { id: "smile-id", name: "Smile ID", enabled: false },
+      { id: "prembly", name: "Prembly", enabled: false },
     ],
   },
   {
@@ -31,24 +16,9 @@ export const channelServices: ChannelService[] = [
     name: "Credit Bureau",
     description: "Credit history before approval",
     partners: [
-      {
-        id: "crc",
-        name: "CRC Credit Bureau",
-        enabled: true,
-        lastCallLabel: "On · last call 2 min ago",
-      },
-      {
-        id: "firstcentral",
-        name: "FirstCentral",
-        enabled: true,
-        lastCallLabel: "On · last call 2 min ago",
-      },
-      {
-        id: "creditregistry",
-        name: "CreditRegistry",
-        enabled: false,
-        lastCallLabel: null,
-      },
+      { id: "crc", name: "CRC Credit Bureau", enabled: true },
+      { id: "firstcentral", name: "FirstCentral", enabled: false },
+      { id: "creditregistry", name: "CreditRegistry", enabled: false },
     ],
   },
   {
@@ -56,18 +26,8 @@ export const channelServices: ChannelService[] = [
     name: "Open Banking",
     description: "Bank statement and income checks",
     partners: [
-      {
-        id: "mono",
-        name: "Mono",
-        enabled: true,
-        lastCallLabel: "On · last call 2 min ago",
-      },
-      {
-        id: "okra",
-        name: "Okra",
-        enabled: false,
-        lastCallLabel: null,
-      },
+      { id: "mono", name: "Mono", enabled: true },
+      { id: "okra", name: "Okra", enabled: false },
     ],
   },
   {
@@ -75,24 +35,9 @@ export const channelServices: ChannelService[] = [
     name: "Deposit",
     description: "Payments coming in",
     partners: [
-      {
-        id: "paystack-deposit",
-        name: "Paystack",
-        enabled: true,
-        lastCallLabel: "On · last call 2 min ago",
-      },
-      {
-        id: "monnify-deposit",
-        name: "Monnify",
-        enabled: true,
-        lastCallLabel: "On · last call 2 min ago",
-      },
-      {
-        id: "palmpay-deposit",
-        name: "Palmpay",
-        enabled: false,
-        lastCallLabel: null,
-      },
+      { id: "paystack-deposit", name: "Paystack", enabled: true },
+      { id: "monnify-deposit", name: "Monnify", enabled: false },
+      { id: "palmpay-deposit", name: "Palmpay", enabled: false },
     ],
   },
   {
@@ -100,24 +45,9 @@ export const channelServices: ChannelService[] = [
     name: "Withdrawal",
     description: "Loan payouts to customers",
     partners: [
-      {
-        id: "palmpay-withdrawal",
-        name: "Palmpay",
-        enabled: true,
-        lastCallLabel: "On · last call 2 min ago",
-      },
-      {
-        id: "monnify-withdrawal",
-        name: "Monnify",
-        enabled: false,
-        lastCallLabel: null,
-      },
-      {
-        id: "paylode",
-        name: "Paylode",
-        enabled: false,
-        lastCallLabel: null,
-      },
+      { id: "palmpay-withdrawal", name: "Palmpay", enabled: true },
+      { id: "monnify-withdrawal", name: "Monnify", enabled: false },
+      { id: "paylode", name: "Paylode", enabled: false },
     ],
   },
 ]

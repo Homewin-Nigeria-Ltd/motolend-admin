@@ -94,3 +94,46 @@ export const userColumns: ColumnDef<UserRecord>[] = [
     cell: ({ row }) => <UserStatusBadge status={row.original.status} />,
   },
 ]
+
+export const adminUserColumns: ColumnDef<UserRecord>[] = [
+  {
+    accessorKey: "firstName",
+    header: "First Name",
+    cell: ({ row }) => (
+      <Link
+        href={`/users/${row.original.id}`}
+        onClick={(event) => event.stopPropagation()}
+        className="whitespace-nowrap font-medium text-foreground underline-offset-4 hover:underline"
+      >
+        {row.original.firstName}
+      </Link>
+    ),
+  },
+  {
+    accessorKey: "lastName",
+    header: "Last Name",
+    cell: ({ row }) => (
+      <span className="whitespace-nowrap text-foreground">
+        {row.original.lastName}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "email",
+    header: "Email",
+    cell: ({ row }) => (
+      <span className="whitespace-nowrap text-foreground">
+        {row.original.email}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "role",
+    header: "Role",
+    cell: ({ row }) => (
+      <span className="whitespace-nowrap text-foreground">
+        {row.original.role}
+      </span>
+    ),
+  },
+]

@@ -173,6 +173,8 @@ export function mapApiUserToUserRecord(user: ApiAdminUser): UserRecord {
     id: user.id,
     createdAt: formatUserCreatedAt(user.created_at),
     name: getApiUserDisplayName(user),
+    firstName: user.first_name?.trim() || "—",
+    lastName: user.last_name?.trim() || "—",
     email: user.email,
     accountNumber: user.profile?.account_number ?? "—",
     repaymentAccount: resolveRepaymentAccount(user),

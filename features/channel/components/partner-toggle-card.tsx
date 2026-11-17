@@ -1,41 +1,33 @@
 "use client"
 
-import { Switch } from "@/components/ui/switch"
+import { RadioGroupItem } from "@/components/ui/radio-group"
 import { cn } from "@/lib/utils"
 
 type PartnerToggleCardProps = {
+  id: string
+  value: string
   name: string
-  enabled: boolean
-  lastCallLabel: string | null
-  onToggle: (enabled: boolean) => void
+  selected: boolean
 }
 
 export function PartnerToggleCard({
+  id,
+  value,
   name,
-  enabled,
-  lastCallLabel,
-  onToggle,
+  selected,
 }: PartnerToggleCardProps) {
   return (
-    <div
+    <label
+      htmlFor={id}
       className={cn(
-        "flex min-w-[180px] flex-1 items-center justify-between gap-3 rounded-xl border px-4 py-3",
-        enabled
+        "flex min-w-[180px] flex-1 cursor-pointer items-center justify-between gap-3 rounded-xl border px-4 py-3 transition-colors",
+        selected
           ? "border-foreground/20 bg-background"
-          : "border-transparent bg-muted",
+          : "border-transparent bg-muted hover:bg-muted/80",
       )}
     >
-      <div className="min-w-0">
-        <p className="truncate text-sm font-semibold text-foreground">{name}</p>
-        <p className="mt-0.5 truncate text-xs text-muted-foreground">
-          {enabled ? lastCallLabel ?? "On" : "Off"}
-        </p>
-      </div>
-      <Switch
-        checked={enabled}
-        onCheckedChange={onToggle}
-        aria-label={`Toggle ${name}`}
-      />
-    </div>
+      <p className="truncate text-sm font-semibold text-foreground">{name}</p>
+      <RadioGroupItem id={id} value={value} aria-label={`Select ${name}`} />
+    </label>
   )
 }

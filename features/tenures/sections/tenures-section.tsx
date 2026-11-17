@@ -6,6 +6,7 @@ import { useMemo, useState } from "react"
 
 import { BackLink } from "@/components/back-link"
 import { DataTable } from "@/components/data-table"
+import { BaseAlertDialog } from "@/components/ui/base-alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
@@ -14,7 +15,7 @@ import { TenureFilterTabs } from "@/features/tenures/components/tenure-filter-ta
 import { TenureSummaryCards } from "@/features/tenures/components/tenure-summary-cards"
 import {
   tenureMetrics,
-  tenureRecords,
+  tenureRecords as initialTenureRecords,
 } from "@/features/tenures/data/mock-tenures"
 import type { TenureRecord, TenureTab } from "@/features/tenures/types"
 
@@ -23,12 +24,19 @@ export function TenuresSection() {
   const [tab, setTab] = useState<TenureTab>("all")
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
+  const [records, setRecords] = useState(initialTenureRecords)
+  const [tenureToDelete, setTenureToDelete] = useState<TenureRecord | null>(
+    null,
+  )
 
   const columns = useMemo(
     () =>
       getTenureColumns({
         onEdit: (tenure: TenureRecord) => {
           router.push(`/loan-products/tenures/${tenure.id}/edit`)
+        },
+        onDelete: (tenure: TenureRecord) => {
+          setTenureToDelete(tenure)
         },
       }),
     [router],
@@ -37,7 +45,7 @@ export function TenuresSection() {
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase()
 
-    return tenureRecords.filter((item) => {
+    return records.filter((item) => {
       if (tab !== "all" && item.status !== tab) {
         return false
       }
@@ -53,7 +61,7 @@ export function TenuresSection() {
         item.interestType.toLowerCase().includes(query)
       )
     })
-  }, [search, tab])
+  }, [records, search, tab])
 
   const pageSize = 15
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
@@ -62,6 +70,15 @@ export function TenuresSection() {
     (currentPage - 1) * pageSize,
     currentPage * pageSize,
   )
+
+  const handleConfirmDelete = () => {
+    if (!tenureToDelete) return
+
+    setRecords((current) =>
+      current.filter((item) => item.id !== tenureToDelete.id),
+    )
+    setTenureToDelete(null)
+  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6 bg-muted p-4 md:gap-8 md:p-6">
@@ -132,6 +149,27 @@ export function TenuresSection() {
         Active tenures are what the mobile app shows when a customer picks how
         long to borrow for.
       </div>
+
+      <BaseAlertDialog
+        title="Delete Tenure"
+        open={tenureToDelete != null}
+        onOpenChange={(open) => {
+          if (!open) setTenureToDelete(null)
+        }}
+        confirmLabel="Delete"
+        confirmVariant="destructive"
+        onConfirm={handleConfirmDelete}
+        headerIcon={<Icons.alert size={28} className="text-destructive" />}
+        className="sm:max-w-md"
+      >
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          Are you sure you want to delete{" "}
+          <span className="font-medium text-foreground">
+            {tenureToDelete?.name}
+          </span>
+          ? This action cannot be undone.
+        </p>
+      </BaseAlertDialog>
     </div>
   )
 }

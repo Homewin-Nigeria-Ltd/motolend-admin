@@ -15,10 +15,12 @@ import { cn } from "@/lib/utils"
 
 type TenureColumnsOptions = {
   onEdit: (tenure: TenureRecord) => void
+  onDelete: (tenure: TenureRecord) => void
 }
 
 export function getTenureColumns({
   onEdit,
+  onDelete,
 }: TenureColumnsOptions): ColumnDef<TenureRecord>[] {
   return [
     {
@@ -104,6 +106,15 @@ export function getTenureColumns({
               }}
             >
               Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={(event) => {
+                event.stopPropagation()
+                onDelete(row.original)
+              }}
+            >
+              Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
