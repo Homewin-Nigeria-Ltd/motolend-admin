@@ -16,15 +16,6 @@ export const loanProductColumns: ColumnDef<LoanProduct>[] = [
     ),
   },
   {
-    accessorKey: "amountRange",
-    header: "Amount Range",
-    cell: ({ row }) => (
-      <span className="whitespace-nowrap text-foreground">
-        {row.original.amountRange}
-      </span>
-    ),
-  },
-  {
     accessorKey: "interest",
     header: "Interest",
     cell: ({ row }) => (

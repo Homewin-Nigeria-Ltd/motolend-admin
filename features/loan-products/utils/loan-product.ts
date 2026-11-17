@@ -70,12 +70,17 @@ function infoRow(
 }
 
 export function normalizeLoanProductStatus(
-  product: Pick<ApiLoanProduct, "is_active" | "details">,
+  product: Pick<ApiLoanProduct, "is_active" | "status" | "details">,
 ): LoanProductStatus {
   const headerStatus = product.details?.header?.status?.trim().toLowerCase()
 
   if (headerStatus === "active" || headerStatus === "inactive") {
     return headerStatus
+  }
+
+  const status = product.status?.trim().toLowerCase()
+  if (status === "active" || status === "inactive") {
+    return status
   }
 
   return product.is_active === true ? "active" : "inactive"
@@ -98,33 +103,39 @@ function isApiLoanProduct(value: unknown): value is ApiLoanProduct {
   )
 }
 
-function resolveAmountRange(product: ApiLoanProduct) {
-  const details = product.details?.loan_amount_and_duration
-
-  const minAmount = details?.min_amount ?? product.min_amount
-  const maxAmount = details?.max_amount ?? product.max_amount
-
-  if (
-    minAmount !== undefined &&
-    minAmount !== null &&
-    maxAmount !== undefined &&
-    maxAmount !== null
-  ) {
-    return `${formatAmount(minAmount)} - ${formatAmount(maxAmount)}`
-  }
-
-  return "—"
+function resolveLinkedTenures(product: ApiLoanProduct) {
+  return product.tenures ?? []
 }
 
 function resolveInterest(product: ApiLoanProduct) {
-  const detailsRate = product.details?.interest_and_fees?.interest_rate
+  if (product.interest?.trim()) {
+    return product.interest.trim()
+  }
 
+  const detailsRate = product.details?.interest_and_fees?.interest_rate
   if (detailsRate?.trim()) {
     return detailsRate.trim()
   }
 
-  const tierRate = product.tiers?.[0]?.interest_rate
+  if (product.interest_rate !== undefined && product.interest_rate !== null) {
+    return `${formatAmount(product.interest_rate)}%`
+  }
 
+  const tenureRates = resolveLinkedTenures(product)
+    .map(
+      (tenure) =>
+        tenure.interest_rate_label?.trim() ||
+        (tenure.interest_rate != null
+          ? `${formatAmount(tenure.interest_rate)}%`
+          : ""),
+    )
+    .filter(Boolean)
+
+  if (tenureRates.length > 0) {
+    return Array.from(new Set(tenureRates)).join(" · ")
+  }
+
+  const tierRate = product.tiers?.[0]?.interest_rate
   if (tierRate !== undefined && tierRate !== null) {
     return `${formatAmount(tierRate)}%`
   }
@@ -134,7 +145,6 @@ function resolveInterest(product: ApiLoanProduct) {
 
 function resolveTenure(product: ApiLoanProduct) {
   const detailsTenure = product.details?.loan_amount_and_duration?.loan_tenure
-
   if (detailsTenure?.trim()) {
     return detailsTenure.trim()
   }
@@ -145,6 +155,21 @@ function resolveTenure(product: ApiLoanProduct) {
 
   if (product.tenure != null) {
     return String(product.tenure)
+  }
+
+  const linkedTenures = resolveLinkedTenures(product)
+    .map((tenure) => {
+      if (tenure.tenure == null) return ""
+      const typeLabel =
+        tenure.tenure_type_label?.trim() ||
+        tenure.tenure_type?.trim() ||
+        ""
+      return typeLabel ? `${tenure.tenure} ${typeLabel}` : String(tenure.tenure)
+    })
+    .filter(Boolean)
+
+  if (linkedTenures.length > 0) {
+    return Array.from(new Set(linkedTenures)).join(" · ")
   }
 
   return "—"
@@ -218,7 +243,6 @@ export function mapApiLoanProduct(product: ApiLoanProduct): LoanProduct {
     description: displayValue(
       product.details?.overview?.description ?? product.description,
     ),
-    amountRange: resolveAmountRange(product),
     interest: resolveInterest(product),
     tenure: resolveTenure(product),
     status: normalizeLoanProductStatus(product),
@@ -265,25 +289,7 @@ export function mapApiLoanProductDetail(
     name: displayValue(details?.header?.name ?? product.name),
     status: normalizeLoanProductStatus(product),
     overview: [
-      // infoRow("Category", overview?.category ?? product.category),
       infoRow("Description", overview?.description ?? product.description),
-      // infoRow("Age", overview?.age),
-      // infoRow("Location", overview?.location),
-      // infoRow("Employment Status", overview?.employment_status),
-      // infoRow("Credit Score", overview?.credit_score),
-      infoRow(
-        "Min Loan Amount",
-        loanAmountDuration?.min_amount ?? product.min_amount,
-      ),
-      infoRow(
-        "Max Loan Amount",
-        loanAmountDuration?.max_amount ?? product.max_amount,
-      ),
-      // infoRow(
-      //   "Step Increments",
-      //   loanAmountDuration?.step_increments ?? product.amount_increment,
-      // ),
-      infoRow("Currency", loanAmountDuration?.currency ?? product.currency),
       infoRow(
         "Loan Tenure",
         loanAmountDuration?.loan_tenure ??
@@ -291,18 +297,6 @@ export function mapApiLoanProductDetail(
             ? `${product.tenure} ${product.tenure_type}`
             : product.tenure),
       ),
-      // infoRow(
-      //   "Repayment Frequency",
-      //   loanAmountDuration?.repayment_frequency ?? product.repayment_frequency,
-      // ),
-      // infoRow(
-      //   "Grace Period",
-      //   loanAmountDuration?.grace_period ?? product.grace_period,
-      // ),
-      // infoRow(
-      //   "Loan Start Date Rule",
-      //   loanAmountDuration?.loan_start_date_rule ?? product.start_date_rules,
-      // ),
     ],
     loanAmountDuration: [
       // infoRow(

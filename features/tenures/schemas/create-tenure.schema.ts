@@ -31,7 +31,9 @@ function requiredNonNegativeNumber(message: string) {
 export const createTenureSchema = z.object({
   name: z.string().trim().min(1, "Tenure name is required"),
   code: z.string().trim().min(1, "Tenure code is required"),
-  linked_products: z.array(z.string()).min(1, "Select at least one product"),
+  loan_product_ids: z
+    .array(z.string())
+    .min(1, "Select at least one product"),
   description: z.string().trim().min(1, "Description is required"),
   tenure: requiredPositiveNumber("Tenure must be greater than 0").refine(
     (value) => Number.isInteger(value),
@@ -87,7 +89,7 @@ export type CreateTenureFormValues = z.output<typeof createTenureSchema>
 export const createTenureFormDefaults: CreateTenureFormInput = {
   name: "",
   code: "",
-  linked_products: [],
+  loan_product_ids: [],
   description: "",
   tenure: undefined,
   tenure_type: "",

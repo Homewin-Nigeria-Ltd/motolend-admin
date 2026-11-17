@@ -56,11 +56,17 @@ async function forwardRequest(
 
   const responseContentType =
     response.headers.get("content-type") ?? "application/json"
+  const contentDisposition = response.headers.get("content-disposition")
   const responseBody = await response.text()
 
   return new NextResponse(responseBody, {
     status: response.status,
-    headers: { "Content-Type": responseContentType },
+    headers: {
+      "Content-Type": responseContentType,
+      ...(contentDisposition
+        ? { "Content-Disposition": contentDisposition }
+        : {}),
+    },
   })
 }
 

@@ -33,21 +33,34 @@ export const transactionColumns: ColumnDef<TransactionRecord>[] = [
   {
     accessorKey: "customerName",
     header: "Customer Name",
-    cell: ({ row }) => (
-      <Link
-        href={`/users/${row.original.userId}`}
-        className="flex items-center gap-3 hover:opacity-80"
-      >
-        <Avatar className="size-10">
-          <AvatarFallback className="bg-primary text-sm font-medium text-primary-foreground">
-            {getUserInitials(row.original.customerName)}
-          </AvatarFallback>
-        </Avatar>
-        <span className="truncate font-medium text-foreground underline-offset-4 hover:underline">
-          {row.original.customerName}
-        </span>
-      </Link>
-    ),
+    cell: ({ row }) => {
+      const record = row.original
+      const content = (
+        <>
+          <Avatar className="size-10">
+            <AvatarFallback className="bg-primary text-sm font-medium text-primary-foreground">
+              {record.customerInitials || getUserInitials(record.customerName)}
+            </AvatarFallback>
+          </Avatar>
+          <span className="truncate font-medium text-foreground underline-offset-4 hover:underline">
+            {record.customerName}
+          </span>
+        </>
+      )
+
+      if (!record.userId || record.userId === "—") {
+        return <div className="flex items-center gap-3">{content}</div>
+      }
+
+      return (
+        <Link
+          href={`/users/${record.userId}`}
+          className="flex items-center gap-3 hover:opacity-80"
+        >
+          {content}
+        </Link>
+      )
+    },
   },
   {
     accessorKey: "loanProduct",

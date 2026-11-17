@@ -5,19 +5,17 @@ import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 
 import { BackLink } from "@/components/back-link"
+import { AppLoader } from "@/components/ui/app-loader"
 import { Button } from "@/components/ui/button"
 import { CreateTenureForm } from "@/features/tenures/components/create-tenure-form"
-import { tenureRecords } from "@/features/tenures/data/mock-tenures"
+import { useUpdateLoanTenure } from "@/features/tenures/hooks/use-loan-tenure-mutations"
+import { useLoanTenureDetail } from "@/features/tenures/hooks/use-loan-tenure-queries"
 import {
   createTenureSchema,
   type CreateTenureFormInput,
   type CreateTenureFormValues,
 } from "@/features/tenures/schemas/create-tenure.schema"
-import {
-  findTenureById,
-  mapTenureRecordToFormValues,
-} from "@/features/tenures/utils/map-tenure-to-form"
-import { toast } from "@/lib/toast"
+import { buildCreateLoanTenurePayload } from "@/features/tenures/utils/build-tenure-payload"
 
 type EditTenureSectionProps = {
   tenureId: string
@@ -25,9 +23,18 @@ type EditTenureSectionProps = {
 
 export function EditTenureSection({ tenureId }: EditTenureSectionProps) {
   const router = useRouter()
-  const tenure = findTenureById(tenureId, tenureRecords)
+  const { data: tenure, isPending, isError, error } =
+    useLoanTenureDetail(tenureId)
 
-  if (!tenure) {
+  if (isPending) {
+    return (
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-muted p-6">
+        <AppLoader spinnerClassName="size-8" />
+      </div>
+    )
+  }
+
+  if (isError || !tenure) {
     return (
       <div className="flex min-h-0 flex-1 flex-col gap-6 bg-muted p-4 md:p-6">
         <div className="flex items-center gap-2">
@@ -37,7 +44,7 @@ export function EditTenureSection({ tenureId }: EditTenureSectionProps) {
           </h2>
         </div>
         <div className="rounded-2xl border border-border bg-background p-6 text-sm text-destructive">
-          Tenure not found.
+          {error instanceof Error ? error.message : "Tenure not found."}
         </div>
       </div>
     )
@@ -47,7 +54,7 @@ export function EditTenureSection({ tenureId }: EditTenureSectionProps) {
     <EditTenureForm
       key={tenure.id}
       tenureId={tenure.id}
-      defaultValues={mapTenureRecordToFormValues(tenure)}
+      defaultValues={tenure.formValues}
       onCancel={() => router.push("/loan-products/tenures")}
       onSuccess={() => router.push("/loan-products/tenures")}
     />
@@ -67,6 +74,8 @@ function EditTenureForm({
   onCancel,
   onSuccess,
 }: EditTenureFormProps) {
+  const { updateLoanTenure, isPending } = useUpdateLoanTenure()
+
   const form = useForm<
     CreateTenureFormInput,
     unknown,
@@ -76,10 +85,15 @@ function EditTenureForm({
     defaultValues,
   })
 
-  const handleSubmit = form.handleSubmit(async () => {
-    void tenureId
-    toast.success("Tenure updated")
-    onSuccess()
+  const handleSubmit = form.handleSubmit(async (values) => {
+    const result = await updateLoanTenure({
+      id: tenureId,
+      ...buildCreateLoanTenurePayload(values),
+    })
+
+    if (result.success) {
+      onSuccess()
+    }
   })
 
   return (
@@ -93,13 +107,20 @@ function EditTenureForm({
 
       <div className="rounded-2xl border border-border bg-background p-5 md:p-8">
         <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-          <CreateTenureForm form={form} />
+          <CreateTenureForm form={form} disabled={isPending} />
 
           <div className="flex flex-wrap items-center gap-3">
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isPending}
+            >
               Cancel
             </Button>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Saving..." : "Save changes"}
+            </Button>
           </div>
         </form>
       </div>

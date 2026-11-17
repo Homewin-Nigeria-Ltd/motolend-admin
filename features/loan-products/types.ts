@@ -30,7 +30,6 @@ export type LoanProduct = {
   id: string
   name: string
   description: string
-  amountRange: string
   interest: string
   tenure: string
   status: LoanProductStatus
@@ -123,6 +122,30 @@ export type ApiLoanProductTier = {
   min_amount: number | string
   max_amount: number | string
   interest_rate: number | string
+  created_at?: string | null
+  updated_at?: string | null
+}
+
+export type ApiLoanProductLinkedTenure = {
+  id?: number | string
+  name?: string | null
+  code?: string | null
+  description?: string | null
+  tenure?: number | string | null
+  tenure_type?: string | null
+  tenure_type_label?: string | null
+  repayment_frequency?: string | null
+  interest_type?: string | null
+  interest_type_label?: string | null
+  interest_frequency?: string | null
+  interest_rate?: number | string | null
+  interest_rate_label?: string | null
+  processing_fee?: number | string | null
+  processing_fee_label?: string | null
+  insurance_fee?: number | string | null
+  insurance_fee_label?: string | null
+  is_active?: boolean | null
+  status?: string | null
   created_at?: string | null
   updated_at?: string | null
 }
@@ -230,46 +253,50 @@ export type ApiLoanProductDetails = {
 export type ApiLoanProduct = {
   id: number
   name: string
-  description: string | null
-  min_amount: string | number | null
-  max_amount: string | number | null
-  interest_type: string | null
-  tenure: number | null
-  tenure_type: string | null
-  credit_protection_fee: string | number | null
-  is_active: boolean
-  created_at: string | null
-  updated_at: string | null
-  deleted_at: string | null
-  code: string | null
-  category: string | null
-  eligibility_criteria: ApiLoanProductEligibilityCriteria | null
-  amount_increment: string | number | null
-  currency: string | null
-  repayment_frequency: string | null
-  grace_period: string | null
-  start_date_rules: string | null
-  interest_rate: string | number | null
-  processing_fee: string | number | null
-  late_payment_fee: string | number | null
-  early_settlement_fee: string | number | null
-  insurance_fee: string | number | null
-  repayment_methods: string[] | null
-  payment_allocation: string | null
-  partial_payment_allowed: string | null
-  overpayment_handling: string | null
-  auto_debit_settings: string | null
-  collateral_required: boolean
-  collateral_types: string[] | null
-  valuation_rules: string | null
-  mandatory_documents: string[] | null
-  allowed_document_formats: string[] | null
-  document_size_limit: string | number | null
-  verification_method: string | null
-  approval_workflow: ApiLoanProductApprovalWorkflow | null
-  notifications_integrations: string[] | null
-  tiers: ApiLoanProductTier[]
-  details: ApiLoanProductDetails | null
+  description?: string | null
+  status?: string | null
+  is_active?: boolean | null
+  min_amount?: string | number | null
+  max_amount?: string | number | null
+  amount_range?: string | null
+  interest?: string | null
+  interest_type?: string | null
+  interest_rate?: string | number | null
+  tenure?: number | string | null
+  tenure_type?: string | null
+  tenures?: ApiLoanProductLinkedTenure[] | null
+  credit_protection_fee?: string | number | null
+  created_at?: string | null
+  updated_at?: string | null
+  deleted_at?: string | null
+  code?: string | null
+  category?: string | null
+  eligibility_criteria?: ApiLoanProductEligibilityCriteria | null
+  amount_increment?: string | number | null
+  currency?: string | null
+  repayment_frequency?: string | null
+  grace_period?: string | null
+  start_date_rules?: string | null
+  processing_fee?: string | number | null
+  late_payment_fee?: string | number | null
+  early_settlement_fee?: string | number | null
+  insurance_fee?: string | number | null
+  repayment_methods?: string[] | null
+  payment_allocation?: string | null
+  partial_payment_allowed?: string | null
+  overpayment_handling?: string | null
+  auto_debit_settings?: string | null
+  collateral_required?: boolean | null
+  collateral_types?: string[] | null
+  valuation_rules?: string | null
+  mandatory_documents?: string[] | null
+  allowed_document_formats?: string[] | null
+  document_size_limit?: string | number | null
+  verification_method?: string | null
+  approval_workflow?: ApiLoanProductApprovalWorkflow | null
+  notifications_integrations?: string[] | null
+  tiers?: ApiLoanProductTier[] | null
+  details?: ApiLoanProductDetails | null
 }
 
 export type ApiLoanProductDetailResponse =

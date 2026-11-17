@@ -7,16 +7,18 @@ import { useForm } from "react-hook-form"
 import { BackLink } from "@/components/back-link"
 import { Button } from "@/components/ui/button"
 import { CreateTenureForm } from "@/features/tenures/components/create-tenure-form"
+import { useCreateLoanTenure } from "@/features/tenures/hooks/use-loan-tenure-mutations"
 import {
   createTenureFormDefaults,
   createTenureSchema,
   type CreateTenureFormInput,
   type CreateTenureFormValues,
 } from "@/features/tenures/schemas/create-tenure.schema"
-import { toast } from "@/lib/toast"
+import { buildCreateLoanTenurePayload } from "@/features/tenures/utils/build-tenure-payload"
 
 export function CreateTenureSection() {
   const router = useRouter()
+  const { createLoanTenure, isPending } = useCreateLoanTenure()
 
   const form = useForm<
     CreateTenureFormInput,
@@ -31,9 +33,12 @@ export function CreateTenureSection() {
     router.push("/loan-products/tenures")
   }
 
-  const handleSubmit = form.handleSubmit(async () => {
-    toast.success("Tenure saved")
-    router.push("/loan-products/tenures")
+  const handleSubmit = form.handleSubmit(async (values) => {
+    const result = await createLoanTenure(buildCreateLoanTenurePayload(values))
+
+    if (result.success) {
+      router.push("/loan-products/tenures")
+    }
   })
 
   return (
@@ -47,13 +52,20 @@ export function CreateTenureSection() {
 
       <div className="rounded-2xl border border-border bg-background p-5 md:p-8">
         <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-          <CreateTenureForm form={form} />
+          <CreateTenureForm form={form} disabled={isPending} />
 
           <div className="flex flex-wrap items-center gap-3">
-            <Button type="button" variant="outline" onClick={handleCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isPending}
+            >
               Cancel
             </Button>
-            <Button type="submit">Save tenure</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Saving..." : "Save tenure"}
+            </Button>
           </div>
         </form>
       </div>

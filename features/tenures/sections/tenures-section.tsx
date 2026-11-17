@@ -6,6 +6,7 @@ import { useMemo, useState } from "react"
 
 import { BackLink } from "@/components/back-link"
 import { DataTable } from "@/components/data-table"
+import { AppLoader } from "@/components/ui/app-loader"
 import { BaseAlertDialog } from "@/components/ui/base-alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
@@ -13,21 +14,79 @@ import { Input } from "@/components/ui/input"
 import { getTenureColumns } from "@/features/tenures/columns"
 import { TenureFilterTabs } from "@/features/tenures/components/tenure-filter-tabs"
 import { TenureSummaryCards } from "@/features/tenures/components/tenure-summary-cards"
-import {
-  tenureMetrics,
-  tenureRecords as initialTenureRecords,
-} from "@/features/tenures/data/mock-tenures"
-import type { TenureRecord, TenureTab } from "@/features/tenures/types"
+import { useDeleteLoanTenure } from "@/features/tenures/hooks/use-loan-tenure-mutations"
+import { useLoanTenureList } from "@/features/tenures/hooks/use-loan-tenure-queries"
+import type {
+  TenureMetric,
+  TenureRecord,
+  TenureTab,
+} from "@/features/tenures/types"
+
+const PAGE_SIZE = 15
 
 export function TenuresSection() {
   const router = useRouter()
   const [tab, setTab] = useState<TenureTab>("all")
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
-  const [records, setRecords] = useState(initialTenureRecords)
   const [tenureToDelete, setTenureToDelete] = useState<TenureRecord | null>(
     null,
   )
+  const { deleteLoanTenure, isPending: isDeleting } = useDeleteLoanTenure()
+
+  const listParams = {
+    page,
+    per_page: PAGE_SIZE,
+    search,
+    status: tab === "all" ? undefined : tab,
+  }
+
+  const {
+    data: tenureList,
+    isPending,
+    isFetching,
+    isError,
+    error,
+  } = useLoanTenureList(listParams)
+
+  const { data: allTenures } = useLoanTenureList({
+    page: 1,
+    per_page: 1,
+  })
+  const { data: activeTenures } = useLoanTenureList({
+    page: 1,
+    per_page: 1,
+    status: "active",
+  })
+  const { data: inactiveTenures } = useLoanTenureList({
+    page: 1,
+    per_page: 1,
+    status: "inactive",
+  })
+
+  const metrics: TenureMetric[] = [
+    {
+      key: "total",
+      label: "Total Tenures",
+      value: String(allTenures?.meta.total ?? 0),
+      changePercent: 0,
+      trend: "up",
+    },
+    {
+      key: "active",
+      label: "Active Tenures",
+      value: String(activeTenures?.meta.total ?? 0),
+      changePercent: 0,
+      trend: "up",
+    },
+    {
+      key: "inactive",
+      label: "Inactive Tenures",
+      value: String(inactiveTenures?.meta.total ?? 0),
+      changePercent: 0,
+      trend: "down",
+    },
+  ]
 
   const columns = useMemo(
     () =>
@@ -42,42 +101,41 @@ export function TenuresSection() {
     [router],
   )
 
-  const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase()
+  const tenures = tenureList?.items ?? []
+  const totalPages = tenureList?.meta.last_page ?? 1
+  const currentPage = tenureList?.meta.current_page ?? page
 
-    return records.filter((item) => {
-      if (tab !== "all" && item.status !== tab) {
-        return false
-      }
-
-      if (!query) {
-        return true
-      }
-
-      return (
-        item.name.toLowerCase().includes(query) ||
-        item.code.toLowerCase().includes(query) ||
-        item.linkedProducts.toLowerCase().includes(query) ||
-        item.interestType.toLowerCase().includes(query)
-      )
-    })
-  }, [records, search, tab])
-
-  const pageSize = 15
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
-  const currentPage = Math.min(page, totalPages)
-  const pageItems = filtered.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize,
-  )
-
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!tenureToDelete) return
 
-    setRecords((current) =>
-      current.filter((item) => item.id !== tenureToDelete.id),
+    const result = await deleteLoanTenure({ id: tenureToDelete.id })
+    if (result.success) {
+      setTenureToDelete(null)
+    }
+  }
+
+  if (isPending && tenures.length === 0) {
+    return (
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-muted p-6">
+        <AppLoader spinnerClassName="size-8" />
+      </div>
     )
-    setTenureToDelete(null)
+  }
+
+  if (isError) {
+    return (
+      <div className="flex min-h-0 flex-1 flex-col gap-6 bg-muted p-4 md:p-6">
+        <div className="flex items-center gap-2">
+          <BackLink href="/loan-products/overview" label="Loan Products" />
+          <h2 className="text-base font-semibold text-foreground">Tenure</h2>
+        </div>
+        <div className="rounded-2xl border border-border bg-background p-6 text-sm text-destructive">
+          {error instanceof Error
+            ? error.message
+            : "Failed to load loan tenures."}
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -87,15 +145,16 @@ export function TenuresSection() {
         <h2 className="text-base font-semibold text-foreground">Tenure</h2>
       </div>
 
-      <TenureSummaryCards metrics={tenureMetrics} />
+      <TenureSummaryCards metrics={metrics} />
 
       <section className="min-w-0">
         <DataTable
           columns={columns}
-          data={pageItems}
+          data={tenures}
           page={currentPage}
           totalPages={totalPages}
           onPageChange={setPage}
+          isLoading={isFetching && tenures.length === 0}
           emptyMessage="No tenures found."
           className="min-w-0"
           toolbar={
@@ -154,11 +213,15 @@ export function TenuresSection() {
         title="Delete Tenure"
         open={tenureToDelete != null}
         onOpenChange={(open) => {
-          if (!open) setTenureToDelete(null)
+          if (!open && !isDeleting) setTenureToDelete(null)
         }}
         confirmLabel="Delete"
+        pendingLabel="Deleting..."
         confirmVariant="destructive"
-        onConfirm={handleConfirmDelete}
+        isPending={isDeleting}
+        onConfirm={() => {
+          void handleConfirmDelete()
+        }}
         headerIcon={<Icons.alert size={28} className="text-destructive" />}
         className="sm:max-w-md"
       >

@@ -1,23 +1,19 @@
 "use client"
 
-import { RECOVERY_TAB_META } from "@/features/recovery/data/mock-recovery"
-import type { RecoveryTab } from "@/features/recovery/types"
+import { RECOVERY_TAB_ORDER } from "@/features/recovery/constants"
+import type { RecoveryTab, RecoveryTabMeta } from "@/features/recovery/types"
 import { cn } from "@/lib/utils"
-
-const tabs = Object.entries(RECOVERY_TAB_META).map(([value, meta]) => ({
-  value: value as RecoveryTab,
-  label: meta.label,
-  count: meta.count,
-}))
 
 type RecoveryFilterTabsProps = {
   value: RecoveryTab
   onChange: (value: RecoveryTab) => void
+  tabs: Record<RecoveryTab, RecoveryTabMeta>
 }
 
 export function RecoveryFilterTabs({
   value,
   onChange,
+  tabs,
 }: RecoveryFilterTabsProps) {
   return (
     <div
@@ -25,16 +21,17 @@ export function RecoveryFilterTabs({
       role="tablist"
       aria-label="Recovery filters"
     >
-      {tabs.map((tab) => {
-        const isActive = value === tab.value
+      {RECOVERY_TAB_ORDER.map((tabValue) => {
+        const tab = tabs[tabValue]
+        const isActive = value === tabValue
 
         return (
           <button
-            key={tab.value}
+            key={tabValue}
             type="button"
             role="tab"
             aria-selected={isActive}
-            onClick={() => onChange(tab.value)}
+            onClick={() => onChange(tabValue)}
             className={cn(
               "relative flex items-center gap-2 pb-3 text-sm font-medium transition-colors",
               isActive

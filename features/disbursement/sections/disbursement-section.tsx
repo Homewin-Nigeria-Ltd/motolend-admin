@@ -4,23 +4,36 @@ import { useMemo, useState } from "react"
 
 import { BackLink } from "@/components/back-link"
 import { DataTable } from "@/components/data-table"
+import { AppLoader } from "@/components/ui/app-loader"
+import { BaseAlertDialog } from "@/components/ui/base-alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { getDisbursementColumns } from "@/features/disbursement/columns"
 import {
-  allocationSummary,
-  defaultAllocationSettings,
-  disbursementRecords,
-} from "@/features/disbursement/data/mock-disbursement"
+  useUpdateDisbursementAllocation,
+  useVerifyDisbursement,
+} from "@/features/disbursement/hooks/use-disbursement-mutations"
+import {
+  useDisbursementAllocation,
+  useDisbursementList,
+} from "@/features/disbursement/hooks/use-disbursement-queries"
 import type {
   AllocationDuration,
+  DisbursementAllocationState,
   DisbursementPartner,
+  DisbursementPartnerOption,
   DisbursementRecord,
 } from "@/features/disbursement/types"
+import {
+  formatAllocationAmountInput,
+  parseAllocationAmountInput,
+} from "@/features/disbursement/utils/map-disbursement"
 import { toast } from "@/lib/toast"
 import { cn } from "@/lib/utils"
+
+const PAGE_SIZE = 15
 
 const DURATION_OPTIONS: { value: AllocationDuration; label: string }[] = [
   { value: "daily", label: "Daily" },
@@ -28,68 +41,103 @@ const DURATION_OPTIONS: { value: AllocationDuration; label: string }[] = [
   { value: "monthly", label: "Monthly" },
 ]
 
-const PARTNER_OPTIONS: { value: DisbursementPartner; label: string }[] = [
+const FALLBACK_PARTNERS: DisbursementPartnerOption[] = [
   { value: "palmpay", label: "Palmpay" },
   { value: "monnify", label: "Monnify" },
   { value: "paylode", label: "Paylode" },
 ]
 
 export function DisbursementSection() {
-  const [amountAllocated, setAmountAllocated] = useState(
-    defaultAllocationSettings.amountAllocated,
-  )
-  const [duration, setDuration] = useState<AllocationDuration>(
-    defaultAllocationSettings.duration,
-  )
-  const [partner, setPartner] = useState<DisbursementPartner>(
-    defaultAllocationSettings.partner,
-  )
-  const [disburseAutomatically, setDisburseAutomatically] = useState(
-    defaultAllocationSettings.disburseAutomatically,
-  )
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
-  const [records, setRecords] = useState(disbursementRecords)
+  const [recordToRequery, setRecordToRequery] =
+    useState<DisbursementRecord | null>(null)
 
-  const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    if (!query) {
-      return records
-    }
+  const {
+    data: allocationData,
+    isPending: isAllocationPending,
+    isError: isAllocationError,
+    error: allocationError,
+  } = useDisbursementAllocation()
 
-    return records.filter(
-      (item) =>
-        item.customerName.toLowerCase().includes(query) ||
-        item.applicationId.toLowerCase().includes(query) ||
-        item.loanProduct.toLowerCase().includes(query) ||
-        item.bankAccount.toLowerCase().includes(query),
-    )
-  }, [records, search])
+  const {
+    data: disbursementList,
+    isPending: isListPending,
+    isFetching: isListFetching,
+    isError: isListError,
+    error: listError,
+  } = useDisbursementList({
+    page,
+    per_page: PAGE_SIZE,
+    search,
+  })
 
-  const pageSize = 15
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
-  const currentPage = Math.min(page, totalPages)
-  const pageItems = filtered.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize,
-  )
+  const {
+    verifyDisbursement,
+    pendingLoanId,
+    isPending: isVerifying,
+  } = useVerifyDisbursement()
+
+  const records = disbursementList?.items ?? []
+  const totalPages = disbursementList?.meta.last_page ?? 1
+  const currentPage = disbursementList?.meta.current_page ?? page
 
   const columns = useMemo(
     () =>
       getDisbursementColumns({
+        pendingLoanId,
         onRequery: (record: DisbursementRecord) => {
-          setRecords((current) =>
-            current.map((item) =>
-              item.id === record.id
-                ? { ...item, status: "disbursed" }
-                : item,
-            ),
-          )
-          toast.success(`Requeried ${record.applicationId}`)
+          if (!record.loanId) {
+            toast.error("Missing loan id for this disbursement")
+            return
+          }
+
+          setRecordToRequery(record)
         },
       }),
-    [],
+    [pendingLoanId],
   )
+
+  const handleConfirmRequery = async () => {
+    if (!recordToRequery?.loanId) return
+
+    const result = await verifyDisbursement({
+      loanId: recordToRequery.loanId,
+    })
+
+    if (result.success) {
+      setRecordToRequery(null)
+    }
+  }
+
+  if (
+    (isAllocationPending && !allocationData) ||
+    (isListPending && records.length === 0)
+  ) {
+    return (
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-muted p-6">
+        <AppLoader spinnerClassName="size-8" />
+      </div>
+    )
+  }
+
+  if (isAllocationError || isListError || !allocationData) {
+    return (
+      <div className="flex min-h-0 flex-1 flex-col gap-6 bg-muted p-4 md:p-6">
+        <div className="flex items-center gap-2">
+          <BackLink href="/loan-products/overview" label="Loan Products" />
+          <h2 className="text-base font-semibold text-foreground">
+            Disbursement Allocation
+          </h2>
+        </div>
+        <div className="rounded-2xl border border-border bg-background p-6 text-sm text-destructive">
+          {(allocationError ?? listError) instanceof Error
+            ? (allocationError ?? listError)?.message
+            : "Failed to load disbursements."}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6 bg-muted p-4 md:gap-8 md:p-6">
@@ -100,168 +148,16 @@ export function DisbursementSection() {
         </h2>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-        <section className="rounded-2xl border border-border bg-background p-5 md:p-6">
-          <h3 className="text-lg font-semibold text-foreground">Allocation</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Total amount we can disburse in each period.
-          </p>
-
-          <div className="mt-5 space-y-5">
-            <div>
-              <label
-                htmlFor="amount-allocated"
-                className="text-sm font-medium text-foreground"
-              >
-                Amount allocated
-              </label>
-              <div className="relative mt-2">
-                <span className="absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground">
-                  ₦
-                </span>
-                <Input
-                  id="amount-allocated"
-                  value={amountAllocated}
-                  onChange={(event) => setAmountAllocated(event.target.value)}
-                  className="h-11 pl-7"
-                />
-              </div>
-            </div>
-
-            <div>
-              <p className="text-sm font-medium text-foreground">Duration</p>
-              <div className="mt-2 grid grid-cols-3 gap-1 rounded-xl bg-muted p-1">
-                {DURATION_OPTIONS.map((option) => {
-                  const isActive = duration === option.value
-
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => setDuration(option.value)}
-                      className={cn(
-                        "h-10 rounded-lg text-sm font-medium transition-colors",
-                        isActive
-                          ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground hover:text-foreground",
-                      )}
-                    >
-                      {option.label}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            <div>
-              <p className="text-sm font-medium text-foreground">
-                Disbursement partner
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {PARTNER_OPTIONS.map((option) => {
-                  const isActive = partner === option.value
-
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => setPartner(option.value)}
-                      className={cn(
-                        "inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors",
-                        isActive
-                          ? "border-primary/30 bg-primary/10 text-foreground"
-                          : "border-border bg-background text-muted-foreground hover:text-foreground",
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "flex size-5 items-center justify-center rounded-full border",
-                          isActive
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : "border-border",
-                        )}
-                      >
-                        {isActive ? <Icons.check size={12} /> : null}
-                      </span>
-                      {option.label}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between gap-4 rounded-xl border border-border px-4 py-3">
-              <div>
-                <p className="text-sm font-semibold text-foreground">
-                  Disburse automatically
-                </p>
-                <p className="mt-0.5 text-sm text-muted-foreground">
-                  Send funds as soon as a loan is approved.
-                </p>
-              </div>
-              <Switch
-                checked={disburseAutomatically}
-                onCheckedChange={setDisburseAutomatically}
-              />
-            </div>
-
-            <Button
-              type="button"
-              className="h-11 w-full"
-              onClick={() => toast.success("Allocation saved")}
-            >
-              Save allocation
-            </Button>
-          </div>
-        </section>
-
-        <section className="rounded-2xl border border-border bg-background p-5 md:p-6">
-          <h3 className="text-lg font-semibold text-foreground">
-            {allocationSummary.title}
-          </h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {allocationSummary.resetNote}
-          </p>
-
-          <div className="mt-6 flex items-end justify-between gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Disbursed</p>
-              <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
-                {allocationSummary.disbursed}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">Remaining</p>
-              <p className="mt-1 text-lg font-semibold text-foreground">
-                {allocationSummary.remaining}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-muted">
-            <div
-              className="h-full rounded-full bg-primary"
-              style={{ width: `${allocationSummary.usedPercent}%` }}
-            />
-          </div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {allocationSummary.usedPercent}% of {allocationSummary.totalAllocated}{" "}
-            used · {allocationSummary.loansDisbursed} loans disbursed.
-          </p>
-
-          <div className="mt-6 rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">
-            {allocationSummary.alert}
-          </div>
-        </section>
-      </div>
+      <DisbursementAllocationForm initialAllocation={allocationData} />
 
       <section className="min-w-0">
         <DataTable
           columns={columns}
-          data={pageItems}
+          data={records}
           page={currentPage}
           totalPages={totalPages}
           onPageChange={setPage}
+          isLoading={isListFetching && records.length === 0}
           emptyMessage="No disbursements found."
           className="min-w-0"
           toolbar={
@@ -298,6 +194,260 @@ export function DisbursementSection() {
             </div>
           }
         />
+      </section>
+
+      <BaseAlertDialog
+        title="Requery disbursement"
+        open={recordToRequery != null}
+        onOpenChange={(open) => {
+          if (!open && !isVerifying) setRecordToRequery(null)
+        }}
+        confirmLabel="Requery"
+        pendingLabel="Verifying..."
+        isPending={isVerifying}
+        onConfirm={() => {
+          void handleConfirmRequery()
+        }}
+        headerIcon={<Icons.alert size={28} className="text-primary" />}
+        className="sm:max-w-md"
+      >
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          Verify pending disbursement for{" "}
+          <span className="font-medium text-foreground">
+            {recordToRequery?.applicationId}
+          </span>
+          {recordToRequery?.customerName
+            ? ` (${recordToRequery.customerName})`
+            : ""}
+          ?
+        </p>
+      </BaseAlertDialog>
+    </div>
+  )
+}
+
+function DisbursementAllocationForm({
+  initialAllocation,
+}: {
+  initialAllocation: DisbursementAllocationState
+}) {
+  const [amountAllocated, setAmountAllocated] = useState(() =>
+    formatAllocationAmountInput(initialAllocation.settings.amountAllocated),
+  )
+  const [duration, setDuration] = useState<AllocationDuration>(
+    initialAllocation.settings.duration,
+  )
+  const [partner, setPartner] = useState<DisbursementPartner>(
+    initialAllocation.settings.partner,
+  )
+  const [disburseAutomatically, setDisburseAutomatically] = useState(
+    initialAllocation.settings.disburseAutomatically,
+  )
+  const [summary, setSummary] = useState(initialAllocation.summary)
+  const [partnerOptions, setPartnerOptions] = useState(
+    initialAllocation.availablePartners.length > 0
+      ? initialAllocation.availablePartners
+      : FALLBACK_PARTNERS,
+  )
+
+  const { updateAllocation, isPending: isSaving } =
+    useUpdateDisbursementAllocation()
+
+  const handleSaveAllocation = async () => {
+    const amount = parseAllocationAmountInput(amountAllocated)
+
+    if (amount <= 0) {
+      toast.error("Enter a valid allocation amount")
+      return
+    }
+
+    const result = await updateAllocation({
+      amount_allocated: amount,
+      duration,
+      disbursement_partner: partner,
+      disburse_automatically: disburseAutomatically,
+    })
+
+    if (result.success && result.data) {
+      setAmountAllocated(
+        formatAllocationAmountInput(result.data.settings.amountAllocated),
+      )
+      setDuration(result.data.settings.duration)
+      setPartner(result.data.settings.partner)
+      setDisburseAutomatically(result.data.settings.disburseAutomatically)
+      setSummary(result.data.summary)
+      setPartnerOptions(
+        result.data.availablePartners.length > 0
+          ? result.data.availablePartners
+          : FALLBACK_PARTNERS,
+      )
+    }
+  }
+
+  return (
+    <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+      <section className="rounded-2xl border border-border bg-background p-5 md:p-6">
+        <h3 className="text-lg font-semibold text-foreground">Allocation</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Total amount we can disburse in each period.
+        </p>
+
+        <div className="mt-5 space-y-5">
+          <div>
+            <label
+              htmlFor="amount-allocated"
+              className="text-sm font-medium text-foreground"
+            >
+              Amount allocated
+            </label>
+            <div className="relative mt-2">
+              <span className="absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground">
+                ₦
+              </span>
+              <Input
+                id="amount-allocated"
+                value={amountAllocated}
+                onChange={(event) => {
+                  const raw = event.target.value.replace(/[^\d,]/g, "")
+                  const parsed = parseAllocationAmountInput(raw)
+                  setAmountAllocated(
+                    raw.trim() === ""
+                      ? ""
+                      : formatAllocationAmountInput(parsed),
+                  )
+                }}
+                disabled={isSaving}
+                className="h-11 pl-7"
+              />
+            </div>
+          </div>
+
+          <div>
+            <p className="text-sm font-medium text-foreground">Duration</p>
+            <div className="mt-2 grid grid-cols-3 gap-1 rounded-xl bg-muted p-1">
+              {DURATION_OPTIONS.map((option) => {
+                const isActive = duration === option.value
+
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    disabled={isSaving}
+                    onClick={() => setDuration(option.value)}
+                    className={cn(
+                      "h-10 rounded-lg text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {option.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-sm font-medium text-foreground">
+              Disbursement partner
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {partnerOptions.map((option) => {
+                const isActive = partner === option.value
+
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    disabled={isSaving}
+                    onClick={() => setPartner(option.value)}
+                    className={cn(
+                      "inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors",
+                      isActive
+                        ? "border-primary/30 bg-primary/10 text-foreground"
+                        : "border-border bg-background text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "flex size-5 items-center justify-center rounded-full border",
+                        isActive
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border",
+                      )}
+                    >
+                      {isActive ? <Icons.check size={12} /> : null}
+                    </span>
+                    {option.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-4 rounded-xl border border-border px-4 py-3">
+            <div>
+              <p className="text-sm font-semibold text-foreground">
+                Disburse automatically
+              </p>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                Send funds as soon as a loan is approved.
+              </p>
+            </div>
+            <Switch
+              checked={disburseAutomatically}
+              onCheckedChange={setDisburseAutomatically}
+              disabled={isSaving}
+            />
+          </div>
+
+          <Button
+            type="button"
+            className="h-11 w-full"
+            disabled={isSaving}
+            onClick={() => {
+              void handleSaveAllocation()
+            }}
+          >
+            {isSaving ? "Saving..." : "Save allocation"}
+          </Button>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-border bg-background p-5 md:p-6">
+        <h3 className="text-lg font-semibold text-foreground">{summary.title}</h3>
+        <p className="mt-1 text-sm text-muted-foreground">{summary.resetNote}</p>
+
+        <div className="mt-6 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-sm text-muted-foreground">Disbursed</p>
+            <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
+              {summary.disbursed}
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-sm text-muted-foreground">Remaining</p>
+            <p className="mt-1 text-lg font-semibold text-foreground">
+              {summary.remaining}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full rounded-full bg-primary"
+            style={{ width: `${summary.usedPercent}%` }}
+          />
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {summary.usedPercent}% of {summary.totalAllocated} used ·{" "}
+          {summary.loansDisbursed} loans disbursed.
+        </p>
+
+        <div className="mt-6 rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">
+          {summary.alert}
+        </div>
       </section>
     </div>
   )

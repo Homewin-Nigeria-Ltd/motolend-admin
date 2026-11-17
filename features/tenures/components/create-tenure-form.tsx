@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { LINKED_PRODUCT_OPTIONS } from "@/features/tenures/data/mock-tenures"
+import { useLoanProductList } from "@/features/loan-products/hooks/use-loan-product-queries"
 import {
   INTEREST_FREQUENCY_OPTIONS,
   INTEREST_TYPE_OPTIONS,
@@ -65,16 +65,18 @@ const interestFrequencyLabels: Record<
 }
 
 export function CreateTenureForm({ form, disabled }: CreateTenureFormProps) {
+  const { data: productList, isPending: isProductsPending } = useLoanProductList({
+    page: 1,
+    per_page: 100,
+  })
+  const loanProducts = productList?.items ?? []
+
   return (
     <div className="flex flex-col gap-6">
       <section className="rounded-2xl border border-border p-5 md:p-6">
         <h3 className="text-base font-semibold text-foreground">
           Tenure information
         </h3>
-        {/* <p className="mt-1 text-sm text-muted-foreground">
-          Same as the loan product form, without minimum amount, maximum amount
-          and credit protection fee.
-        </p> */}
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <Field>
@@ -102,38 +104,51 @@ export function CreateTenureForm({ form, disabled }: CreateTenureFormProps) {
 
         <div className="mt-4">
           <Controller
-            name="linked_products"
+            name="loan_product_ids"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>Linked loan products</FieldLabel>
                 <div className="rounded-xl border border-border p-3">
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {LINKED_PRODUCT_OPTIONS.map((product) => {
-                      const checked = field.value?.includes(product) ?? false
+                  {isProductsPending ? (
+                    <p className="px-2 py-2 text-sm text-muted-foreground">
+                      Loading products…
+                    </p>
+                  ) : loanProducts.length === 0 ? (
+                    <p className="px-2 py-2 text-sm text-muted-foreground">
+                      No loan products available.
+                    </p>
+                  ) : (
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {loanProducts.map((product) => {
+                        const checked =
+                          field.value?.includes(product.id) ?? false
 
-                      return (
-                        <label
-                          key={product}
-                          className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-muted"
-                        >
-                          <Checkbox
-                            checked={checked}
-                            disabled={disabled}
-                            onCheckedChange={(next) => {
-                              const current = field.value ?? []
-                              field.onChange(
-                                next === true
-                                  ? [...current, product]
-                                  : current.filter((item) => item !== product),
-                              )
-                            }}
-                          />
-                          {product}
-                        </label>
-                      )
-                    })}
-                  </div>
+                        return (
+                          <label
+                            key={product.id}
+                            className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-muted"
+                          >
+                            <Checkbox
+                              checked={checked}
+                              disabled={disabled}
+                              onCheckedChange={(next) => {
+                                const current = field.value ?? []
+                                field.onChange(
+                                  next === true
+                                    ? [...current, product.id]
+                                    : current.filter(
+                                        (item) => item !== product.id,
+                                      ),
+                                )
+                              }}
+                            />
+                            {product.name}
+                          </label>
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
                 {fieldState.invalid ? (
                   <FieldError errors={[fieldState.error]} />

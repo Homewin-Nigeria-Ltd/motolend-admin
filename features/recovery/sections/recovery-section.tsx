@@ -4,6 +4,7 @@ import { useMemo, useState } from "react"
 
 import { BackLink } from "@/components/back-link"
 import { DataTable } from "@/components/data-table"
+import { AppLoader } from "@/components/ui/app-loader"
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
@@ -13,19 +14,24 @@ import { MarkPaidOtpDialog } from "@/features/recovery/components/mark-paid-otp-
 import { RecoveryFilterTabs } from "@/features/recovery/components/recovery-filter-tabs"
 import { RecoverySummaryCards } from "@/features/recovery/components/recovery-summary-cards"
 import {
-  RECOVERY_TAB_META,
-  recoveryLoans as initialLoans,
-  recoveryMetrics,
-} from "@/features/recovery/data/mock-recovery"
+  useRecoveryLoans,
+  useRecoveryMetrics,
+  useRecoveryStageCounts,
+} from "@/features/recovery/hooks/use-recovery-queries"
 import type { MarkPaidFormValues } from "@/features/recovery/schemas/mark-paid.schema"
 import type { RecoveryLoan, RecoveryTab } from "@/features/recovery/types"
+import { exportRecoveryLoansCsv } from "@/features/recovery/utils/export-recovery"
+import { buildRecoveryTabMeta } from "@/features/recovery/utils/map-recovery"
 import { toast } from "@/lib/toast"
+
+const PAGE_SIZE = 15
 
 export function RecoverySection() {
   const [tab, setTab] = useState<RecoveryTab>("active")
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
-  const [loans, setLoans] = useState(initialLoans)
+  const [isExporting, setIsExporting] = useState(false)
+  const [paidOverrides, setPaidOverrides] = useState<Record<string, true>>({})
   const [selectedLoan, setSelectedLoan] = useState<RecoveryLoan | null>(null)
   const [markPaidOpen, setMarkPaidOpen] = useState(false)
   const [otpOpen, setOtpOpen] = useState(false)
@@ -35,34 +41,51 @@ export function RecoverySection() {
   const [isVerifying, setIsVerifying] = useState(false)
   const [isResending, setIsResending] = useState(false)
 
-  const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase()
+  const {
+    data: stageCounts = [],
+    isPending: isStageCountsPending,
+    isError: isStageCountsError,
+    error: stageCountsError,
+  } = useRecoveryStageCounts()
 
-    return loans.filter((loan) => {
-      if (loan.tab !== tab) {
-        return false
-      }
+  const {
+    data: metrics = [],
+    isPending: isMetricsPending,
+    isError: isMetricsError,
+    error: metricsError,
+  } = useRecoveryMetrics()
 
-      if (!query) {
-        return true
-      }
+  const {
+    data: loanList,
+    isPending,
+    isFetching,
+    isError,
+    error,
+  } = useRecoveryLoans({
+    page,
+    per_page: PAGE_SIZE,
+    search,
+    stage: tab,
+  })
 
-      return (
-        loan.customerName.toLowerCase().includes(query) ||
-        loan.phone.includes(query) ||
-        loan.applicationId.toLowerCase().includes(query) ||
-        loan.id.includes(query)
-      )
-    })
-  }, [loans, search, tab])
-
-  const pageSize = 15
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
-  const currentPage = Math.min(page, totalPages)
-  const pageItems = filtered.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize,
+  const tabMeta = useMemo(
+    () => buildRecoveryTabMeta(stageCounts),
+    [stageCounts],
   )
+
+  const records = useMemo(() => {
+    const items = loanList?.items ?? []
+    if (Object.keys(paidOverrides).length === 0) {
+      return items
+    }
+
+    return items.map((loan) =>
+      paidOverrides[loan.id] ? { ...loan, status: "paid" as const } : loan,
+    )
+  }, [loanList?.items, paidOverrides])
+
+  const totalPages = loanList?.meta.last_page ?? 1
+  const currentPage = loanList?.meta.current_page ?? page
 
   const columns = useMemo(
     () =>
@@ -74,6 +97,22 @@ export function RecoverySection() {
       }),
     [],
   )
+
+  const handleExport = async () => {
+    try {
+      setIsExporting(true)
+      await exportRecoveryLoansCsv({ search, stage: tab })
+      toast.success("Recovery loans exported")
+    } catch (exportError) {
+      toast.error(
+        exportError instanceof Error
+          ? exportError.message
+          : "Failed to export recovery loans",
+      )
+    } finally {
+      setIsExporting(false)
+    }
+  }
 
   async function handleSendOtp(values: MarkPaidFormValues) {
     setIsSendingOtp(true)
@@ -109,11 +148,10 @@ export function RecoverySection() {
       void otp
       void pendingValues
 
-      setLoans((current) =>
-        current.map((loan) =>
-          loan.id === selectedLoan.id ? { ...loan, status: "paid" } : loan,
-        ),
-      )
+      setPaidOverrides((current) => ({
+        ...current,
+        [selectedLoan.id]: true,
+      }))
       setOtpOpen(false)
       setSelectedLoan(null)
       setPendingValues(null)
@@ -123,6 +161,34 @@ export function RecoverySection() {
     }
   }
 
+  if (
+    (isPending && records.length === 0) ||
+    (isStageCountsPending && stageCounts.length === 0) ||
+    (isMetricsPending && metrics.length === 0)
+  ) {
+    return (
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-muted p-6">
+        <AppLoader spinnerClassName="size-8" />
+      </div>
+    )
+  }
+
+  if (isError || isStageCountsError || isMetricsError) {
+    return (
+      <div className="flex min-h-0 flex-1 flex-col gap-6 bg-muted p-4 md:p-6">
+        <div className="flex items-center gap-2">
+          <BackLink href="/repayments/overview" label="Repayments" />
+          <h2 className="text-base font-semibold text-foreground">Recovery</h2>
+        </div>
+        <div className="rounded-2xl border border-border bg-background p-6 text-sm text-destructive">
+          {(error ?? stageCountsError ?? metricsError) instanceof Error
+            ? (error ?? stageCountsError ?? metricsError)?.message
+            : "Failed to load recovery loans."}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6 bg-muted p-4 md:gap-8 md:p-6">
       <div className="flex items-center gap-2">
@@ -130,12 +196,12 @@ export function RecoverySection() {
         <h2 className="text-base font-semibold text-foreground">Recovery</h2>
       </div>
 
-      <RecoverySummaryCards metrics={recoveryMetrics} />
+      <RecoverySummaryCards metrics={metrics} />
 
       <section className="min-w-0">
         <DataTable
           columns={columns}
-          data={pageItems}
+          data={records}
           page={currentPage}
           totalPages={totalPages}
           onPageChange={setPage}
@@ -145,6 +211,7 @@ export function RecoverySection() {
             <div className="flex w-full flex-col gap-4 border-b border-border px-4 py-4">
               <RecoveryFilterTabs
                 value={tab}
+                tabs={tabMeta}
                 onChange={(value) => {
                   setTab(value)
                   setPage(1)
@@ -153,7 +220,7 @@ export function RecoverySection() {
 
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <p className="text-sm text-muted-foreground">
-                  • {RECOVERY_TAB_META[tab].description}
+                  • {tabMeta[tab].description}
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2">
@@ -183,8 +250,12 @@ export function RecoverySection() {
                     type="button"
                     className="h-10 px-4"
                     icon={{ name: "download", position: "left" }}
+                    disabled={isExporting || isFetching}
+                    onClick={() => {
+                      void handleExport()
+                    }}
                   >
-                    Export
+                    {isExporting ? "Exporting..." : "Export"}
                   </Button>
                 </div>
               </div>
