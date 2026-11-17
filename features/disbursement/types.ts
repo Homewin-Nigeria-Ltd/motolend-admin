@@ -77,6 +77,10 @@ export type UpdateDisbursementAllocationInput = {
   disburse_automatically: boolean
 }
 
+export type RaiseDisbursementAllocationInput = {
+  additional_amount: number
+}
+
 export type VerifyDisbursementInput = {
   loanId: string
 }
@@ -143,6 +147,11 @@ export type ApiDisbursementAllocationUsage = {
   percentage_used?: number | string | null
   loans_disbursed_count?: number | string | null
   is_exhausted?: boolean | number | string | null
+  alert_message?: string | null
+  message?: string | null
+  customer_message?: string | null
+  resumes_at?: string | null
+  declines_until?: string | null
 }
 
 export type ApiDisbursementPartnerOption = {

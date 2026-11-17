@@ -38,7 +38,7 @@ export function ChannelSection() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-muted p-4 md:gap-8 md:p-6">
+    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-white p-4 md:gap-8 md:p-6">
       <div className="flex items-center gap-2">
         <BackLink href="/settings" label="Settings" />
         <h2 className="text-base font-semibold text-foreground">Channel</h2>

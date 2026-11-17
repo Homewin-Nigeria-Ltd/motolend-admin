@@ -73,7 +73,7 @@ export function CreateRoleSection() {
 
   if (isPending) {
     return (
-      <div className="flex min-h-0 flex-1 items-center justify-center bg-muted p-6">
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-white p-6">
         <AppLoader spinnerClassName="size-8" />
       </div>
     )
@@ -81,7 +81,7 @@ export function CreateRoleSection() {
 
   if (isError || !catalog) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col bg-muted p-4 md:p-6">
+      <div className="flex min-h-0 flex-1 flex-col bg-white p-4 md:p-6">
         <div className="rounded-2xl border border-border bg-background p-6 text-sm text-destructive">
           Could not load permissions.
         </div>
@@ -98,7 +98,7 @@ export function CreateRoleSection() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-muted p-4 md:p-6">
+    <div className="flex min-h-0 flex-1 flex-col bg-white p-4 md:p-6">
       <div className="mb-4">
         <BackLink href="/settings/role-permissions" label="Roles & Permissions" />
       </div>

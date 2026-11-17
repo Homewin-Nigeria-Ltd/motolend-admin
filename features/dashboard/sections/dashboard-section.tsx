@@ -9,7 +9,7 @@ import { DashboardTopMetrics } from "@/features/dashboard/components/dashboard-t
 
 export function DashboardSection() {
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-muted p-4 md:gap-8 md:p-6">
+    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-white p-4 md:gap-8 md:p-6">
       <DashboardSectionErrorBoundary title="Overview metrics">
         <DashboardTopMetrics />
       </DashboardSectionErrorBoundary>

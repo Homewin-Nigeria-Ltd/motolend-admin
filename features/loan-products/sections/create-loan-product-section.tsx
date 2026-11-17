@@ -42,7 +42,7 @@ export function CreateLoanProductSection() {
   })
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-muted p-4 md:p-6">
+    <div className="flex min-h-0 flex-1 flex-col bg-white p-4 md:p-6">
       <div className="mb-4 flex items-center gap-2">
         <BackLink href="/loan-products/overview" label="Loan Products" />
         <h2 className="text-base font-semibold text-foreground">

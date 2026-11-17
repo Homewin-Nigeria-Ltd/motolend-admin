@@ -11,7 +11,9 @@ import { Icons } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { getDisbursementColumns } from "@/features/disbursement/columns"
+import { RaiseAllocationDialog } from "@/features/disbursement/components/raise-allocation-dialog"
 import {
+  useRaiseDisbursementAllocation,
   useUpdateDisbursementAllocation,
   useVerifyDisbursement,
 } from "@/features/disbursement/hooks/use-disbursement-mutations"
@@ -115,7 +117,7 @@ export function DisbursementSection() {
     (isListPending && records.length === 0)
   ) {
     return (
-      <div className="flex min-h-0 flex-1 items-center justify-center bg-muted p-6">
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-white p-6">
         <AppLoader spinnerClassName="size-8" />
       </div>
     )
@@ -123,14 +125,14 @@ export function DisbursementSection() {
 
   if (isAllocationError || isListError || !allocationData) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col gap-6 bg-muted p-4 md:p-6">
+      <div className="flex min-h-0 flex-1 flex-col gap-6 bg-white p-4 md:p-6">
         <div className="flex items-center gap-2">
           <BackLink href="/loan-products/overview" label="Loan Products" />
           <h2 className="text-base font-semibold text-foreground">
             Disbursement Allocation
           </h2>
         </div>
-        <div className="rounded-2xl border border-border bg-background p-6 text-sm text-destructive">
+        <div className="rounded-2xl border border-border bg-white p-6 text-sm text-destructive">
           {(allocationError ?? listError) instanceof Error
             ? (allocationError ?? listError)?.message
             : "Failed to load disbursements."}
@@ -140,7 +142,7 @@ export function DisbursementSection() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-muted p-4 md:gap-8 md:p-6">
+    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-white p-4 md:gap-8 md:p-6">
       <div className="flex items-center gap-2">
         <BackLink href="/loan-products/overview" label="Loan Products" />
         <h2 className="text-base font-semibold text-foreground">
@@ -249,9 +251,19 @@ function DisbursementAllocationForm({
       ? initialAllocation.availablePartners
       : FALLBACK_PARTNERS,
   )
+  const [raiseOpen, setRaiseOpen] = useState(false)
 
   const { updateAllocation, isPending: isSaving } =
     useUpdateDisbursementAllocation()
+  const { raiseAllocation, isPending: isRaising } =
+    useRaiseDisbursementAllocation()
+
+  const raisePeriodLabel =
+    duration === "daily"
+      ? "today's"
+      : duration === "weekly"
+        ? "this week's"
+        : "this month's"
 
   const handleSaveAllocation = async () => {
     const amount = parseAllocationAmountInput(amountAllocated)
@@ -284,9 +296,28 @@ function DisbursementAllocationForm({
     }
   }
 
+  const handleRaiseAllocation = async (additionalAmount: number) => {
+    const result = await raiseAllocation({
+      additional_amount: additionalAmount,
+    })
+
+    if (result.success && result.data) {
+      setSummary(result.data.summary)
+      setPartnerOptions(
+        result.data.availablePartners.length > 0
+          ? result.data.availablePartners
+          : FALLBACK_PARTNERS,
+      )
+      return true
+    }
+
+    return false
+  }
+
   return (
+    <>
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-      <section className="rounded-2xl border border-border bg-background p-5 md:p-6">
+      <section className="rounded-2xl border border-border bg-white p-5 md:p-6">
         <h3 className="text-lg font-semibold text-foreground">Allocation</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Total amount we can disburse in each period.
@@ -415,40 +446,81 @@ function DisbursementAllocationForm({
         </div>
       </section>
 
-      <section className="rounded-2xl border border-border bg-background p-5 md:p-6">
-        <h3 className="text-lg font-semibold text-foreground">{summary.title}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">{summary.resetNote}</p>
-
-        <div className="mt-6 flex items-end justify-between gap-4">
-          <div>
-            <p className="text-sm text-muted-foreground">Disbursed</p>
-            <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
-              {summary.disbursed}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Remaining</p>
-            <p className="mt-1 text-lg font-semibold text-foreground">
-              {summary.remaining}
-            </p>
-          </div>
+      <section className="overflow-hidden rounded-2xl border border-border bg-white">
+        <div className="border-b border-border bg-[#F9F9F9] px-5 py-4 md:px-6">
+          <h3 className="text-lg font-semibold text-foreground">
+            {summary.title}
+          </h3>
+          <p className="mt-1 text-sm text-muted-foreground">{summary.resetNote}</p>
         </div>
+        <div className="bg-white p-5 md:p-6">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground">Disbursed</p>
+              <p
+                className={cn(
+                  "mt-1 text-3xl font-semibold tracking-tight",
+                  summary.isExhausted ? "text-red-600" : "text-foreground",
+                )}
+              >
+                {summary.disbursed}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-muted-foreground">Remaining</p>
+              <p className="mt-1 text-lg font-semibold text-foreground">
+                {summary.remaining}
+              </p>
+            </div>
+          </div>
 
-        <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-muted">
+          <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-muted">
+            <div
+              className={cn(
+                "h-full rounded-full",
+                summary.isExhausted ? "bg-red-500" : "bg-primary",
+              )}
+              style={{ width: `${summary.usedPercent}%` }}
+            />
+          </div>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {summary.usedPercent}% of {summary.totalAllocated} used ·{" "}
+            {summary.loansDisbursed} loans disbursed.
+          </p>
+
           <div
-            className="h-full rounded-full bg-primary"
-            style={{ width: `${summary.usedPercent}%` }}
-          />
-        </div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {summary.usedPercent}% of {summary.totalAllocated} used ·{" "}
-          {summary.loansDisbursed} loans disbursed.
-        </p>
+            className={cn(
+              "mt-6 rounded-xl px-4 py-3 text-sm",
+              summary.isExhausted
+                ? "bg-red-50 text-red-700"
+                : "bg-muted text-muted-foreground",
+            )}
+          >
+            {summary.alert}
+          </div>
 
-        <div className="mt-6 rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">
-          {summary.alert}
+          {summary.isExhausted ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-4 h-10 border-primary text-primary hover:bg-primary/5 hover:text-primary"
+              disabled={isRaising}
+              onClick={() => setRaiseOpen(true)}
+            >
+              Raise {raisePeriodLabel} allocation
+            </Button>
+          ) : null}
         </div>
       </section>
     </div>
+
+    <RaiseAllocationDialog
+      open={raiseOpen}
+      onOpenChange={setRaiseOpen}
+      isPending={isRaising}
+      periodLabel={raisePeriodLabel}
+      onConfirm={handleRaiseAllocation}
+    />
+    </>
   )
 }

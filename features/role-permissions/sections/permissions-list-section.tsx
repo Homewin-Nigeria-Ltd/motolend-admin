@@ -25,7 +25,7 @@ export function PermissionsListSection() {
 
   if (isPending) {
     return (
-      <div className="flex min-h-0 flex-1 items-center justify-center bg-muted p-6">
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-white p-6">
         <AppLoader spinnerClassName="size-8" />
       </div>
     )
@@ -33,7 +33,7 @@ export function PermissionsListSection() {
 
   if (isError) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col bg-muted p-4 md:p-6">
+      <div className="flex min-h-0 flex-1 flex-col bg-white p-4 md:p-6">
         <div className="rounded-2xl border border-border bg-background p-6 text-sm text-destructive">
           Could not load roles.
         </div>
@@ -44,7 +44,7 @@ export function PermissionsListSection() {
   const roleList = roles ?? []
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-muted p-4 md:p-6">
+    <div className="flex min-h-0 flex-1 flex-col bg-white p-4 md:p-6">
       <div className="mb-4">
         <BackLink href="/settings" label="Settings" />
       </div>

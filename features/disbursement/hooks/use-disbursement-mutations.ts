@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { disbursementKeys } from "@/features/disbursement/api/keys"
 import { disbursementMutations } from "@/features/disbursement/api/mutations"
 import type {
+  RaiseDisbursementAllocationInput,
   UpdateDisbursementAllocationInput,
   VerifyDisbursementInput,
 } from "@/features/disbursement/types"
@@ -38,6 +39,39 @@ export function useUpdateDisbursementAllocation() {
 
   return {
     updateAllocation: (input: UpdateDisbursementAllocationInput) =>
+      mutation.mutateAsync(input),
+    isPending: mutation.isPending,
+  }
+}
+
+export function useRaiseDisbursementAllocation() {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    ...disbursementMutations.raiseAllocation,
+    onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(result.error)
+        return
+      }
+
+      if (result.data) {
+        queryClient.setQueryData(disbursementKeys.allocation(), result.data)
+      }
+
+      void queryClient.invalidateQueries({
+        queryKey: disbursementKeys.allocation(),
+      })
+      void queryClient.invalidateQueries({ queryKey: disbursementKeys.lists() })
+      toast.success("Allocation raised for this period")
+    },
+    onError: () => {
+      toast.error("Failed to raise disbursement allocation")
+    },
+  })
+
+  return {
+    raiseAllocation: (input: RaiseDisbursementAllocationInput) =>
       mutation.mutateAsync(input),
     isPending: mutation.isPending,
   }

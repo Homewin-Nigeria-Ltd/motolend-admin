@@ -5,6 +5,7 @@ import type {
   ApiDisbursementAllocationResponse,
   DisbursementActionResult,
   DisbursementAllocationState,
+  RaiseDisbursementAllocationInput,
   UpdateDisbursementAllocationInput,
   VerifyDisbursementInput,
 } from "@/features/disbursement/types"
@@ -41,6 +42,26 @@ export async function updateDisbursementAllocationAction(
     }
   } catch (error) {
     return toActionError(error, "Failed to update disbursement allocation")
+  }
+}
+
+export async function raiseDisbursementAllocationAction(
+  input: RaiseDisbursementAllocationInput,
+): Promise<DisbursementActionResult<DisbursementAllocationState>> {
+  try {
+    const response = await apiServer.post<ApiDisbursementAllocationResponse>(
+      disbursementServerEndpoints.raiseAllocation,
+      {
+        additional_amount: input.additional_amount,
+      },
+    )
+
+    return {
+      success: true,
+      data: mapApiDisbursementAllocationResponse(response),
+    }
+  } catch (error) {
+    return toActionError(error, "Failed to raise disbursement allocation")
   }
 }
 

@@ -30,8 +30,7 @@ export type LoanProduct = {
   id: string
   name: string
   description: string
-  interest: string
-  tenure: string
+  tenures: string[]
   status: LoanProductStatus
 }
 

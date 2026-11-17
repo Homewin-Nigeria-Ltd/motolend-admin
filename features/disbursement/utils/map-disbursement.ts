@@ -247,6 +247,25 @@ function mapAllocationSummary(
         : 0
       : Math.min(100, Math.round(toNumber(usedPercentRaw)))
   const isExhausted = toBoolean(usage?.is_exhausted, usedPercent >= 100)
+  const alertFromApi =
+    toStringValue(usage?.alert_message) || toStringValue(usage?.message)
+  const customerMessage = toStringValue(usage?.customer_message)
+  const resumesAt =
+    toStringValue(usage?.resumes_at) || toStringValue(usage?.declines_until)
+
+  let alert = isExhausted
+    ? "Allocation is exhausted. New disbursements pause until the next reset or you increase the amount."
+    : "When allocation runs out, new disbursements pause until the next reset or you increase the amount."
+
+  if (alertFromApi) {
+    alert = alertFromApi
+  } else if (isExhausted && resumesAt) {
+    alert = `New requests are declined until ${resumesAt}.`
+  }
+
+  if (isExhausted && customerMessage) {
+    alert = `${alert} Customers see: "${customerMessage}"`
+  }
 
   return {
     title: resolvePeriodTitle(settings.duration, usage?.period_label ?? undefined),
@@ -262,9 +281,7 @@ function mapAllocationSummary(
     totalAllocated: settings.amountAllocatedFormatted,
     loansDisbursed: toNumber(usage?.loans_disbursed_count),
     isExhausted,
-    alert: isExhausted
-      ? "Allocation is exhausted. New disbursements pause until the next reset or you increase the amount."
-      : "When allocation runs out, new disbursements pause until the next reset or you increase the amount.",
+    alert,
   }
 }
 

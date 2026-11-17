@@ -16,22 +16,28 @@ export const loanProductColumns: ColumnDef<LoanProduct>[] = [
     ),
   },
   {
-    accessorKey: "interest",
-    header: "Interest",
-    cell: ({ row }) => (
-      <span className="whitespace-nowrap text-foreground">
-        {row.original.interest}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "tenure",
-    header: "Tenure",
-    cell: ({ row }) => (
-      <span className="whitespace-nowrap text-foreground">
-        {row.original.tenure}
-      </span>
-    ),
+    id: "tenures",
+    header: "Linked Tenures",
+    cell: ({ row }) => {
+      const tenures = row.original.tenures
+
+      if (tenures.length === 0) {
+        return <span className="text-muted-foreground">—</span>
+      }
+
+      return (
+        <div className="flex flex-wrap gap-2">
+          {tenures.map((tenure) => (
+            <span
+              key={tenure}
+              className="inline-flex whitespace-nowrap rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"
+            >
+              {tenure}
+            </span>
+          ))}
+        </div>
+      )
+    },
   },
   {
     accessorKey: "status",

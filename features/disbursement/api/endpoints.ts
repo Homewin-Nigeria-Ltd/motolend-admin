@@ -4,6 +4,7 @@ const loansPath = "/admin/loans"
 export const disbursementServerEndpoints = {
   list: disbursementsPath,
   allocation: `${disbursementsPath}/allocation`,
+  raiseAllocation: `${disbursementsPath}/allocation/raise`,
   verify: (loanId: string) =>
     `${loansPath}/${encodeURIComponent(loanId)}/disbursement/verify`,
 } as const

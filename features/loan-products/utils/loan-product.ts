@@ -143,22 +143,13 @@ function resolveInterest(product: ApiLoanProduct) {
   return displayValue(product.interest_type)
 }
 
-function resolveTenure(product: ApiLoanProduct) {
-  const detailsTenure = product.details?.loan_amount_and_duration?.loan_tenure
-  if (detailsTenure?.trim()) {
-    return detailsTenure.trim()
-  }
-
-  if (product.tenure != null && product.tenure_type?.trim()) {
-    return `${product.tenure} ${product.tenure_type.trim()}`
-  }
-
-  if (product.tenure != null) {
-    return String(product.tenure)
-  }
-
+function resolveTenures(product: ApiLoanProduct): string[] {
   const linkedTenures = resolveLinkedTenures(product)
     .map((tenure) => {
+      if (tenure.name?.trim()) {
+        return tenure.name.trim()
+      }
+
       if (tenure.tenure == null) return ""
       const typeLabel =
         tenure.tenure_type_label?.trim() ||
@@ -169,10 +160,23 @@ function resolveTenure(product: ApiLoanProduct) {
     .filter(Boolean)
 
   if (linkedTenures.length > 0) {
-    return Array.from(new Set(linkedTenures)).join(" · ")
+    return Array.from(new Set(linkedTenures))
   }
 
-  return "—"
+  const detailsTenure = product.details?.loan_amount_and_duration?.loan_tenure
+  if (detailsTenure?.trim()) {
+    return [detailsTenure.trim()]
+  }
+
+  if (product.tenure != null && product.tenure_type?.trim()) {
+    return [`${product.tenure} ${product.tenure_type.trim()}`]
+  }
+
+  if (product.tenure != null) {
+    return [String(product.tenure)]
+  }
+
+  return []
 }
 
 function mapApiTier(
@@ -243,8 +247,7 @@ export function mapApiLoanProduct(product: ApiLoanProduct): LoanProduct {
     description: displayValue(
       product.details?.overview?.description ?? product.description,
     ),
-    interest: resolveInterest(product),
-    tenure: resolveTenure(product),
+    tenures: resolveTenures(product),
     status: normalizeLoanProductStatus(product),
   }
 }
