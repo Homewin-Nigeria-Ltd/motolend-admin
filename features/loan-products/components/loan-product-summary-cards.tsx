@@ -1,5 +1,5 @@
+import { StatSummaryCard } from "@/components/stat-summary-card"
 import type { LoanProductKpi } from "@/features/loan-products/types"
-import { MetricSummaryCard } from "@/components/metric-summary-card"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function SummaryCardSkeleton() {
@@ -8,17 +8,6 @@ function SummaryCardSkeleton() {
       <Skeleton className="h-4 w-24 rounded-md" />
       <Skeleton className="mt-4 h-8 w-20 rounded-md" />
     </div>
-  )
-}
-
-function SummaryCard({ kpi }: { kpi: LoanProductKpi }) {
-  return (
-    <MetricSummaryCard
-      label={kpi.label}
-      value={kpi.value}
-      changePercent={kpi.changePercent}
-      trend={kpi.trend}
-    />
   )
 }
 
@@ -42,7 +31,13 @@ export function LoanProductSummaryCards({
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {kpis.map((kpi) => (
-        <SummaryCard key={kpi.key} kpi={kpi} />
+        <StatSummaryCard
+          key={kpi.key}
+          label={kpi.label}
+          value={kpi.value}
+          changePercent={kpi.changePercent}
+          trend={kpi.trend}
+        />
       ))}
     </div>
   )

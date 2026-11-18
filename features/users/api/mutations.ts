@@ -19,6 +19,7 @@ export const userMutations = {
       }),
   },
   reset: {
-    mutationFn: ({ id }: ResetUserInput) => api.post(userEndpoints.reset(id)),
+    mutationFn: ({ id }: ResetUserInput) =>
+      api.post(userEndpoints.reset(id), {}),
   },
 }
