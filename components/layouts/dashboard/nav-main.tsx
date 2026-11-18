@@ -45,7 +45,8 @@ function isNavSubItemActive(pathname: string, subUrl: string) {
       (pathname.startsWith("/loan-products/") &&
         !pathname.startsWith("/loan-products/tenures") &&
         !pathname.startsWith("/loan-products/disbursement") &&
-        !pathname.startsWith("/loan-products/progression"))
+        !pathname.startsWith("/loan-products/progression") &&
+        !pathname.startsWith("/loan-products/decline"))
     )
   }
 

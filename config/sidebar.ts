@@ -57,6 +57,10 @@ export const navMain: NavItem[] = [
         title: "Loan Progression",
         url: "/loan-products/progression",
       },
+      {
+        title: "Declined Loans",
+        url: "/loan-products/decline",
+      },
     ],
   },
   {
