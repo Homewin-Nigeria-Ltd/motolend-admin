@@ -59,3 +59,26 @@ export function useUpdateUserStatus(userId: string) {
     isPending: mutation.isPending,
   }
 }
+
+export function useResetUser(userId: string) {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    ...userMutations.reset,
+    onSuccess: () => {
+      toast.success("User account reset")
+      queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) })
+      queryClient.invalidateQueries({ queryKey: userKeys.lists() })
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to reset user account",
+      )
+    },
+  })
+
+  return {
+    resetUser: () => mutation.mutateAsync({ id: userId }),
+    isPending: mutation.isPending,
+  }
+}

@@ -29,7 +29,7 @@ export type TenureRecord = {
   processingFee: string
   insuranceFee: string
   loanProductIds: string[]
-  linkedProducts: string
+  linkedProducts: string[]
   status: TenureStatus
   description?: string
   repaymentFrequency?: string
@@ -84,6 +84,8 @@ export type LoanTenureActionResult =
 export type ApiLoanTenureProduct = {
   id?: number | string
   name?: string | null
+  is_active?: boolean | number | string | null
+  status?: string | null
 }
 
 export type ApiLoanTenure = {
@@ -93,15 +95,22 @@ export type ApiLoanTenure = {
   description?: string | null
   loan_product_ids?: Array<number | string> | null
   loan_products?: ApiLoanTenureProduct[] | null
+  linked_products?: string | null
   tenure?: number | string | null
   tenure_type?: string | null
+  tenure_type_label?: string | null
   repayment_frequency?: string | null
   interest_type?: string | null
+  interest_type_label?: string | null
   interest_frequency?: string | null
   interest_rate?: number | string | null
+  interest_rate_label?: string | null
   processing_fee?: number | string | null
+  processing_fee_label?: string | null
   insurance_fee?: number | string | null
+  insurance_fee_label?: string | null
   is_active?: boolean | number | string | null
+  status?: string | null
   created_at?: string | null
   updated_at?: string | null
   deleted_at?: string | null

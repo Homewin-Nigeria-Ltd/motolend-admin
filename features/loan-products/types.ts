@@ -34,9 +34,15 @@ export type LoanProduct = {
   status: LoanProductStatus
 }
 
+export type LoanProductInfoChip = {
+  id: string
+  label: string
+}
+
 export type LoanProductInfoRow = {
   label: string
   value: string
+  chips?: LoanProductInfoChip[]
 }
 
 export type LoanProductTier = {

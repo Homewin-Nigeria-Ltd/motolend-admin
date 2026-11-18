@@ -19,7 +19,7 @@ import { api } from "@/lib/api/client"
 async function fetchLoanTenureList(
   params: TenureListParams,
 ): Promise<TenureListResponse> {
-  const query: Record<string, string | number | boolean> = {
+  const query: Record<string, string | number> = {
     page: params.page,
     per_page: params.per_page ?? 15,
   }
@@ -28,12 +28,8 @@ async function fetchLoanTenureList(
     query.search = params.search.trim()
   }
 
-  if (params.status === "active") {
-    query.is_active = true
-  }
-
-  if (params.status === "inactive") {
-    query.is_active = false
+  if (params.status === "active" || params.status === "inactive") {
+    query.status = params.status
   }
 
   const response = await api.get<ApiLoanTenureListResponse>(

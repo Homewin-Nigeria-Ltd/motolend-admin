@@ -4,6 +4,8 @@ import type {
   ApiLoanProductMetricsResponse,
   LoanProduct,
   LoanProductDetail,
+  LoanProductInfoChip,
+  LoanProductInfoRow,
   LoanProductIntegrationStatus,
   LoanProductKpi,
   LoanProductStatus,
@@ -62,10 +64,21 @@ function formatDetailValue(
 function infoRow(
   label: string,
   value: string | number | boolean | string[] | null | undefined,
-) {
+): LoanProductInfoRow {
   return {
     label,
     value: formatDetailValue(value),
+  }
+}
+
+function infoChipsRow(
+  label: string,
+  chips: LoanProductInfoChip[],
+): LoanProductInfoRow {
+  return {
+    label,
+    value: chips.length > 0 ? chips.map((chip) => chip.label).join(", ") : "—",
+    chips,
   }
 }
 
@@ -143,24 +156,48 @@ function resolveInterest(product: ApiLoanProduct) {
   return displayValue(product.interest_type)
 }
 
-function resolveTenures(product: ApiLoanProduct): string[] {
-  const linkedTenures = resolveLinkedTenures(product)
-    .map((tenure) => {
-      if (tenure.name?.trim()) {
-        return tenure.name.trim()
-      }
+function resolveTenureLabel(
+  tenure: NonNullable<ApiLoanProduct["tenures"]>[number],
+) {
+  if (tenure.name?.trim()) {
+    return tenure.name.trim()
+  }
 
-      if (tenure.tenure == null) return ""
-      const typeLabel =
-        tenure.tenure_type_label?.trim() ||
-        tenure.tenure_type?.trim() ||
-        ""
-      return typeLabel ? `${tenure.tenure} ${typeLabel}` : String(tenure.tenure)
+  if (tenure.tenure == null) return ""
+
+  const typeLabel =
+    tenure.tenure_type_label?.trim() || tenure.tenure_type?.trim() || ""
+
+  return typeLabel ? `${tenure.tenure} ${typeLabel}` : String(tenure.tenure)
+}
+
+function resolveTenureChips(product: ApiLoanProduct): LoanProductInfoChip[] {
+  if (!Array.isArray(product.tenures)) {
+    return []
+  }
+
+  const chips: LoanProductInfoChip[] = []
+  const seen = new Set<string>()
+
+  for (const tenure of product.tenures) {
+    const label = resolveTenureLabel(tenure)
+    if (!label || seen.has(label)) continue
+
+    seen.add(label)
+    chips.push({
+      id: tenure.id != null ? String(tenure.id) : label,
+      label,
     })
-    .filter(Boolean)
+  }
 
-  if (linkedTenures.length > 0) {
-    return Array.from(new Set(linkedTenures))
+  return chips
+}
+
+function resolveTenures(product: ApiLoanProduct): string[] {
+  const linkedTenures = resolveTenureChips(product).map((chip) => chip.label)
+
+  if (linkedTenures.length > 0 || Array.isArray(product.tenures)) {
+    return linkedTenures
   }
 
   const detailsTenure = product.details?.loan_amount_and_duration?.loan_tenure
@@ -293,13 +330,7 @@ export function mapApiLoanProductDetail(
     status: normalizeLoanProductStatus(product),
     overview: [
       infoRow("Description", overview?.description ?? product.description),
-      infoRow(
-        "Loan Tenure",
-        loanAmountDuration?.loan_tenure ??
-          (product.tenure != null && product.tenure_type
-            ? `${product.tenure} ${product.tenure_type}`
-            : product.tenure),
-      ),
+      infoChipsRow("Loan Tenures", resolveTenureChips(product)),
     ],
     loanAmountDuration: [
       // infoRow(

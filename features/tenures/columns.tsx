@@ -55,13 +55,28 @@ export function getTenureColumns({
       header: "Insurance Fee",
     },
     {
-      accessorKey: "linkedProducts",
+      id: "linkedProducts",
       header: "Linked Products",
-      cell: ({ row }) => (
-        <span className="max-w-[220px] truncate text-foreground">
-          {row.original.linkedProducts}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const products = row.original.linkedProducts
+
+        if (products.length === 0) {
+          return <span className="text-muted-foreground">—</span>
+        }
+
+        return (
+          <div className="flex flex-wrap gap-2">
+            {products.map((product) => (
+              <span
+                key={product}
+                className="inline-flex whitespace-nowrap rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"
+              >
+                {product}
+              </span>
+            ))}
+          </div>
+        )
+      },
     },
     {
       accessorKey: "status",

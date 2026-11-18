@@ -3,6 +3,7 @@ import { createAdminUserAction } from "@/features/users/actions/create-admin-use
 import { userEndpoints } from "@/features/users/api/endpoints"
 import type {
   CreateAdminUserInput,
+  ResetUserInput,
   UpdateUserStatusInput,
 } from "@/features/users/types"
 
@@ -16,5 +17,8 @@ export const userMutations = {
         status,
         ...(reason ? { reason } : {}),
       }),
+  },
+  reset: {
+    mutationFn: ({ id }: ResetUserInput) => api.post(userEndpoints.reset(id)),
   },
 }

@@ -198,6 +198,10 @@ export function extractApiUser(
   return response.data ?? response.user ?? null
 }
 
-export function tabToListQuery(tab: UserTab) {
-  return { status: tab }
+export function tabToListQuery(tab: UserTab): Record<string, string> {
+  if (tab === "active" || tab === "inactive") {
+    return { status: tab }
+  }
+
+  return {}
 }

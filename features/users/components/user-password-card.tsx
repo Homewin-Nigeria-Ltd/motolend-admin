@@ -6,6 +6,7 @@ import { BaseAlertDialog } from "@/components/ui/base-alert-dialog"
 import { BaseModal } from "@/components/ui/base-modal"
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
+import { useResetUser } from "@/features/users/hooks/use-user-mutations"
 
 type UserPasswordCardProps = {
   userId: string
@@ -15,18 +16,16 @@ type UserPasswordCardProps = {
 export function UserPasswordCard({ userId, userName }: UserPasswordCardProps) {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [successOpen, setSuccessOpen] = useState(false)
-  const [isPending, setIsPending] = useState(false)
+  const { resetUser, isPending } = useResetUser(userId)
   const firstName = userName.trim().split(/\s+/)[0] || userName
 
   async function handleReset() {
-    setIsPending(true)
     try {
-      await new Promise((resolve) => window.setTimeout(resolve, 400))
-      void userId
+      await resetUser()
       setConfirmOpen(false)
       setSuccessOpen(true)
-    } finally {
-      setIsPending(false)
+    } catch {
+      // Error toast is handled in the mutation hook.
     }
   }
 

@@ -135,6 +135,10 @@ export type UpdateUserStatusInput = {
   reason?: string
 }
 
+export type ResetUserInput = {
+  id: string
+}
+
 export type CreateAdminUserInput = {
   full_name: string
   email: string

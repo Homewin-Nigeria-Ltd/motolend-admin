@@ -63,20 +63,36 @@ function resolveLoanProductIds(tenure: ApiLoanTenure): string[] {
     .filter(Boolean)
 }
 
-function resolveLinkedProductsLabel(tenure: ApiLoanTenure) {
+function resolveLinkedProducts(tenure: ApiLoanTenure): string[] {
   const names = (tenure.loan_products ?? [])
     .map((product) => toStringValue(product.name))
     .filter(Boolean)
 
   if (names.length) {
-    return names.join(", ")
+    return Array.from(new Set(names))
   }
 
-  const ids = resolveLoanProductIds(tenure)
-  return ids.length ? ids.join(", ") : "—"
+  const linked = toStringValue(tenure.linked_products)
+  if (linked) {
+    return Array.from(
+      new Set(
+        linked
+          .split(",")
+          .map((part) => part.trim())
+          .filter(Boolean),
+      ),
+    )
+  }
+
+  return []
 }
 
 function resolveStatus(tenure: ApiLoanTenure): TenureStatus {
+  const status = toStringValue(tenure.status).toLowerCase()
+  if (status === "active" || status === "inactive") {
+    return status
+  }
+
   return toBoolean(tenure.is_active, false) ? "active" : "inactive"
 }
 
@@ -101,13 +117,23 @@ export function mapApiLoanTenure(tenure: ApiLoanTenure): TenureRecord {
     name: toStringValue(tenure.name) || "—",
     code: toStringValue(tenure.code) || "—",
     tenure: toNumber(tenure.tenure),
-    tenureType: mapTenureTypeLabel(tenure.tenure_type),
-    interestType: mapInterestTypeLabel(tenure.interest_type),
-    interestRate: formatPercent(tenure.interest_rate),
-    processingFee: formatPercent(tenure.processing_fee),
-    insuranceFee: formatPercent(tenure.insurance_fee),
+    tenureType: mapTenureTypeLabel(
+      tenure.tenure_type_label ?? tenure.tenure_type,
+    ),
+    interestType:
+      toStringValue(tenure.interest_type_label) ||
+      mapInterestTypeLabel(tenure.interest_type),
+    interestRate:
+      toStringValue(tenure.interest_rate_label) ||
+      formatPercent(tenure.interest_rate),
+    processingFee:
+      toStringValue(tenure.processing_fee_label) ||
+      formatPercent(tenure.processing_fee),
+    insuranceFee:
+      toStringValue(tenure.insurance_fee_label) ||
+      formatPercent(tenure.insurance_fee),
     loanProductIds: resolveLoanProductIds(tenure),
-    linkedProducts: resolveLinkedProductsLabel(tenure),
+    linkedProducts: resolveLinkedProducts(tenure),
     status: resolveStatus(tenure),
     description: toStringValue(tenure.description) || undefined,
     repaymentFrequency: toStringValue(tenure.repayment_frequency) || undefined,
