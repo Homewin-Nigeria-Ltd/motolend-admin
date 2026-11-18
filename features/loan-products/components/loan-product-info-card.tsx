@@ -40,7 +40,7 @@ function InfoRow({ label, value, chips }: LoanProductInfoRow) {
 
 export function LoanProductInfoCard({ title, rows }: LoanProductInfoCardProps) {
   return (
-    <div className="rounded-2xl border border-border bg-background p-5 md:p-6">
+    <div className="rounded-2xl border border-border bg-[#F9F9F9] p-5 md:p-6">
       <h3 className="text-base font-semibold text-foreground">{title}</h3>
 
       <div className="mt-6 flex flex-col gap-4">

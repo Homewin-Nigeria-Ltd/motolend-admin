@@ -5,16 +5,27 @@ import { loanTenureKeys } from "@/features/tenures/api/keys"
 import type {
   ApiLoanTenureDetailResponse,
   ApiLoanTenureListResponse,
+  ApiLoanTenureMetricsResponse,
   TenureDetail,
   TenureListParams,
   TenureListResponse,
+  TenureMetric,
 } from "@/features/tenures/types"
 import {
   extractApiLoanTenure,
   mapApiLoanTenure,
   mapApiLoanTenureDetail,
 } from "@/features/tenures/utils/map-tenure"
+import { mapApiMetricsToTenureMetrics } from "@/features/tenures/utils/map-tenure-metrics"
 import { api } from "@/lib/api/client"
+
+async function fetchLoanTenureMetrics(): Promise<TenureMetric[]> {
+  const response = await api.get<ApiLoanTenureMetricsResponse>(
+    loanTenureEndpoints.metrics,
+  )
+
+  return mapApiMetricsToTenureMetrics(response)
+}
 
 async function fetchLoanTenureList(
   params: TenureListParams,
@@ -67,6 +78,13 @@ async function fetchLoanTenureDetail(id: string): Promise<TenureDetail> {
 }
 
 export const loanTenureQueries = {
+  metrics: () =>
+    queryOptions({
+      queryKey: loanTenureKeys.metrics(),
+      queryFn: fetchLoanTenureMetrics,
+      staleTime: 60 * 1000,
+    }),
+
   list: (params: TenureListParams) =>
     queryOptions({
       queryKey: loanTenureKeys.list(params),

@@ -15,12 +15,11 @@ import { getTenureColumns } from "@/features/tenures/columns"
 import { TenureFilterTabs } from "@/features/tenures/components/tenure-filter-tabs"
 import { TenureSummaryCards } from "@/features/tenures/components/tenure-summary-cards"
 import { useDeleteLoanTenure } from "@/features/tenures/hooks/use-loan-tenure-mutations"
-import { useLoanTenureList } from "@/features/tenures/hooks/use-loan-tenure-queries"
-import type {
-  TenureMetric,
-  TenureRecord,
-  TenureTab,
-} from "@/features/tenures/types"
+import {
+  useLoanTenureList,
+  useLoanTenureMetrics,
+} from "@/features/tenures/hooks/use-loan-tenure-queries"
+import type { TenureRecord, TenureTab } from "@/features/tenures/types"
 
 const PAGE_SIZE = 15
 
@@ -33,6 +32,13 @@ export function TenuresSection() {
     null,
   )
   const { deleteLoanTenure, isPending: isDeleting } = useDeleteLoanTenure()
+
+  const {
+    data: metrics,
+    isPending: isMetricsPending,
+    isError: isMetricsError,
+    error: metricsError,
+  } = useLoanTenureMetrics()
 
   const listParams = {
     page,
@@ -48,45 +54,6 @@ export function TenuresSection() {
     isError,
     error,
   } = useLoanTenureList(listParams)
-
-  const { data: allTenures } = useLoanTenureList({
-    page: 1,
-    per_page: 1,
-  })
-  const { data: activeTenures } = useLoanTenureList({
-    page: 1,
-    per_page: 1,
-    status: "active",
-  })
-  const { data: inactiveTenures } = useLoanTenureList({
-    page: 1,
-    per_page: 1,
-    status: "inactive",
-  })
-
-  const metrics: TenureMetric[] = [
-    {
-      key: "total",
-      label: "Total Tenures",
-      value: String(allTenures?.meta.total ?? 0),
-      changePercent: 0,
-      trend: "up",
-    },
-    {
-      key: "active",
-      label: "Active Tenures",
-      value: String(activeTenures?.meta.total ?? 0),
-      changePercent: 0,
-      trend: "up",
-    },
-    {
-      key: "inactive",
-      label: "Inactive Tenures",
-      value: String(inactiveTenures?.meta.total ?? 0),
-      changePercent: 0,
-      trend: "down",
-    },
-  ]
 
   const columns = useMemo(
     () =>
@@ -145,7 +112,18 @@ export function TenuresSection() {
         <h2 className="text-base font-semibold text-foreground">Tenure</h2>
       </div>
 
-      <TenureSummaryCards metrics={metrics} />
+      {isMetricsError ? (
+        <div className="rounded-2xl border border-border bg-background p-4 text-sm text-destructive">
+          {metricsError instanceof Error
+            ? metricsError.message
+            : "Failed to load loan tenure metrics."}
+        </div>
+      ) : (
+        <TenureSummaryCards
+          metrics={metrics ?? []}
+          isLoading={isMetricsPending}
+        />
+      )}
 
       <section className="min-w-0">
         <DataTable
@@ -182,15 +160,6 @@ export function TenuresSection() {
                       className="h-10"
                     />
                   </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="size-10 shrink-0"
-                    aria-label="Filter tenures"
-                  >
-                    <Icons.filter size={18} />
-                  </Button>
                   <Button type="button" className="h-10 gap-1.5 px-4" asChild>
                     <Link href="/loan-products/tenures/new">
                       <Icons.add size={16} />

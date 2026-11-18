@@ -53,6 +53,18 @@ export type TenureMetric = {
   trend: "up" | "down"
 }
 
+export type ApiLoanTenureMetricItem = {
+  value: number
+  percentage: number
+  direction: "up" | "down" | string
+}
+
+export type ApiLoanTenureMetricsResponse = {
+  total_tenures: ApiLoanTenureMetricItem
+  active_tenures: ApiLoanTenureMetricItem
+  inactive_tenures: ApiLoanTenureMetricItem
+}
+
 export type CreateLoanTenureInput = {
   name: string
   code: string

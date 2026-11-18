@@ -182,15 +182,6 @@ export function DisbursementSection() {
                       className="h-10"
                     />
                   </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="size-10 shrink-0"
-                    aria-label="Filter disbursements"
-                  >
-                    <Icons.filter size={18} />
-                  </Button>
                 </div>
               </div>
             </div>

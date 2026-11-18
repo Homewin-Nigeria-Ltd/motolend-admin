@@ -59,7 +59,7 @@ export function LoanProductDetailHeader({
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-background px-4 py-4 md:px-6">
+    <div className="rounded-2xl border border-border bg-[#F9F9F9] px-4 py-4 md:px-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8 sm:gap-y-4">
           <HeaderField label="Loan Product Name">

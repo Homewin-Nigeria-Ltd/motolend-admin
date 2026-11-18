@@ -2,6 +2,7 @@ import type { TenureListParams } from "@/features/tenures/types"
 
 export const loanTenureKeys = {
   all: ["loan-tenures"] as const,
+  metrics: () => [...loanTenureKeys.all, "metrics"] as const,
   lists: () => [...loanTenureKeys.all, "list"] as const,
   list: (params: TenureListParams) =>
     [...loanTenureKeys.lists(), params] as const,
