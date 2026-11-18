@@ -7,6 +7,7 @@ export function buildCreateLoanProductPayload(
   return {
     name: values.name.trim(),
     description: values.description.trim(),
+    application_fee: values.application_fee,
     is_active: values.is_active,
   }
 }

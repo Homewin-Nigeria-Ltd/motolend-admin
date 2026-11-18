@@ -44,6 +44,20 @@ export function CreateLoanProductForm({
         <FieldError errors={[form.formState.errors.description]} />
       </Field>
 
+      <Field>
+        <FieldLabel htmlFor="application-fee">Application Fee</FieldLabel>
+        <Input
+          id="application-fee"
+          type="number"
+          step="0.01"
+          min={0}
+          placeholder="0"
+          disabled={disabled}
+          {...form.register("application_fee", { valueAsNumber: true })}
+        />
+        <FieldError errors={[form.formState.errors.application_fee]} />
+      </Field>
+
       <Controller
         control={form.control}
         name="is_active"

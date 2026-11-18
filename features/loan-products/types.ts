@@ -69,6 +69,7 @@ export type LoanProductIntegration = {
 export type CreateLoanProductInput = {
   name: string
   description: string
+  application_fee: number
   is_active: boolean
 }
 
@@ -261,6 +262,7 @@ export type ApiLoanProduct = {
   description?: string | null
   status?: string | null
   is_active?: boolean | null
+  application_fee?: string | number | null
   min_amount?: string | number | null
   max_amount?: string | number | null
   amount_range?: string | null

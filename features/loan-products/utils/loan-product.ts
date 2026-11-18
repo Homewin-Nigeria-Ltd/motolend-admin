@@ -249,6 +249,19 @@ function toStringValue(value: unknown): string {
   return ""
 }
 
+function toNumber(value: unknown, fallback = 0): number {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    const parsed = Number(value)
+    return Number.isFinite(parsed) ? parsed : fallback
+  }
+
+  return fallback
+}
+
 function toBoolean(value: unknown, fallback = false): boolean {
   if (typeof value === "boolean") {
     return value
@@ -273,6 +286,7 @@ function mapApiLoanProductToFormValues(
   return {
     name: toStringValue(product.name),
     description: toStringValue(product.description),
+    application_fee: toNumber(product.application_fee, 0),
     is_active: toBoolean(product.is_active, true),
   }
 }
