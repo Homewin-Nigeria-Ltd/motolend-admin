@@ -134,11 +134,7 @@ export function MarkPaidDialog({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel>Recovery method</FieldLabel>
-              <Select
-                modal={false}
-                value={field.value}
-                onValueChange={field.onChange}
-              >
+              <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger className="h-11 w-full">
                   <SelectValue placeholder="Select method" />
                 </SelectTrigger>
