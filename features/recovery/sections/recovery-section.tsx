@@ -14,11 +14,19 @@ import { MarkPaidOtpDialog } from "@/features/recovery/components/mark-paid-otp-
 import { RecoveryFilterTabs } from "@/features/recovery/components/recovery-filter-tabs"
 import { RecoverySummaryCards } from "@/features/recovery/components/recovery-summary-cards"
 import {
+  useSendRecoveryOtp,
+  useVerifyRecoveryOtp,
+} from "@/features/recovery/hooks/use-recovery-mutations"
+import {
   useRecoveryLoans,
   useRecoveryMetrics,
   useRecoveryStageCounts,
 } from "@/features/recovery/hooks/use-recovery-queries"
-import type { MarkPaidFormValues } from "@/features/recovery/schemas/mark-paid.schema"
+import {
+  RECOVERY_METHOD_LABELS,
+  parseAmountRecovered,
+  type MarkPaidFormValues,
+} from "@/features/recovery/schemas/mark-paid.schema"
 import type { RecoveryLoan, RecoveryTab } from "@/features/recovery/types"
 import { exportRecoveryLoansCsv } from "@/features/recovery/utils/export-recovery"
 import { buildRecoveryTabMeta } from "@/features/recovery/utils/map-recovery"
@@ -37,8 +45,9 @@ export function RecoverySection() {
   const [otpOpen, setOtpOpen] = useState(false)
   const [pendingValues, setPendingValues] =
     useState<MarkPaidFormValues | null>(null)
-  const [isSendingOtp, setIsSendingOtp] = useState(false)
-  const [isVerifying, setIsVerifying] = useState(false)
+
+  const { sendOtp, isPending: isSendingOtp } = useSendRecoveryOtp()
+  const { verifyOtp, isPending: isVerifying } = useVerifyRecoveryOtp()
   const [isResending, setIsResending] = useState(false)
 
   const {
@@ -115,39 +124,61 @@ export function RecoverySection() {
   }
 
   async function handleSendOtp(values: MarkPaidFormValues) {
-    setIsSendingOtp(true)
+    if (!selectedLoan) return
+
+    const amountRecovered = parseAmountRecovered(values.amount_recovered)
+    if (!Number.isFinite(amountRecovered) || amountRecovered <= 0) {
+      toast.error("Enter a valid amount recovered")
+      return
+    }
+
     try {
-      await new Promise((resolve) => window.setTimeout(resolve, 500))
+      await sendOtp({
+        loanId: selectedLoan.id,
+        recovery_method: RECOVERY_METHOD_LABELS[values.recovery_method],
+        amount_recovered: amountRecovered,
+        payment_reference: values.payment_reference.trim(),
+      })
       setPendingValues(values)
       setMarkPaidOpen(false)
       setOtpOpen(true)
-      toast.success("OTP sent to recovery@motolend.ng")
-    } finally {
-      setIsSendingOtp(false)
+    } catch {
+      // Error toast is handled in the mutation hook.
     }
   }
 
   async function handleResendOtp() {
+    if (!selectedLoan || !pendingValues) return
+
+    const amountRecovered = parseAmountRecovered(pendingValues.amount_recovered)
+    if (!Number.isFinite(amountRecovered) || amountRecovered <= 0) {
+      toast.error("Enter a valid amount recovered")
+      return
+    }
+
     setIsResending(true)
     try {
-      await new Promise((resolve) => window.setTimeout(resolve, 500))
-      toast.success("A new OTP has been sent")
+      await sendOtp({
+        loanId: selectedLoan.id,
+        recovery_method: RECOVERY_METHOD_LABELS[pendingValues.recovery_method],
+        amount_recovered: amountRecovered,
+        payment_reference: pendingValues.payment_reference.trim(),
+      })
+    } catch {
+      // Error toast is handled in the mutation hook.
     } finally {
       setIsResending(false)
     }
   }
 
   async function handleVerifyOtp(otp: string) {
-    if (!selectedLoan || !pendingValues) {
-      return
-    }
+    if (!selectedLoan) return
 
-    setIsVerifying(true)
     try {
-      await new Promise((resolve) => window.setTimeout(resolve, 600))
-      void otp
-      void pendingValues
-
+      await verifyOtp({
+        loanId: selectedLoan.id,
+        otp,
+      })
       setPaidOverrides((current) => ({
         ...current,
         [selectedLoan.id]: true,
@@ -155,9 +186,8 @@ export function RecoverySection() {
       setOtpOpen(false)
       setSelectedLoan(null)
       setPendingValues(null)
-      toast.success(`Loan ${selectedLoan.applicationId} marked as Paid`)
-    } finally {
-      setIsVerifying(false)
+    } catch {
+      // Error toast is handled in the mutation hook.
     }
   }
 

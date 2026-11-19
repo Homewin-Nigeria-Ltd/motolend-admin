@@ -104,6 +104,24 @@ export type RecoveryMethod =
   | "pos"
   | "other"
 
+export type SendRecoveryOtpInput = {
+  loanId: string
+  recovery_method: string
+  amount_recovered: number
+  payment_reference: string
+}
+
+export type VerifyRecoveryOtpInput = {
+  loanId: string
+  otp: string
+}
+
+export type ApiSendRecoveryOtpResponse = {
+  message?: string
+  approval_email?: string
+  expires_in_seconds?: number
+}
+
 export type ApiRecoveryLoan = {
   id?: number | string
   application_id?: string | number | null

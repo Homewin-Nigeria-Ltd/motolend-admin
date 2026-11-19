@@ -7,6 +7,16 @@ export const RECOVERY_METHOD_OPTIONS = [
   "other",
 ] as const
 
+export const RECOVERY_METHOD_LABELS: Record<
+  (typeof RECOVERY_METHOD_OPTIONS)[number],
+  string
+> = {
+  bank_transfer: "Bank transfer to recovery account",
+  cash: "Cash collected",
+  pos: "POS / card payment",
+  other: "Other",
+}
+
 export const markPaidSchema = z.object({
   recovery_method: z.enum(RECOVERY_METHOD_OPTIONS, {
     required_error: "Recovery method is required",
@@ -22,4 +32,9 @@ export const markPaidFormDefaults: MarkPaidFormValues = {
   recovery_method: "bank_transfer",
   amount_recovered: "",
   payment_reference: "",
+}
+
+export function parseAmountRecovered(value: string) {
+  const parsed = Number(value.replace(/[^\d.]/g, ""))
+  return Number.isFinite(parsed) ? parsed : NaN
 }

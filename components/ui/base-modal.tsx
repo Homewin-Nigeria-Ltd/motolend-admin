@@ -83,11 +83,13 @@ export function BaseModal({
   )
 
   const footerNode = footer ? (
-    <div className="shrink-0 border-t border-border px-6 py-5">{footer}</div>
+    <div className="shrink-0 border-t border-border px-4 py-4 sm:px-6 sm:py-5">
+      {footer}
+    </div>
   ) : null
 
   const main = asForm ? (
-    <form onSubmit={onSubmit} className="flex flex-col">
+    <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
       {body}
       {footerNode}
     </form>
@@ -150,9 +152,7 @@ export function BaseModal({
           </div>
         )}
 
-        <OverlayPortalContainer
-          className={isDetail ? "flex min-h-0 flex-1 flex-col" : undefined}
-        >
+        <OverlayPortalContainer className="flex min-h-0 flex-1 flex-col">
           {main}
         </OverlayPortalContainer>
       </DialogContent>

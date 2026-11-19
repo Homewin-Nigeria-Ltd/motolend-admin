@@ -1,5 +1,7 @@
 "use client"
 
+import { useRef } from "react"
+
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import type { SmsTemplate } from "@/features/sms/types"
@@ -9,7 +11,10 @@ type SmsTemplateCardProps = {
   message: string
   onMessageChange: (value: string) => void
   onSend: () => void
-  onImportCsv: () => void
+  onCsvSelected: (file: File) => void
+  onClearCsv?: () => void
+  csvFileName?: string | null
+  isSending?: boolean
 }
 
 function getSmsMeta(length: number) {
@@ -28,8 +33,12 @@ export function SmsTemplateCard({
   message,
   onMessageChange,
   onSend,
-  onImportCsv,
+  onCsvSelected,
+  onClearCsv,
+  csvFileName,
+  isSending = false,
 }: SmsTemplateCardProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const meta = getSmsMeta(message.length)
 
   return (
@@ -49,21 +58,50 @@ export function SmsTemplateCard({
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-muted px-4 py-3">
-        <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">
-            {template.contactCount} contacts
-          </span>{" "}
-          from {template.contactsLabel}
-        </p>
+        <div className="min-w-0">
+          <p className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">
+              {template.contactCount} contacts
+            </span>{" "}
+            from {template.contactsLabel}
+          </p>
+          {csvFileName ? (
+            <p className="mt-1 truncate text-xs text-foreground">
+              CSV ready: {csvFileName}
+              {onClearCsv ? (
+                <button
+                  type="button"
+                  className="ml-2 text-muted-foreground underline-offset-2 hover:underline"
+                  onClick={onClearCsv}
+                  disabled={isSending}
+                >
+                  Clear
+                </button>
+              ) : null}
+            </p>
+          ) : null}
+        </div>
         <Button
           type="button"
           variant="outline"
           size="sm"
           className="h-9"
-          onClick={onImportCsv}
+          disabled={isSending}
+          onClick={() => fileInputRef.current?.click()}
         >
           Import CSV
         </Button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv,text/csv"
+          className="hidden"
+          onChange={(event) => {
+            const file = event.target.files?.[0]
+            event.target.value = ""
+            if (file) onCsvSelected(file)
+          }}
+        />
       </div>
 
       <div className="mt-4 flex min-h-0 flex-1 flex-col">
@@ -72,13 +110,19 @@ export function SmsTemplateCard({
           onChange={(event) => onMessageChange(event.target.value)}
           className="min-h-[120px] flex-1 rounded-xl border-border bg-background px-4 py-3 text-sm leading-6"
           aria-label={`${template.title} SMS message`}
+          disabled={isSending}
         />
       </div>
 
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-muted-foreground">{meta.label}</p>
-        <Button type="button" className="h-10 shrink-0 px-4" onClick={onSend}>
-          {template.buttonLabel}
+        <Button
+          type="button"
+          className="h-10 shrink-0 px-4"
+          onClick={onSend}
+          disabled={isSending || !message.trim()}
+        >
+          {isSending ? "Sending…" : template.buttonLabel}
         </Button>
       </div>
     </article>

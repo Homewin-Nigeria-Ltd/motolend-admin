@@ -244,6 +244,7 @@ export type ApiLoanApplication = {
   user_id: string
   loan_product_id?: number
   amount: number | string
+  original_requested_amount?: number | string | null
   total_repayment: number | string
   interest_rate?: number | string | null
   tenure?: number

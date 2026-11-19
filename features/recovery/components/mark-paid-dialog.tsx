@@ -16,19 +16,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {
+  RECOVERY_METHOD_LABELS,
   markPaidFormDefaults,
   markPaidSchema,
   type MarkPaidFormValues,
 } from "@/features/recovery/schemas/mark-paid.schema"
 import type { RecoveryLoan } from "@/features/recovery/types"
-
-const recoveryMethodLabels: Record<MarkPaidFormValues["recovery_method"], string> =
-  {
-    bank_transfer: "Bank transfer to recovery account",
-    cash: "Cash collected",
-    pos: "POS / card payment",
-    other: "Other",
-  }
 
 type MarkPaidDialogProps = {
   loan: RecoveryLoan | null
@@ -57,7 +50,7 @@ export function MarkPaidDialog({
 
     form.reset({
       recovery_method: "bank_transfer",
-      amount_recovered: `₦${loan.outstanding}`,
+      amount_recovered: String(loan.outstandingRaw || ""),
       payment_reference: "",
     })
   }, [open, loan, form])
@@ -69,7 +62,9 @@ export function MarkPaidDialog({
   return (
     <BaseModal
       title={`Mark loan ${loan.applicationId} as Paid`}
-      className="max-w-lg"
+      className="flex max-h-[min(92dvh,calc(100vh-2rem))] w-[calc(100vw-2rem)] max-w-lg flex-col sm:w-full"
+      bodyClassName="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 sm:px-6 sm:pb-6"
+      headerClassName="px-4 pt-6 pb-2 sm:px-6 sm:pt-8"
       open={open}
       onOpenChange={(next) => {
         if (!next) {
@@ -80,16 +75,17 @@ export function MarkPaidDialog({
       asForm
       onSubmit={form.handleSubmit((values) => onSendOtp(values))}
       footer={
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button
             type="button"
             variant="outline"
+            className="h-11 w-full sm:w-auto"
             onClick={() => onOpenChange(false)}
             disabled={isPending}
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" className="h-11 w-full sm:w-auto" disabled={isPending}>
             {isPending ? "Sending…" : "Send OTP"}
           </Button>
         </div>
@@ -101,23 +97,31 @@ export function MarkPaidDialog({
       </p>
 
       <div className="rounded-xl bg-muted px-4 py-3 text-sm">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 break-words">
           <p>
             <span className="text-muted-foreground">Customer:</span>{" "}
             <span className="font-medium text-foreground">
-              {loan.customerName} · {loan.phone}
+              {loan.customerName}
+              <span className="hidden sm:inline"> · </span>
+              <span className="mt-0.5 block sm:mt-0 sm:inline">
+                {loan.phone}
+              </span>
             </span>
           </p>
           <p>
             <span className="text-muted-foreground">Loan product:</span>{" "}
             <span className="font-medium text-foreground">
-              {loan.loanProduct} · due {loan.dueDate}
+              {loan.loanProduct}
+              <span className="hidden sm:inline"> · </span>
+              <span className="mt-0.5 block sm:mt-0 sm:inline">
+                due {loan.dueDate}
+              </span>
             </span>
           </p>
           <p>
             <span className="text-muted-foreground">Outstanding:</span>{" "}
             <span className="font-medium text-foreground">
-              ₦{loan.outstanding}
+              {loan.outstanding}
             </span>
           </p>
         </div>
@@ -130,16 +134,22 @@ export function MarkPaidDialog({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel>Recovery method</FieldLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select
+                modal={false}
+                value={field.value}
+                onValueChange={field.onChange}
+              >
                 <SelectTrigger className="h-11 w-full">
                   <SelectValue placeholder="Select method" />
                 </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(recoveryMethodLabels).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
+                <SelectContent position="popper">
+                  {Object.entries(RECOVERY_METHOD_LABELS).map(
+                    ([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ),
+                  )}
                 </SelectContent>
               </Select>
               {fieldState.invalid ? (
@@ -159,7 +169,7 @@ export function MarkPaidDialog({
                 {...field}
                 id="amount-recovered"
                 className="h-11"
-                placeholder="₦0"
+                placeholder="0"
               />
               {fieldState.invalid ? (
                 <FieldError errors={[fieldState.error]} />

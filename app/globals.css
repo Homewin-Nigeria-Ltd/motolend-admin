@@ -133,6 +133,7 @@
   }
   html {
     font-size: 16px;
+    scrollbar-gutter: stable;
     @apply font-sans;
   }
   body {
